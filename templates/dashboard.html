@@ -200,8 +200,6 @@
 
                                 <div class="filter-buttons" style="width: 100%; display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 0rem; padding-bottom: 1.5rem;">
                                     <script>
-                                        const starSvg = `<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><g><path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" class="fil0"></path></g></svg>`;
-
                                         const categories = [
                                             { id: 'all', name: 'All' },
                                             { id: 'household', name: 'Household' },
@@ -218,13 +216,36 @@
 
                                         categories.forEach(cat => {
                                             document.write(`
-                                                <button class="button filter-btn ${cat.id === 'all' ? 'active' : ''}" onclick="filterCategory('${cat.id}', this)">
+                                                <button class="btn filter-btn ${cat.id === 'all' ? 'active' : ''}" onclick="filterCategory('${cat.id}', this)"
+                                                    style="background: ${cat.id === 'all' ? 'var(--primary)' : 'rgba(255,255,255,0.05)'}; 
+                                                           color: ${cat.id === 'all' ? '#000' : 'white'}; 
+                                                           border: 1px solid ${cat.id === 'all' ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}; 
+                                                           border-radius: 9999px; 
+                                                           padding: 0.4rem 1rem; 
+                                                           font-weight: 600; 
+                                                           font-size: 0.85rem; 
+                                                           cursor: pointer;
+                                                           transition: 0.3s;
+                                                           box-shadow: ${cat.id === 'all' ? '0 0 10px rgba(59, 228, 119, 0.3)' : 'none'};">
                                                     ${cat.name}
-                                                    <div class="star-1">${starSvg}</div><div class="star-2">${starSvg}</div>
-                                                    <div class="star-3">${starSvg}</div><div class="star-4">${starSvg}</div>
-                                                    <div class="star-5">${starSvg}</div><div class="star-6">${starSvg}</div>
                                                 </button>
                                             `);
+                                        });
+
+                                        // Ensure clicking a category updates the active button style
+                                        document.addEventListener('click', function(e) {
+                                            if (e.target && e.target.classList.contains('filter-btn')) {
+                                                document.querySelectorAll('.filter-btn').forEach(btn => {
+                                                    btn.style.background = 'rgba(255,255,255,0.05)';
+                                                    btn.style.color = 'white';
+                                                    btn.style.border = '1px solid rgba(255,255,255,0.1)';
+                                                    btn.style.boxShadow = 'none';
+                                                });
+                                                e.target.style.background = 'var(--primary)';
+                                                e.target.style.color = '#000';
+                                                e.target.style.border = '1px solid var(--primary)';
+                                                e.target.style.boxShadow = '0 0 10px rgba(59, 228, 119, 0.3)';
+                                            }
                                         });
                                     </script>
                                 </div>

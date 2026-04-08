@@ -212,6 +212,11 @@
                 }
             } catch (err) {
                 console.error("Error:", err);
+                document.getElementById('email-error').innerText = "Temporary Backend Issue. Check IDE console for OTP.";
+                document.getElementById('email-error').style.display = 'block';
+                sendOtpBtn.innerText = "Create Account";
+                sendOtpBtn.style.opacity = "1";
+                sendOtpBtn.disabled = false;
             }
         });
 

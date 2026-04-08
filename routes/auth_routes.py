@@ -18,6 +18,10 @@ SENDER_EMAIL = os.environ.get("MAIL_USERNAME")
 SENDER_PASSWORD = os.environ.get("MAIL_PASSWORD")
 
 def send_otp_email(recipient_email, otp):
+    if not SENDER_EMAIL or not SENDER_PASSWORD:
+        print(f"\n[DEV MODE] SMTP not configured. Simulated sending OTP to {recipient_email}: {otp}\n")
+        return True
+
     msg = MIMEText(f"""Hii! 
 Welcome to Task-Hive!
 Your 6-digit email verification code is: {otp}.
@@ -123,6 +127,10 @@ def login_user():
 
 
 def send_password_reset_email(recipient_email, otp):
+    if not SENDER_EMAIL or not SENDER_PASSWORD:
+        print(f"\n[DEV MODE] SMTP not configured. Simulated sending Reset OTP to {recipient_email}: {otp}\n")
+        return True
+
     msg = MIMEText(f"""Hello,
 We received a request to reset your Task-Hive password.
 

@@ -15,10 +15,10 @@ from routes.auth_routes import auth_bp
 app = Flask(__name__)
 app.register_blueprint(dashboard_bp)
 
-UPLOAD_FOLDER ='/home/Task-Hive/Task-Hive/static/uploads'
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.secret_key = os.environ.get("SECRET_KEY")
+app.secret_key = os.environ.get("SECRET_KEY", "super_secret_dev_fallback_key")
 
 database_url = os.environ.get("DATABASE_URL", "sqlite:///Task-Hive.db")
 

@@ -450,3 +450,69 @@ input:focus, select:focus, textarea:focus {
 .justify-between { justify-content: space-between; }
 .justify-center { justify-content: center; }
 .gap-4 { gap: 1rem; }
+
+/* Video Banner Presentation */
+.video-banner {
+    width: 100%;
+}
+
+.banner-video {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Modal Popup Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: #111827;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(59, 228, 119, 0.25);
+    border-radius: 20px;
+    padding: 2.5rem;
+    width: 90%;
+    max-width: 550px;
+    color: white;
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-textarea {
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: white;
+    padding: 1rem;
+    min-height: 150px;
+    margin: 1.5rem 0;
+    font-size: 1rem;
+    outline: none;
+    resize: none;
+}
+
+.modal-textarea:focus { border-color: var(--primary); }
+.modal-actions { display: flex; gap: 1rem; justify-content: flex-end; }
+
+
