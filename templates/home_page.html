@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task-Hive - Organize Your Tasks, Achieve Your Goals</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-content">
+      <div class="logo">
+        <div class="logo-icon">
+          <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="Task-Hive Logo">
+        </div>
+        <span class="logo-text">Task-Hive</span>
+      </div>
+
+      <nav class="nav">
+        <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+        <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
+        <a href="{{ url_for('auth.login_page') }}" class="nav-link">Login</a>
+      </nav>
+
+      <a href="{{ url_for('auth.register_page') }}" class="btn btn-primary">Get Started</a>
+    </div>
+  </header>
+
+  <section class="video-banner">
+    <video autoplay muted loop playsinline class="banner-video">
+      <source src="{{ url_for('static', filename='videos/loop_video.mp4') }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </section>
+
+  <!-- Hero Section -->
+  <section class="hero">
+
+    <div class="container hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">Organize Your Tasks,<br><span class="text-gradient">Achieve Your Goals</span></h1>
+        <p class="hero-description">
+          Task-Hive helps you create, manage, and complete tasks efficiently with intuitive organization, deadline
+          tracking, and real-time payment integration for task-related services.
+        </p>
+        <div class="hero-buttons flex gap-4 justify-center" style="margin-top: 2rem;">
+          <a href="{{ url_for('auth.register_page') }}" class="btn btn-primary">Start Free Today</a>
+          <a href="{{ url_for('auth.login_page') }}" class="btn btn-secondary">Sign In</a>
+        </div>
+      </div>
+
+      <div class="hero-image">
+        <img src="{{ url_for('static', filename='images/hero.jpeg') }}" alt="Person working on tasks">
+      </div>
+    </div>
+  </section>
+
+<!-- Categories Section -->
+<section class="categories">
+  <div class="container">
+    <h2 class="categories-title">Task Categories We Offer</h2>
+
+    <div class="categories-slider">
+      <div class="categories-track">
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/cleaning.jpeg') }}" alt="Cleaning">
+          <p class="categories-text">Cleaning</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/delivery.jpeg') }}" alt="Delivery">
+          <p class="categories-text">Delivery</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/repair.jpeg') }}" alt="Repairs">
+          <p class="categories-text">Repairs</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/grocery help.jpeg') }}" alt="Grocery">
+          <p class="categories-text">Grocery Pickup</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/pet care.jpeg') }}" alt="Pet Care">
+          <p class="categories-text">Pet Care</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/tutoring.jpeg') }}" alt="Tutoring">
+          <p class="categories-text">Tutoring</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/moving help.jpeg') }}" alt="Moving">
+          <p class="categories-text">Moving Help</p>
+        </div>
+
+        <!-- duplicate cards for infinite loop -->
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/cleaning.jpeg') }}" alt="Cleaning">
+          <p class="categories-text">Cleaning</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/delivery.jpeg') }}" alt="Delivery">
+          <p class="categories-text">Delivery</p>
+        </div>
+
+        <div class="category-card">
+          <img src="{{ url_for('static', filename='images/repair.jpeg') }}" alt="Repairs">
+          <p class="categories-text">Repairs</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <h2 class="features-title"><span class=text-gradient>KEY FEATURES</span></h2>
+      <p class="features-subtitle">
+        Everything you need to get things done locally<br>
+        — fast, safe, and affordable.
+      </p>
+
+      <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+        <div class="card glass feature-card text-center">
+          <div class="feature-icon mb-2"><img src="{{ url_for('static', filename='images/notepad-icon.jpeg') }}" alt="Notepad" style="width: 60px; height: 60px; border-radius: 50%;"></div>
+          <h3 class="feature-title mb-2">Smart Task Organization</h3>
+          <p class="feature-description">
+            Create categories, use tags, and prioritize tasks. Organize your tasks with intuitive interfaces. Add
+            subtasks, set deadlines, prioritize, and keep everything in one place.
+          </p>
+        </div>
+
+        <div class="card glass feature-card text-center">
+          <div class="feature-icon mb-2"><img src="{{ url_for('static', filename='images/Lock-icon.png') }}" alt="Lock" style="width: 60px; height: 60px; border-radius: 50%;"></div>
+          <h3 class="feature-title mb-2">User Registration & Secure Access</h3>
+          <p class="feature-description">
+            Post errands easily by adding task details, location, and budget. Find people ready to handle your tasks.
+            Select the ones you're offering.
+          </p>
+        </div>
+
+        <div class="card glass feature-card text-center">
+          <div class="feature-icon mb-2"><img src="{{ url_for('static', filename='images/Map-icon.png') }}" alt="Map" style="width: 60px; height: 60px; border-radius: 50%;"></div>
+          <h3 class="feature-title mb-2">Nearby Task Matching</h3>
+          <p class="feature-description">
+            Task-Hive displays errands within a 5 km radius. This location-based feature helps you find tasks to accept
+            quick, and easy to complete.
+          </p>
+        </div>
+
+        <div class="card glass feature-card text-center">
+          <div class="feature-icon mb-2"><img src="{{ url_for('static', filename='images/Tick-icon.png') }}" alt="Tick" style="width: 60px; height: 60px; border-radius: 50%;"></div>
+          <h3 class="feature-title mb-2">Easy Task Acceptance</h3>
+          <p class="feature-description">
+            Quickly accept errands to browse available errands and accept tasks based on your skill level and
+            availability. It follows a user-friendly posting to completion.
+          </p>
+        </div>
+
+        <div class="card glass feature-card text-center">
+          <div class="feature-icon mb-2"><img src="{{ url_for('static', filename='images/Star-icon.png') }}" alt="star" style="width: 60px; height: 60px; border-radius: 50%;"></div>
+          <h3 class="feature-title mb-2">Clean and User-Friendly Interface</h3>
+          <p class="feature-description">
+            The platform features a simple, clean design that makes tasks intuitive and easy to use. No technical
+            expertise is required for users to use it effectively.
+          </p>
+        </div>
+
+        <div class="card glass feature-card text-center">
+          <div class="feature-icon mb-2"><img src="{{ url_for('static', filename='images/Community-icon.png') }}" alt="Community" style="width: 60px; height: 60px; border-radius: 50%;"></div>
+          <h3 class="feature-title mb-2">Community Driven Platform</h3>
+          <p class="feature-description">
+            Task-Hive connects people within the same locality, fostering a sense of community and enabling community
+            collaboration.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <div class="container cta-content text-center" style="padding: 4rem 1rem; margin-top: 4rem; background: linear-gradient(45deg, rgba(139, 92, 246, 0.4), rgba(236, 72, 153, 0.4)); border-radius: var(--b-radius);">
+      <h2 class="cta-title mb-2">Ready to Transform Your Productivity?</h2>
+      <p class="cta-description mb-4">
+        Task-Hive connects you with trusted local workers within a 5KM radius.<br>
+        Post a task to immediately see it done today. Earn money helping your community.
+      </p>
+      <a href="{{ url_for('auth.register_page') }}" class="btn btn-primary">Sign Up Now</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <div class="logo-icon">
+          <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="Task-Hive Logo">
+        </div>
+        <div>
+          <span class="footer-logo-text">Task-Hive</span>
+          <p class="footer-description">
+            Hyperlocal errand marketplace connecting task<br>
+            posters with eager workers.
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-copyright">
+        © 2026 Task-Hive. All rights reserved.
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+Task-Hive - Static Folder Description
+
+The static folder contains all the files that are directly served to the user's browser without any server-side processing. These files are responsible for the visual appearance and client-side behavior of the Task-Hive web application.
+
+Contents of this folder include:
+
+1. CSS Files
+   These files define the styling and layout of the application such as colors, fonts, spacing, responsiveness, and overall user interface design.
+
+2. Images and Icons
+   This includes logos, illustrations, icons, and other visual assets used throughout the application to enhance the interface.
+
+3. Video
+   This includes the home page loop video
+
+Purpose:
+The static folder ensures that all frontend resources like stylesheets, videos, and images are organized in one place and can be efficiently delivered to users by the web server.
+
+In the Task-Hive application, these files help create a smooth, responsive, and visually appealing experience for users who post tasks or accept nearby errands.

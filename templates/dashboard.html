@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Task-Hive</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="dashboard-header-content">
+                <div class="logo">
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" width="40" alt="Task-Hive Logo">
+                    <span class="logo-text">Task-Hive</span>
+                </div>
+
+                <div class="profile-menu" style="display: flex; align-items: center; gap: 1.5rem;">
+
+                    <div style="position: relative;">
+                        <button onclick="toggleNotifs()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; position: relative;">
+                            <img src="{{ url_for('static', filename='images/notification.png') }}" alt="Notifications" style="width: 30px; height: 30px;">
+                            <span id="notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 0.65rem; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;">0</span>
+                        </button>
+
+                        <div id="notif-dropdown" style="display: none; position: absolute; top: 120%; right: -50px; width: 320px; background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden; z-index: 100;">
+                            <div style="padding: 1rem; background: #f8fafc; border-bottom: 1px solid #e5e7eb; font-weight: 800; color: #111827;">Notifications</div>
+                            <div id="notif-list" style="max-height: 350px; overflow-y: auto;">
+                                </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <a href="/profile" class="avatar">
+                            {% if user.profile_pic %}
+                            <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="Profile">
+                            {% else %}
+                            {{ user.name[0] | upper }}
+                            {% endif %}
+                        </a>
+                        <span class="profile-name">{{ user.name }}</span>
+                        <a href="/logout" class="logout-link">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="dashboard-wrapper">
+
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="sidebar-link active">Dashboard</a>
+                <a href="/dashboard#available-tasks-section" class="sidebar-link">Available Tasks</a>
+                <a href="/dashboard#post-task-section" class="sidebar-link">Post a Task</a>
+                <a href="/dashboard#my-tasks-section" class="sidebar-link">My Tasks</a>
+                <a href="/leaderboard" class="sidebar-link">Leaderboard</a>
+                <a href="/history" class="sidebar-link">History</a>
+            </nav>
+
+            <div style="margin-top: auto;">
+                <a href="/profile" class="sidebar-link" style="display: block;">Profile</a>
+                <a href="/logout" class="sidebar-link"
+                    style="display: block; color: #ef4444; margin-top: 1rem;">Logout</a>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <div class="container" style="max-width: 800px;">
+                <h1 class="welcome-title">
+                    <span id="greeting-text"></span> {{ user.name }}
+                    <img src="{{ url_for('static', filename='images/hello-icon.png') }}" alt="Wave"
+                        class="welcome-icon">
+                </h1>
+                <p class="welcome-subtitle">What do you need help with today?</p>
+
+                <div class="card glass" id="post-task-section" style="margin-bottom: 2rem;">
+                    <h2 class="mb-3">Post a Task</h2>
+                    <form action="/post-task" method="POST" class="post-task-form">
+                        <input type="hidden" name="latitude" id="form-lat">
+                        <input type="hidden" name="longitude" id="form-lng">
+                        <div style="display: flex; gap: 1rem;">
+                            <input type="text" name="title" placeholder="What needs to be done?" required style="flex: 1.8;">
+                            <input type="text" name="duration" placeholder="When? (e.g., 5-6 PM for 1 Month)" required style="flex: 1.2;">
+                        </div>
+
+                        <textarea name="description" placeholder="Provide some details..." required></textarea>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <select name="category" required style="flex: 1;">
+                                <option value="">Select Category...</option>
+
+                                <optgroup label="Household">
+                                    <option value="cleaning">Cleaning</option>
+                                    <option value="cooking">Cooking / Meal Prep</option>
+                                    <option value="laundry">Laundry / Ironing</option>
+                                    <option value="dishwashing">Dishwashing</option>
+                                    <option value="organizing">Home Organization</option>
+                                </optgroup>
+
+                                <optgroup label="Shopping & Errands">
+                                    <option value="grocery">Grocery Shopping</option>
+                                    <option value="medicine">Medicine Pickup</option>
+                                    <option value="parcel">Parcel Pickup/Drop</option>
+                                    <option value="bill">Bill Payments</option>
+                                    <option value="queue">Queue Standing</option>
+                                </optgroup>
+
+                                <optgroup label="Delivery & Transport">
+                                    <option value="food_delivery">Food Delivery</option>
+                                    <option value="package_delivery">Package Delivery</option>
+                                    <option value="document_delivery">Document Delivery</option>
+                                    <option value="ride">Ride Assistance</option>
+                                </optgroup>
+
+                                <optgroup label="Repairs & Maintenance">
+                                    <option value="electrical">Electrical Work</option>
+                                    <option value="plumbing">Plumbing</option>
+                                    <option value="furniture">Furniture Repair</option>
+                                    <option value="appliance">Appliance Fixing</option>
+                                    <option value="handyman">General Handyman</option>
+                                </optgroup>
+
+                                <optgroup label="Academic & Study Help">
+                                    <option value="assignment">Assignment Help</option>
+                                    <option value="notes">Notes Making</option>
+                                    <option value="tutoring">Tutoring</option>
+                                    <option value="project">Project Assistance</option>
+                                    <option value="presentation">Presentation Help</option>
+                                </optgroup>
+
+                                <optgroup label="Digital & Tech">
+                                    <option value="data_entry">Data Entry</option>
+                                    <option value="typing">Typing Work</option>
+                                    <option value="design">Graphic Design</option>
+                                    <option value="website">Website Help</option>
+                                    <option value="software">App/Software Setup</option>
+                                </optgroup>
+
+                                <optgroup label="Personal Assistance">
+                                    <option value="elderly">Elderly Assistance</option>
+                                    <option value="babysitting">Babysitting</option>
+                                    <option value="petcare">Pet Care</option>
+                                    <option value="companion">Companion Help</option>
+                                </optgroup>
+
+                                <optgroup label="Events & Occasions">
+                                    <option value="setup">Event Setup</option>
+                                    <option value="decoration">Decoration</option>
+                                    <option value="photography">Photography/Videography</option>
+                                    <option value="crowd">Crowd Management</option>
+                                    <option value="invitation">Invitation Distribution</option>
+                                </optgroup>
+
+                                <optgroup label="Beauty & Grooming">
+                                    <option value="makeup">Makeup</option>
+                                    <option value="mehndi">Mehndi / Henna</option>
+                                    <option value="hair">Hair Styling</option>
+                                    <option value="skincare">Skincare / Facials</option>
+                                    <option value="nails">Nail Care</option>
+                                    <option value="grooming">Groom Styling</option>
+                                </optgroup>
+
+                                <optgroup label="Miscellaneous">
+                                    <option value="moving">Moving Help</option>
+                                    <option value="waiting">Waiting Tasks</option>
+                                    <option value="small_tasks">Small Favors</option>
+                                    <option value="other">Other</option>
+                                </optgroup>
+                            </select>
+
+                            <input type="number" name="payment" placeholder="Budget (₹)" required style="flex: 1;">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mt-4" style="width: 100%;">Post Task</button>
+                    </form>
+                </div>
+                <div id="my-tasks-section">
+                    <div class="tasks-section" id="my-accepted-section" style="display: none;">
+                        <div class="tasks-header">
+                            <h2 class="section-title" style="margin-bottom: 0; color: rgb(43, 75, 43);">Your Active
+                                Tasks</h2>
+                        </div>
+                        <div id="my-accepted-list" class="tasks-feed"></div>
+                    </div>
+
+                    <div class="tasks-section" id="my-posted-section" style="display: none;">
+                        <div class="tasks-header">
+                            <h2 class="section-title" style="margin-bottom: 0;">Tasks You Posted</h2>
+                        </div>
+                        <div id="my-posted-list" class="tasks-feed"></div>
+                    </div>
+
+                    <div id="available-tasks-section">
+                        <div class="tasks-section">
+                            <div class="tasks-header"
+                                style="flex-direction: column; align-items: flex-start; gap: 1.5rem;">
+                                <h2 class="section-title" style="margin-bottom: 0;">Available Tasks Near You</h2>
+
+                                <div class="filter-buttons" style="width: 100%; display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 0rem; padding-bottom: 1.5rem;">
+                                    <script>
+                                        const starSvg = `<svg xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 784.11 815.53" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" version="1.1" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><g><path d="M392.05 0c-20.9,210.08 -184.06,378.41 -392.05,407.78 207.96,29.37 371.12,197.68 392.05,407.74 20.93,-210.06 184.09,-378.37 392.05,-407.74 -207.98,-29.38 -371.16,-197.69 -392.06,-407.78z" class="fil0"></path></g></svg>`;
+
+                                        const categories = [
+                                            { id: 'all', name: 'All' },
+                                            { id: 'household', name: 'Household' },
+                                            { id: 'shopping', name: 'Shopping' },
+                                            { id: 'delivery', name: 'Delivery' },
+                                            { id: 'repairs', name: 'Repairs' },
+                                            { id: 'academic', name: 'Academic' },
+                                            { id: 'tech', name: 'Tech' },
+                                            { id: 'personal', name: 'Personal Assistance' },
+                                            { id: 'events', name: 'Events' },
+                                            { id: 'beauty', name: 'Beauty' },
+                                            { id: 'misc', name: 'Misc' }
+                                        ];
+
+                                        categories.forEach(cat => {
+                                            document.write(`
+                                                <button class="button filter-btn ${cat.id === 'all' ? 'active' : ''}" onclick="filterCategory('${cat.id}', this)">
+                                                    ${cat.name}
+                                                    <div class="star-1">${starSvg}</div><div class="star-2">${starSvg}</div>
+                                                    <div class="star-3">${starSvg}</div><div class="star-4">${starSvg}</div>
+                                                    <div class="star-5">${starSvg}</div><div class="star-6">${starSvg}</div>
+                                                </button>
+                                            `);
+                                        });
+                                    </script>
+                                </div>
+                            </div>
+
+                            <div id="task-list" class="tasks-feed"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+        </main>
+    </div>
+    <footer class="footer" style="margin-left: 262px; width: calc(100% - 262px);">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo-icon">
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="Task-Hive Logo">
+                </div>
+                <div>
+                    <span class="footer-logo-text">Task-Hive</span>
+                    <p class="footer-description">
+                        Hyperlocal errand marketplace connecting task<br>
+                        posters with eager workers.
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer-copyright">
+                © 2026 Task-Hive. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    <div id="apply-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">Apply for Task</h3>
+            <p class="modal-subtitle">Tell the poster why you are a great fit for this job.</p>
+
+            <textarea id="apply-pitch-text" class="modal-textarea" placeholder="e.g., I have 3 years of experience in plumbing, and I can bring my own tools..."></textarea>
+
+            <div class="modal-actions">
+                <button onclick="closeApplyModal()" style="padding: 0.75rem 1.5rem; background: #f3f4f6; color: #4b5563; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer; transition: 0.2s;">Cancel</button>
+
+                <button onclick="submitApplication()" style="padding: 0.75rem 1.5rem; background: #047857; color: white; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 6px rgba(4, 120, 87, 0.2); transition: 0.2s;">Submit Pitch</button>
+            </div>
+        </div>
+    </div>
+    <div id="toast-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+
+            const toast = document.createElement('div');
+            toast.className = `custom-toast ${type}`;
+
+            const icon = type === 'success' ? '✓' : '⚠️';
+
+            toast.innerHTML = `<span class="toast-icon">${icon}</span> <span>${message}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+        let cachedLat = null;
+        let cachedLng = null;
+        let locationResolved = false;
+
+        function loadTasks(category = "all") {
+            const container = document.getElementById("task-list");
+
+            container.innerHTML = `
+                <div style="text-align: center; padding: 4rem 2rem;">
+                    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+                    <div style="display: inline-block; width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.1); border-left-color: #3BE477; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <p style="color: #000000; margin-top: 1rem; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px;">Finding nearby tasks...</p>
+                </div>
+            `;
+
+            if (locationResolved) {
+                fetchTasksFromAPI(category, cachedLat, cachedLng);
+            }
+            else if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        cachedLat = position.coords.latitude;
+                        cachedLng = position.coords.longitude;
+                        locationResolved = true;
+
+                        const latInput = document.getElementById("form-lat");
+                        const lngInput = document.getElementById("form-lng");
+                        if(latInput) latInput.value = cachedLat;
+                        if(lngInput) lngInput.value = cachedLng;
+
+                        fetchTasksFromAPI(category, cachedLat, cachedLng);
+                    },
+                    (error) => {
+                        console.warn("Location access denied or unavailable.");
+                        locationResolved = true;
+                        fetchTasksFromAPI(category, null, null);
+                    }
+                );
+            } else {
+                locationResolved = true;
+                fetchTasksFromAPI(category, null, null);
+            }
+        }
+
+        function fetchTasksFromAPI(category, lat, lng) {
+            let url = `/tasks?category=${category}`;
+
+            if (lat && lng) {
+                url += `&lat=${lat}&lng=${lng}`;
+            }
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById("task-list");
+                    container.innerHTML = "";
+
+                    if (data.length === 0) {
+                        container.innerHTML = `<p style="text-align: center; color: #000000; padding: 2rem;">No tasks found within 5km right now. Try expanding your search later!</p>`;
+                        return;
+                    }
+
+                    data.forEach(task => {
+                        const distanceTag = task.distance !== null && task.distance !== undefined
+                            ? `<span style="background: rgba(59, 228, 119, 0.2); color: #3BE477; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem;">📍 ${task.distance} km away</span>`
+                            : '';
+
+                        container.innerHTML += `
+                            <div class="task-card" onclick="this.classList.toggle('expanded')">
+                                <div class="task-card-header">
+                                    <div>
+                                        <h3 class="task-title">${task.title}</h3>
+                                        <span class="task-category-tag" style="text-transform: capitalize;">${task.category}</span>
+                                        <span style="background: rgba(59, 228, 119, 0.3); border: 1px solid rgba(59, 228, 119, 0.7); color: #000000; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem;"> ${task.duration || 'Flexible'}</span>
+                                        ${distanceTag}
+                                    </div>
+                                    <div class="task-payment">
+                                        <span class="payment-label" style="color: #000000; font-weight: 700;">Amount offered</span>
+                                        <span class="task-amount">₹${task.payment}</span>
+                                    </div>
+                                </div>
+
+                                <div class="task-description" style="white-space: pre-wrap;"><span style="color: #ffffff; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Task Details</span><br>${task.description}
+                                </div>
+
+                                <div class="task-footer" style="margin-top: 1rem;">
+                                    <button class="btn btn-primary" onclick="event.stopPropagation(); applyTask(${task.id})">
+                                        Apply for Task
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                });
+        }
+
+        function filterCategory(category, buttonElement) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            if (buttonElement) {
+                buttonElement.classList.add('active');
+            }
+
+            loadTasks(category);
+        }
+
+        async function acceptTask(taskId) {
+            const response = await fetch(`/accept-task/${taskId}`, {
+                method: "POST"
+            });
+
+            const result = await response.json();
+            alert(result.message || result.error);
+            loadTasks();
+        }
+
+        function loadMyTasks() {
+            fetch("/my-tasks")
+                .then(res => res.json())
+                .then(data => {
+                    data.accepted = data.accepted ? data.accepted.filter(t => t.status !== "completed") : [];
+                    data.posted = data.posted ? data.posted.filter(t => t.status !== "completed") : [];
+                    const acceptedContainer = document.getElementById("my-accepted-list");
+                    const acceptedSection = document.getElementById("my-accepted-section");
+                    acceptedContainer.innerHTML = "";
+
+                    if (data.accepted && data.accepted.length > 0) {
+                        acceptedSection.style.display = "block";
+                        data.accepted.forEach(task => {
+
+                            let timelineHTML = '<div style="margin-top: 1.25rem; margin-bottom: 1.5rem; padding-left: 12px; border-left: 3px solid rgba(59, 228, 119, 0.3); display: flex; flex-direction: column; gap: 1.5rem;">';
+                            if (task.updates && task.updates.length > 0) {
+                                task.updates.forEach(up => {
+
+                                    const dateObj = new Date(up.time);
+                                    const localTime = dateObj.toLocaleString([], {
+                                        month: 'short', day: 'numeric',
+                                        hour: 'numeric', minute: '2-digit', hour12: true
+                                    });
+
+                                    let proofHtml = up.proof_image ? `<div style="margin-top: 12px;"><img src="/static/uploads/${up.proof_image}" style="max-width: 150px; border-radius: 8px; border: 2px solid #3BE477; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3);" onclick="event.stopPropagation(); window.open('/static/uploads/${up.proof_image}')"></div>` : "";
+
+                                    timelineHTML += `
+                                        <div style="position: relative; padding-left: 1.5rem;">
+                                            <div style="position: absolute; left: -1.15rem; top: 0.25rem; width: 14px; height: 14px; background-color: #3BE477; border-radius: 50%; box-shadow: 0 0 10px #3BE477, 0 0 20px rgba(59, 228, 119, 0.4);"></div>
+                                            <div style="background: rgba(0, 0, 0, 0.5); padding: 1.25rem; border-radius: 0.75rem; border: 1px solid rgba(59, 228, 119, 0.2); box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                    <span style="color: #3BE477; font-weight: 900; font-size: 1.1rem;">${up.percentage}% Complete</span>
+                                                    <span style="color: #ffffff; font-size: 0.8rem; font-weight: bold;">${localTime}</span>
+                                                </div>
+                                                <p style="color: #f3f4f6; font-size: 0.95rem; margin-top: 0; line-height: 1.4;">${up.message}</p>
+                                                ${proofHtml}
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                            } else { timelineHTML += `<p style="color: #ffffff; font-size: 0.85rem; font-style: italic; margin-top: 0.5rem; padding-left: 1rem;">No updates sent yet. Start working to log your progress!</p>`; }
+                            timelineHTML += '</div>';
+
+
+                            let isLocked = task.payment_status === "unpaid" && task.updates.some(u => u.percentage >= 50);
+                            let updateFormHtml = "";
+
+                            if (task.payment_status === "fully_paid") {
+                                updateFormHtml = `<div style="margin-top: 1.5rem; color: #3BE477; font-weight: bold; text-align: center; border: 1px solid #3BE477; padding: 1rem; border-radius: 0.5rem; background: rgba(59, 228, 119, 0.1);">Task Completed & Fully Paid!</div>`;
+                            } else if (task.payment_status === "payment_claimed") {
+                                updateFormHtml = `<button onclick="confirmReceipt(${task.id}, event)" style="margin-top: 1.5rem; text-align: center; color: #3BE477;width: 100%; font-weight: bold; padding: 1rem; border: 1px dashed #3BE477; border-radius: 0.5rem; background: rgba(59, 228, 119, 0.1)">Confirm You Received The Funds</button>`;
+                            } else if (isLocked) {
+                                updateFormHtml = `<div style="margin-top: 1.5rem; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;">⏳ Waiting for the Client to release the 50% milestone payment.</div>`;
+                            } else {
+                                updateFormHtml = `
+                                    <div style="margin-top: 0.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 0.75rem;">
+                                        <label style="color: #ffffff; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Post New Update</label>
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <input type="number" id="perc-${task.id}" placeholder="%" min="0" max="100"
+                                                style="width: 80px; background: rgba(0,0,0,0.6); color: white; border: 1px solid #3BE477; border-radius: 0.5rem; padding: 0.75rem; font-size: 1rem; font-weight: bold; outline: none; text-align: center;"
+                                                oninput="toggleProofInput(${task.id})" onclick="event.stopPropagation();">
+                                            <input type="text" id="msg-${task.id}" placeholder="What did you just complete?"
+                                                style="flex: 1; background: rgba(0,0,0,0.6); color: white; border: 1px solid #3BE477; border-radius: 0.5rem; padding: 0.75rem; font-size: 1rem; outline: none;"
+                                                onclick="event.stopPropagation();">
+                                        </div>
+                                        <div id="proof-container-${task.id}" style="display: none; background: rgba(59, 228, 119, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px dashed #3BE477; margin-top: 0.5rem;">
+                                            <label style="display: block; color: #3BE477; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem;">📸 Upload Proof of Work (Required for 50% & 100%)</label>
+                                            <input type="file" id="proof-${task.id}" style="width: 100%; color: white; font-size: 0.9rem;" onclick="event.stopPropagation();">
+                                        </div>
+                                        <button onclick="postTaskUpdate(${task.id}, event)" style="margin-top: 0.5rem; background: #3BE477; color: black; border: none; border-radius: 0.5rem; padding: 0.75rem 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;">Send Update</button>
+                                    </div>
+                                `;
+                            }
+
+                            acceptedContainer.innerHTML += `
+                                <div class="task-card" onclick="this.classList.toggle('expanded')">
+                                    <div class="task-card-header">
+                                        <div>
+                                        <h3 class="task-title" style="color: white;">${task.title}</h3>
+                                        <span class="task-category-tag">${task.category}</span>
+                                        <span style="background: rgba(59, 228, 119, 0.3);border: 1px solid rgba(59, 228, 119, 0.7); color: #000000; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem;">🕒 ${task.duration || 'Flexible'}</span>
+                                    </div>
+                                        <div class="task-payment">
+                                            <span class="payment-label" style="color: #ffffff; font-weight: 700;">You Earn</span>
+                                            <span class="task-amount">₹${task.payment}</span>
+                                        </div>
+                                    </div>
+                                    <div class="task-description">
+                                        <div style="background: rgba(59, 228, 119, 0.3); border: 1px solid rgba(59, 228, 119, 0.7); padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <span style="font-size: 0.75rem; color: #ffffff; text-transform: uppercase; font-weight: bold;">Client Name</span><br>
+                                                <span style="color: white; font-weight: bold; font-size: 1.1rem;">${task.contact_name}</span>
+                                            </div>
+                                            ${task.contact_phone ? `
+                                            <div style="text-align: right;">
+                                                <span style="font-size: 0.75rem; color: #ffffff; text-transform: uppercase; font-weight: bold;">Contact Number</span><br>
+                                                <span style="color: #295539; font-weight: bold; font-size: 1.1rem; letter-spacing: 0.5px;">📞 ${task.contact_phone}</span>
+                                            </div>` : ''}
+                                        </div>
+
+                                        <span style="color: #3BE477; font-size: 0.8rem; text-transform: uppercase; font-weight: bold;">Task History</span><br>
+                                        ${timelineHTML}
+                                        ${updateFormHtml}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else { acceptedSection.style.display = "none"; }
+
+                    const postedContainer = document.getElementById("my-posted-list");
+                    const postedSection = document.getElementById("my-posted-section");
+                    postedContainer.innerHTML = "";
+
+                    if (data.posted && data.posted.length > 0) {
+                        postedSection.style.display = "block";
+                        data.posted.forEach(task => {
+
+                            let timelineHTML = '<div style="margin-top: 1.5rem; padding-left: 12px; border-left: 3px solid rgba(59, 228, 119, 0.8); display: flex; flex-direction: column; gap: 1.5rem;">';
+                            if (task.updates && task.updates.length > 0) {
+                                task.updates.forEach(up => {
+                                    const dateObj = new Date(up.time);
+                                    const localTime = dateObj.toLocaleString([], {
+                                        month: 'short', day: 'numeric',
+                                        hour: 'numeric', minute: '2-digit', hour12: true
+                                    });
+                                    let proofHtml = up.proof_image ? `<div style="margin-top: 12px;"><img src="/static/uploads/${up.proof_image}" style="max-width: 150px; border-radius: 8px; border: 2px solid #3BE477; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3);" onclick="event.stopPropagation(); window.open('/static/uploads/${up.proof_image}')"></div>` : "";
+
+                                    timelineHTML += `
+                                        <div style="position: relative; padding-left: 1.5rem;">
+                                            <div style="position: absolute; left: -1.15rem; top: 0.25rem; width: 14px; height: 14px; background-color: #3BE477; border-radius: 50%; box-shadow: 0 0 10px #3BE477, 0 0 20px rgba(59, 228, 119, 0.4);"></div>
+                                            <div style="background: rgba(0, 0, 0, 0.5); padding: 1.25rem; border-radius: 0.75rem; border: 1px solid rgba(59, 228, 119, 0.2); box-shadow: 0 4px 6px rgba(0,0,0,0.2);">
+                                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                                <span style="color: #3BE477; font-weight: 900; font-size: 1.1rem;">${up.percentage}% Complete</span>
+                                                <span style="color: #ffffff; font-size: 0.8rem; font-weight: bold;">${localTime}</span>
+                                            </div>
+                                                <p style="color: #f3f4f6; font-size: 0.95rem; margin-top: 0; line-height: 1.4;">${up.message}</p>
+                                                ${proofHtml}
+                                            </div>
+                                        </div>
+                                    `;
+                                });
+                            } else { timelineHTML += `<p style="color: #ffffff; font-size: 0.85rem; font-style: italic; margin-top: 1rem; padding-left: 1rem;">Waiting for worker to start.</p>`; }
+                            timelineHTML += '</div>';
+
+                            let paymentBtnHtml = "";
+                            const halfAmount = task.payment / 2;
+
+                            if (task.payment_status === "unpaid" && task.updates.some(u => u.percentage >= 50)) {
+                                paymentBtnHtml = `<button onclick="processPayment(${task.id}, event)" style="margin-top: 1.5rem;width: 100%; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;"> Release 50% Milestone (₹${halfAmount})</button>`;
+                            } else if (task.payment_status === "half_paid" && task.updates.some(u => u.percentage === 100)) {
+                                paymentBtnHtml = `<button onclick="releaseFinalPayment(${task.id}, event)" style="margin-top: 1.5rem;width: 100%; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;">Release Final Payment (₹${halfAmount}) & Rate Worker</button>`;
+                            } else if (task.payment_status === "payment_claimed") {
+                                paymentBtnHtml = `<div style="margin-top: 1.5rem; text-align: center; color: #fbbf24; font-weight: bold; padding: 1rem; border: 1px dashed #fbbf24; border-radius: 0.5rem; background: rgba(251, 191, 36, 0.1);">Waiting for worker to verify bank receipt...</div>`;
+                            } else if (task.payment_status === "fully_paid") {
+                                paymentBtnHtml = `<div style="margin-top: 1.5rem; text-align: center; color: #3BE477; font-weight: bold; padding: 0.75rem; border: 1px solid #3BE477; border-radius: 0.5rem;">Fully Paid & Completed</div>`;
+                            }
+                            let openTaskActionsHtml = "";
+
+                            if (task.status === "open") {
+                                openTaskActionsHtml = `
+                                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem; width: 100%;">
+                                        <a href="/review-applicants/${task.id}" style="flex: 1; text-align: center; background: #fbbf24; color: black; border: none; border-radius: 0.5rem; padding: 0.75rem; font-weight: 800; text-decoration: none; transition: 0.2s;">Review</a>
+
+                                        <button onclick="cancelTask(${task.id}, event)" style="flex: 1; background: #ef4444; color: white; border: none; border-radius: 0.5rem; padding: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s;">Cancel</button>
+                                    </div>
+                                `;
+                            }
+                            let unassignBtnHtml = "";
+                            if (task.status === "assigned" && task.payment_status === "unpaid") {
+                                unassignBtnHtml = `
+                                <div style="display: flex; justify-content: center; margin-top: 1.5rem; width: 100%;">
+                                    <button onclick="unassignTask(${task.id}, event)" style="width: 60%; max-width: 300px; background: #ef4444; color: #ffffff; border:none; border-radius: 0.7rem; padding: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);">
+                                        Cancel Worker & Relist Task
+                                    </button>
+                                </div>`;
+                            }
+
+                            postedContainer.innerHTML += `
+                                <div class="task-card" onclick="this.classList.toggle('expanded')">
+                                    <div class="task-card-header">
+                                        <div>
+                                        <h3 class="task-title" style="color: #000000;">${task.title}</h3>
+                                        <span class="task-category-tag">${task.category}</span>
+                                        <span style="background: rgba(59, 228, 119, 0.3);border: 1px solid rgba(59, 228, 119, 0.7); color: #000000; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem;">🕒 ${task.duration || 'Flexible'}</span>
+                                    </div>
+                                        <div class="task-payment">
+                                            <span class="payment-label" style="color: #000000; font-weight: 700;">Budget</span>
+                                            <span class="task-amount" style="color: #295539;">₹${task.payment}</span>
+                                        </div>
+                                    </div>
+                                    <div class="task-description">
+                                        <div style="background: rgba(59, 228, 119, 0.3); border: 1px solid rgba(59, 228, 119, 0.7); padding: 0.75rem 1rem; border-radius: 0.5rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <span style="font-size: 0.75rem; color: #ffffff; text-transform: uppercase; font-weight: bold;">Assigned Worker</span><br>
+                                                <span style="color: white; font-weight: bold; font-size: 1.1rem;">${task.contact_name}</span>
+                                            </div>
+                                            ${task.contact_phone ? `
+                                            <div style="text-align: right;">
+                                                <span style="font-size: 0.75rem; color: #ffffff; text-transform: uppercase; font-weight: bold;">Contact Number</span><br>
+                                                <span style="color: #295539; font-weight: bold; font-size: 1.1rem; letter-spacing: 0.5px;">📞 ${task.contact_phone}</span>
+                                            </div>` : ''}
+                                        </div>
+
+                                        <span style="color: #ffffff; font-size: 0.8rem; text-transform: uppercase; font-weight: bold;">Live Progress Tracker</span><br>
+                                        ${timelineHTML}
+                                        ${paymentBtnHtml}
+                                        ${unassignBtnHtml}
+                                        ${openTaskActionsHtml}
+                                    </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else { postedSection.style.display = "none"; }
+                });
+        }
+
+        async function postTaskUpdate(taskId, event) {
+            event.stopPropagation();
+            const btn = event.target;
+
+            const perc = document.getElementById(`perc-${taskId}`).value;
+            const msg = document.getElementById(`msg-${taskId}`).value;
+            const proofInput = document.getElementById(`proof-${taskId}`);
+
+            if (!perc || !msg) {
+                showToast('Please enter both a percentage and a message.', 'error');
+                return;
+            }
+            if ((perc == 50 || perc == 100) && (!proofInput || !proofInput.files[0])) {
+                showToast('You must upload an image as proof of work for this milestone!', 'error');
+                return;
+            }
+
+            btn.innerText = "Uploading... ⏳";
+            btn.disabled = true;
+            btn.style.opacity = "0.6";
+            btn.style.cursor = "not-allowed";
+
+            const formData = new FormData();
+            formData.append('percentage', perc);
+            formData.append('message', msg);
+            if (proofInput && proofInput.files[0]) {
+                formData.append('proof', proofInput.files[0]);
+            }
+
+            const response = await fetch(`/add-task-update/${taskId}`, {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+
+            result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
+
+            loadMyTasks();
+        }
+
+        function toggleProofInput(taskId) {
+            const perc = document.getElementById(`perc-${taskId}`).value;
+            const proofContainer = document.getElementById(`proof-container-${taskId}`);
+            if (perc == 50 || perc == 100) {
+                proofContainer.style.display = 'block';
+            } else {
+                proofContainer.style.display = 'none';
+            }
+        }
+
+        async function releaseFinalPayment(taskId, event) {
+            event.stopPropagation();
+
+            const infoRes = await fetch(`/api/payment-info/${taskId}`);
+            const info = await infoRes.json();
+            if (info.error) return showToast(info.error, 'error');
+
+            const upiLink = `upi://pay?pa=${info.worker_upi}&pn=${info.worker_name}&am=${info.amount_due}&cu=INR`;
+            const encodedUpiLink = encodeURIComponent(upiLink);
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            let paymentUI = isMobile
+                ? `<a href="${upiLink}" style="display: inline-block; background: #111827; color: #fff; padding: 0.875rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; width: 100%; box-sizing: border-box; margin-top: 1rem;">📱 Open UPI App to Pay</a>`
+                : `<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;"><p style="font-size: 0.9rem; color: #4b5563; font-weight: bold; margin-bottom: 0.5rem;">Scan with your phone to pay</p><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedUpiLink}" style="border-radius: 0.5rem; border: 4px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>`;
+
+            const payChoice = await Swal.fire({
+                title: 'Release Final Payment',
+                html: `
+                    <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 1rem; border: 2px dashed #3BE477; margin-bottom: 1rem; text-align: center;">
+                        <h3 style="color: #047857; font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">₹${info.amount_due}</h3>
+                        <p style="font-weight: 600; color: #111827;">To: ${info.worker_name}</p>
+                    </div>
+                    ${paymentUI}
+                    <p style="font-size: 0.8rem; color: #ef4444; margin-top: 1.5rem; font-weight: bold;">Only click "I have paid" AFTER completing the transaction.</p>
+                `,
+                showCancelButton: true,
+                confirmButtonColor: '#3BE477',
+                cancelButtonText: '<span style="color: black;">Cancel</span>',
+                confirmButtonText: 'I have paid!'
+            });
+
+            if (!payChoice.isConfirmed) return;
+
+            const { value: rating } = await Swal.fire({
+                title: 'Rate the Worker!',
+                text: 'How many stars do they deserve for their hard work?',
+                icon: 'star',
+                input: 'select',
+                inputOptions: {
+                    '5': '⭐⭐⭐⭐⭐ (5/5) - Excellent!',
+                    '4': '⭐⭐⭐⭐ (4/5) - Great job',
+                    '3': '⭐⭐⭐ (3/5) - It was okay',
+                    '2': '⭐⭐ (2/5) - Needs improvement',
+                    '1': '⭐ (1/5) - Poor experience'
+                },
+                inputPlaceholder: 'Select a rating...',
+                showCancelButton: true,
+                confirmButtonColor: '#3BE477',
+                inputValidator: (value) => {
+                    if (!value) return 'You need to choose a rating to complete the task!'
+                }
+            });
+
+            if (rating) {
+                const response = await fetch(`/process-payment/${taskId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ rating: parseInt(rating) })
+                });
+
+                const result = await response.json();
+                if (result.error) {
+                    showToast(result.error, 'error');
+                } else {
+                    Swal.fire('Congrats!', 'After the Worker confirms the payment, the task will be marked as complete.', 'success');
+                    loadMyTasks();
+                }
+            }
+        }
+
+        async function confirmReceipt(taskId, event) {
+            event.stopPropagation();
+
+            const userChoice = await Swal.fire({
+                title: 'Confirm Funds?',
+                text: "Only click this if you have checked your bank/UPI app and verified the money arrived.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3BE477',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Yes, I got it!'
+            });
+
+            if (!userChoice.isConfirmed) return;
+
+            const response = await fetch(`/confirm-receipt/${taskId}`, { method: "POST" });
+            const result = await response.json();
+
+            if (result.error) {
+                showToast(result.error, 'error');
+            } else {
+                Swal.fire('Awesome!', result.message, 'success');
+                loadMyTasks();
+            }
+        }
+
+        function toggleProofInput(taskId) {
+            const perc = document.getElementById(`perc-${taskId}`).value;
+            const proofContainer = document.getElementById(`proof-container-${taskId}`);
+            if (perc == 50 || perc == 100) {
+                proofContainer.style.display = 'block';
+            } else {
+                proofContainer.style.display = 'none';
+            }
+        }
+
+        let currentApplyTaskId = null;
+
+        function applyTask(taskId) {
+            currentApplyTaskId = taskId;
+            document.getElementById('apply-pitch-text').value = '';
+            document.getElementById('apply-modal').classList.add('show');
+        }
+
+        function closeApplyModal() {
+            document.getElementById('apply-modal').classList.remove('show');
+            currentApplyTaskId = null;
+        }
+        async function submitApplication() {
+            const pitch = document.getElementById('apply-pitch-text').value.trim();
+
+            if (!pitch) {
+                showToast("Please write a short pitch to apply!", "error");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/apply-task/${currentApplyTaskId}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: pitch })
+                });
+
+                const result = await response.json();
+                result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
+
+                loadTasks();
+
+            } catch (error) {
+                showToast("Backend crashed! Check your VS Code Terminal.", "error");
+                console.error("Fetch error:", error);
+            } finally {
+                closeApplyModal();
+            }
+        }
+
+async function processPayment(taskId, event) {
+            event.stopPropagation();
+
+            const infoRes = await fetch(`/api/payment-info/${taskId}`);
+            const info = await infoRes.json();
+
+            if (info.error) return showToast(info.error, 'error');
+
+            if (!info.worker_upi) {
+                return Swal.fire('Cannot Pay', 'The worker has not linked a UPI ID yet. Send them a message to update their profile!', 'error');
+            }
+
+            const upiLink = `upi://pay?pa=${info.worker_upi}&pn=${info.worker_name}&am=${info.amount_due}&cu=INR`;
+            const encodedUpiLink = encodeURIComponent(upiLink);
+
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+            let paymentUI = '';
+            if (isMobile) {
+                paymentUI = `
+                    <a href="${upiLink}" style="display: inline-block; background: #111827; color: #fff; padding: 0.875rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; width: 100%; box-sizing: border-box; margin-top: 1rem;">
+                        📱 Open UPI App to Pay
+                    </a>`;
+            } else {
+                paymentUI = `
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                        <p style="font-size: 0.9rem; color: #4b5563; font-weight: bold; margin-bottom: 0.5rem;">Scan with your phone to pay</p>
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedUpiLink}" alt="QR Code" style="border-radius: 0.5rem; border: 4px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    </div>`;
+            }
+
+            const userChoice = await Swal.fire({
+                title: 'Release Milestone',
+                html: `
+                    <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 1rem; border: 2px dashed #3BE477; margin-bottom: 1rem; text-align: center;">
+                        <h3 style="color: #047857; font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">₹${info.amount_due}</h3>
+                        <p style="font-weight: 600; color: #111827;">To: ${info.worker_name}</p>
+                        <p style="color: #6b7280; font-family: monospace; font-size: 0.9rem;">${info.worker_upi}</p>
+                    </div>
+
+                    ${paymentUI}
+
+                    <p style="font-size: 0.8rem; color: #ef4444; margin-top: 1.5rem; font-weight: bold;">
+                        Only click "I have paid" AFTER completing the transaction.
+                    </p>
+                `,
+                showCancelButton: true,
+                confirmButtonColor: '#3BE477',
+                cancelButtonColor: '#e5e7eb',
+                cancelButtonText: '<span style="color: black;">Cancel</span>',
+                confirmButtonText: 'I have paid! Release funds'
+            });
+
+            if (!userChoice.isConfirmed) return;
+
+            const response = await fetch(`/process-payment/${taskId}`, { method: "POST" });
+            const result = await response.json();
+            result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
+            loadMyTasks();
+        }
+
+        async function unassignTask(taskId, event) {
+            event.stopPropagation();
+
+            const userChoice = await Swal.fire({
+                title: 'Remove Worker?',
+                text: "The task will be put back on the public feed and all current progress will be wiped.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, remove them'
+            });
+
+            if (!userChoice.isConfirmed) return;
+
+            const response = await fetch(`/unassign-task/${taskId}`, { method: "POST" });
+            const result = await response.json();
+
+            result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
+            loadTasks();
+            loadMyTasks();
+        }
+
+        async function cancelTask(taskId, event) {
+            event.stopPropagation();
+
+            const userChoice = await Swal.fire({
+                title: 'Cancel Task?',
+                text: "Are you sure you want to completely cancel and delete this task? This cannot be undone.",
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Yes, delete it'
+            });
+
+            if (!userChoice.isConfirmed) return;
+
+            const response = await fetch(`/cancel-task/${taskId}`, { method: "POST" });
+            const result = await response.json();
+
+            result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
+            loadTasks();
+            loadMyTasks();
+        }
+
+        function setGreeting() {
+            const hour = new Date().getHours();
+            let greeting = 'Good evening,';
+            if (hour < 12) {
+                greeting = 'Good morning,';
+            } else if (hour < 18) {
+                greeting = 'Good afternoon,';
+            }
+            document.getElementById('greeting-text').innerText = greeting;
+        }
+
+        function setActive(clickedElement) {
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            clickedElement.classList.add('active');
+        }
+
+        let notifsOpen = false;
+
+        function toggleNotifs() {
+            const dropdown = document.getElementById('notif-dropdown');
+            notifsOpen = !notifsOpen;
+            dropdown.style.display = notifsOpen ? 'block' : 'none';
+        }
+
+        function loadNotifications() {
+            fetch("/api/notifications")
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById("notif-list");
+                    const badge = document.getElementById("notif-badge");
+                    list.innerHTML = "";
+
+                    let unreadCount = data.filter(n => !n.is_read).length;
+
+                    if (unreadCount > 0) {
+                        badge.style.display = "flex";
+                        badge.innerText = unreadCount;
+                    } else {
+                        badge.style.display = "none";
+                    }
+
+                    if (data.length === 0) {
+                        list.innerHTML = `<div style="padding: 1.5rem; text-align: center; color: #6b7280; font-size: 0.9rem;">You have no new notifications.</div>`;
+                        return;
+                    }
+
+                    data.forEach(n => {
+                        let bg = n.is_read ? 'white' : '#f0fdf4';
+                        let dot = n.is_read ? '' : `<div class="unread-dot" style="width: 8px; height: 8px; background: #3BE477; border-radius: 50%; flex-shrink: 0;"></div>`;
+
+                        list.innerHTML += `
+                            <div onclick="readNotif(${n.id}, '${n.link}', this)" style="padding: 1rem; border-bottom: 1px solid #e5e7eb; background: ${bg}; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; transition: background 0.2s;">
+                                ${dot}
+                                <span style="font-size: 0.85rem; color: #374151; line-height: 1.4;">${n.message}</span>
+                            </div>
+                        `;
+                    });
+                });
+        }
+
+        async function readNotif(id, link, element) {
+            element.style.background = 'white';
+            const dot = element.querySelector('.unread-dot');
+            const badge = document.getElementById("notif-badge");
+
+            if (dot) {
+                dot.remove();
+                let currentCount = parseInt(badge.innerText) || 0;
+
+                if (currentCount > 0) {
+                    currentCount -= 1;
+                    badge.innerText = currentCount;
+                    if (currentCount === 0) {
+                        badge.style.display = "none";
+                    }
+                }
+            }
+
+            toggleNotifs();
+
+            await fetch(`/api/notifications/read/${id}`, { method: "POST" });
+            window.location.href = link;
+        }
+        loadNotifications();
+        setInterval(loadNotifications, 30000);
+        setGreeting();
+        loadTasks();
+        loadMyTasks();
+    </script>
+
+</body>
+
+</html>
