@@ -86,7 +86,7 @@ python app.py
 ### Step 4: Access the Command Center
 Fire up your browser and navigate to:
 ```
-http://127.0.0.1:5000
+http://127.0.0.1:2004
 ```
 
 ---
