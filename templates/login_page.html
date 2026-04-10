@@ -41,19 +41,21 @@
           <form class="login-form" action="/login-user" method="POST">
             <div class="form-group">
               <label for="email" class="form-label">Email Address</label>
-              <input type="email" name="email" id="email" class="form-input {% if email_error %}input-error{% endif %}" value="{{ email_input | default('') }}" placeholder="Your Email" required>
-              
+              <input type="email" name="email" id="email" class="form-input {% if email_error %}input-error{% endif %}"
+                value="{{ email_input | default('') }}" placeholder="Your Email" required>
+
               {% if email_error %}
-                <span class="inline-error">{{ email_error }}</span>
+              <span class="inline-error">{{ email_error }}</span>
               {% endif %}
             </div>
 
             <div class="form-group">
               <label for="password" class="form-label">Password</label>
-              <input type="password" name="password" id="password" placeholder="Your Password" class="form-input {% if password_error %}input-error{% endif %}" required>
-              
+              <input type="password" name="password" id="password" placeholder="Your Password"
+                class="form-input {% if password_error %}input-error{% endif %}" required>
+
               {% if password_error %}
-                <span class="inline-error">{{ password_error }}</span>
+              <span class="inline-error">{{ password_error }}</span>
               {% endif %}
             </div>
             <div class="form-options">
