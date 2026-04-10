@@ -52,35 +52,47 @@
         </div>
       </div>
 
-      <div class="hero-image">
-        <img src="{{ url_for('static', filename='images/hero_photo.png') }}" alt="Sleek Modern Workspace">
+      <div class="hero-image"
+        style="border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(59, 228, 119, 0.2);">
+        <img src="{{ url_for('static', filename='images/hero_photo.png') }}" alt="Sleek Modern Workspace"
+          style="width: 100%; display: block; border: 2px solid rgba(255,255,255,0.1); border-radius: 20px;">
       </div>
     </div>
   </section>
 
-<!-- Categories Section -->
-<section class="categories">
-  <div class="container">
-    <h2 class="categories-title">Task Categories We Offer</h2>
+  <!-- Categories Section -->
+  <section class="categories">
+    <div class="container">
+      <h2 class="categories-title">Task Categories We Offer</h2>
 
-    <div class="categories-grid">
-        <div class="category-card card glass text-center">
-          <img src="{{ url_for('static', filename='images/cleaning_photo.png') }}" alt="Cleaning" class="category-img">
-          <p class="categories-text">Cleaning Tasks</p>
+      <div class="categories-grid"
+        style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin: 3rem 0;">
+        <div class="category-card card glass text-center flex-col items-center justify-center"
+          style="width: 250px; overflow: hidden; padding: 0; padding-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;">
+          <img src="{{ url_for('static', filename='images/cleaning_photo.png') }}" alt="Cleaning"
+            style="width: 100%; height: 160px; object-fit: cover; border-bottom: 2px solid rgba(59, 228, 119, 0.5); margin-bottom: 1.2rem;">
+          <p class="categories-text font-bold text-white text-uppercase"
+            style="letter-spacing: 1.5px; font-size: 1rem;">Cleaning Tasks</p>
         </div>
 
-        <div class="category-card card glass text-center">
-          <img src="{{ url_for('static', filename='images/delivery_photo.png') }}" alt="Delivery" class="category-img">
-          <p class="categories-text">Fast Delivery</p>
+        <div class="category-card card glass text-center flex-col items-center justify-center"
+          style="width: 250px; overflow: hidden; padding: 0; padding-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;">
+          <img src="{{ url_for('static', filename='images/delivery_photo.png') }}" alt="Delivery"
+            style="width: 100%; height: 160px; object-fit: cover; border-bottom: 2px solid rgba(139, 92, 246, 0.5); margin-bottom: 1.2rem;">
+          <p class="categories-text font-bold text-white text-uppercase"
+            style="letter-spacing: 1.5px; font-size: 1rem;">Fast Delivery</p>
         </div>
 
-        <div class="category-card card glass text-center">
-          <img src="{{ url_for('static', filename='images/repairs_photo.png') }}" alt="Repairs" class="category-img">
-          <p class="categories-text">Home Repairs</p>
+        <div class="category-card card glass text-center flex-col items-center justify-center"
+          style="width: 250px; overflow: hidden; padding: 0; padding-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;">
+          <img src="{{ url_for('static', filename='images/repairs_photo.png') }}" alt="Repairs"
+            style="width: 100%; height: 160px; object-fit: cover; border-bottom: 2px solid rgba(59, 228, 119, 0.5); margin-bottom: 1.2rem;">
+          <p class="categories-text font-bold text-white text-uppercase"
+            style="letter-spacing: 1.5px; font-size: 1rem;">Home Repairs</p>
         </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
   <!-- Features Section -->
   <section class="features">
@@ -91,10 +103,18 @@
         — fast, safe, and affordable.
       </p>
 
-      <div class="features-grid">
+      <div class="features-grid"
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
         <div class="card glass feature-card text-center">
           <div class="feature-icon mb-2 flex justify-center text-primary" style="font-size: 3rem;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
           </div>
           <h3 class="feature-title mb-2">Smart Task Organization</h3>
           <p class="feature-description">
@@ -105,7 +125,11 @@
 
         <div class="card glass feature-card text-center">
           <div class="feature-icon mb-2 flex justify-center text-primary" style="font-size: 3rem;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
           </div>
           <h3 class="feature-title mb-2">User Registration & Secure Access</h3>
           <p class="feature-description">
@@ -116,7 +140,11 @@
 
         <div class="card glass feature-card text-center">
           <div class="feature-icon mb-2 flex justify-center text-primary" style="font-size: 3rem;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
           </div>
           <h3 class="feature-title mb-2">Nearby Task Matching</h3>
           <p class="feature-description">
@@ -127,7 +155,11 @@
 
         <div class="card glass feature-card text-center">
           <div class="feature-icon mb-2 flex justify-center text-primary" style="font-size: 3rem;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
           </div>
           <h3 class="feature-title mb-2">Easy Task Acceptance</h3>
           <p class="feature-description">
@@ -138,7 +170,12 @@
 
         <div class="card glass feature-card text-center">
           <div class="feature-icon mb-2 flex justify-center text-primary" style="font-size: 3rem;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+              </polygon>
+            </svg>
           </div>
           <h3 class="feature-title mb-2">Clean and User-Friendly Interface</h3>
           <p class="feature-description">
@@ -149,7 +186,13 @@
 
         <div class="card glass feature-card text-center">
           <div class="feature-icon mb-2 flex justify-center text-primary" style="font-size: 3rem;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
           </div>
           <h3 class="feature-title mb-2">Community Driven Platform</h3>
           <p class="feature-description">
@@ -163,7 +206,8 @@
 
   <!-- CTA Section -->
   <section class="cta">
-    <div class="container cta-content text-center" style="padding: 4rem 1rem; margin-top: 4rem; background: linear-gradient(45deg, rgba(139, 92, 246, 0.4), rgba(236, 72, 153, 0.4)); border-radius: var(--b-radius);">
+    <div class="container cta-content text-center"
+      style="padding: 4rem 1rem; margin-top: 4rem; background: linear-gradient(45deg, rgba(139, 92, 246, 0.4), rgba(236, 72, 153, 0.4)); border-radius: var(--b-radius);">
       <h2 class="cta-title mb-2">Ready to Transform Your Productivity?</h2>
       <p class="cta-description mb-4">
         Task-Hive connects you with trusted local workers within a 5KM radius.<br>
@@ -190,10 +234,11 @@
       </div>
 
       <div class="footer-copyright">
-        © 2026 Task-Hive. All rights reserved.
+        © 2026 **K Sai Vignesh Yadav**. All Rights Reserved.
       </div>
     </div>
   </footer>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 
 </html>

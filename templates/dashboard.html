@@ -15,7 +15,12 @@
                 <!-- Left: Logo & Toggle -->
                 <div class="logo">
                     <button class="mobile-toggle" id="sidebar-toggle">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
                     </button>
                     <img src="{{ url_for('static', filename='images/Icon.png') }}" width="40" alt="Task-Hive Logo">
                     <span class="logo-text">Task-Hive</span>
@@ -28,13 +33,15 @@
                     <div style="position: relative;">
                         <button class="notif-btn" onclick="toggleNotifs()" id="notif-bell-btn">
                             <img src="{{ url_for('static', filename='images/notification.png') }}" alt="Notifications">
-                            <span id="notif-badge" style="display: none; position: absolute; top: -4px; right: -4px; background: #ef4444; color: white; font-size: 0.6rem; font-weight: 800; min-width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center; border: 2px solid #0f172a; padding: 0 3px;">0</span>
+                            <span id="notif-badge"
+                                style="display: none; position: absolute; top: -4px; right: -4px; background: #ef4444; color: white; font-size: 0.6rem; font-weight: 800; min-width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center; border: 2px solid #0f172a; padding: 0 3px;">0</span>
                         </button>
 
                         <div id="notif-dropdown" class="notif-dropdown">
                             <div class="notif-header">
                                 <span class="notif-header-title">🔔 Notifications</span>
-                                <span id="notif-unread-count" class="notif-header-badge" style="display:none;">0 new</span>
+                                <span id="notif-unread-count" class="notif-header-badge" style="display:none;">0
+                                    new</span>
                             </div>
                             <div id="notif-list" class="notif-list"></div>
                         </div>
@@ -92,8 +99,10 @@
                         <input type="hidden" name="latitude" id="form-lat">
                         <input type="hidden" name="longitude" id="form-lng">
                         <div style="display: flex; gap: 1rem;">
-                            <input type="text" name="title" placeholder="What needs to be done?" required style="flex: 1.8;">
-                            <input type="text" name="duration" placeholder="When? (e.g., 5-6 PM for 1 Month)" required style="flex: 1.2;">
+                            <input type="text" name="title" placeholder="What needs to be done?" required
+                                style="flex: 1.8;">
+                            <input type="text" name="duration" placeholder="When? (e.g., 5-6 PM for 1 Month)" required
+                                style="flex: 1.2;">
                         </div>
 
                         <textarea name="description" placeholder="Provide some details..." required></textarea>
@@ -209,7 +218,8 @@
                                 style="flex-direction: column; align-items: flex-start; gap: 1.5rem;">
                                 <h2 class="section-title" style="margin-bottom: 0;">Available Tasks Near You</h2>
 
-                                <div class="filter-buttons" style="width: 100%; display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 0rem; padding-bottom: 1.5rem;">
+                                <div class="filter-buttons"
+                                    style="width: 100%; display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 0rem; padding-bottom: 1.5rem;">
                                     <script>
                                         const categories = [
                                             { id: 'all', name: 'All' },
@@ -244,7 +254,7 @@
                                         });
 
                                         // Ensure clicking a category updates the active button style
-                                        document.addEventListener('click', function(e) {
+                                        document.addEventListener('click', function (e) {
                                             if (e.target && e.target.classList.contains('filter-btn')) {
                                                 document.querySelectorAll('.filter-btn').forEach(btn => {
                                                     btn.style.background = 'rgba(255,255,255,0.05)';
@@ -295,12 +305,16 @@
             <h3 class="modal-title">Apply for Task</h3>
             <p class="modal-subtitle">Tell the poster why you are a great fit for this job.</p>
 
-            <textarea id="apply-pitch-text" class="modal-textarea" placeholder="e.g., I have 3 years of experience in plumbing, and I can bring my own tools..."></textarea>
+            <textarea id="apply-pitch-text" class="modal-textarea"
+                placeholder="e.g., I have 3 years of experience in plumbing, and I can bring my own tools..."></textarea>
 
             <div class="modal-actions">
-                <button onclick="closeApplyModal()" style="padding: 0.75rem 1.5rem; background: #f3f4f6; color: #4b5563; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer; transition: 0.2s;">Cancel</button>
+                <button onclick="closeApplyModal()"
+                    style="padding: 0.75rem 1.5rem; background: #f3f4f6; color: #4b5563; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer; transition: 0.2s;">Cancel</button>
 
-                <button onclick="submitApplication()" style="padding: 0.75rem 1.5rem; background: #047857; color: white; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 6px rgba(4, 120, 87, 0.2); transition: 0.2s;">Submit Pitch</button>
+                <button onclick="submitApplication()"
+                    style="padding: 0.75rem 1.5rem; background: #047857; color: white; border: none; border-radius: 0.5rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 6px rgba(4, 120, 87, 0.2); transition: 0.2s;">Submit
+                    Pitch</button>
             </div>
         </div>
     </div>
@@ -354,8 +368,8 @@
 
                         const latInput = document.getElementById("form-lat");
                         const lngInput = document.getElementById("form-lng");
-                        if(latInput) latInput.value = cachedLat;
-                        if(lngInput) lngInput.value = cachedLng;
+                        if (latInput) latInput.value = cachedLat;
+                        if (lngInput) lngInput.value = cachedLng;
 
                         fetchTasksFromAPI(category, cachedLat, cachedLng);
                     },
@@ -761,7 +775,7 @@
                 description: `Final Payment – ${order.task_title}`,
                 order_id: order.order_id,
                 theme: { color: '#3BE477' },
-                handler: async function(response) {
+                handler: async function (response) {
                     const verifyRes = await fetch('/verify-payment', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -887,7 +901,7 @@
                 order_id: order.order_id,
                 theme: { color: '#3BE477' },
                 prefill: { name: order.worker_name },
-                handler: async function(response) {
+                handler: async function (response) {
                     const verifyRes = await fetch('/verify-payment', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -986,7 +1000,7 @@
         }
 
         // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
+        document.addEventListener('click', function (e) {
             const bell = document.getElementById('notif-bell-btn');
             const dropdown = document.getElementById('notif-dropdown');
             if (notifsOpen && !bell.contains(e.target) && !dropdown.contains(e.target)) {

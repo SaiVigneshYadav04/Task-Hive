@@ -116,11 +116,13 @@ Task-Hive was forged to prove a point and demonstrate raw mastery in full-stack 
 
 ## 👑 SOLE CREATOR
 
-**Vignesh Yadav** (2401720006)
+**K Sai Vignesh Yadav** 
 *Architect, Developer, and Engine Builder.*
 
 ---
 
-## 📜 LICENSE
+## 📜 LICENSE & COPYRIGHT
 
-Built for educational demonstration and supremacy.
+**© 2026 K Sai Vignesh Yadav. All Rights Reserved.**
+
+This project and its entire codebase are the exclusive property of K Sai Vignesh Yadav. No part of this repository may be copied, redistributed, modified, or used in any form without explicit written permission from the author.
