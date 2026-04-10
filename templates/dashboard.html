@@ -12,8 +12,11 @@
     <header class="header">
         <div class="container">
             <div class="dashboard-header-content">
-                <!-- Left: Logo -->
+                <!-- Left: Logo & Toggle -->
                 <div class="logo">
+                    <button class="mobile-toggle" id="sidebar-toggle">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                    </button>
                     <img src="{{ url_for('static', filename='images/Icon.png') }}" width="40" alt="Task-Hive Logo">
                     <span class="logo-text">Task-Hive</span>
                 </div>
@@ -54,6 +57,7 @@
             </div>
         </div>
     </header>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <div class="dashboard-wrapper">
 
         <aside class="sidebar">
@@ -301,6 +305,7 @@
         </div>
     </div>
     <div id="toast-container"></div>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function showToast(message, type = 'success') {
@@ -708,39 +713,21 @@
         async function releaseFinalPayment(taskId, event) {
             event.stopPropagation();
 
-            const infoRes = await fetch(`/api/payment-info/${taskId}`);
-            const info = await infoRes.json();
-            if (info.error) return showToast(info.error, 'error');
+            // Create Razorpay order for final 50%
+            const orderRes = await fetch(`/create-order/${taskId}/full`, { method: 'POST' });
+            const order = await orderRes.json();
 
-            const upiLink = `upi://pay?pa=${info.worker_upi}&pn=${info.worker_name}&am=${info.amount_due}&cu=INR`;
-            const encodedUpiLink = encodeURIComponent(upiLink);
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (order.error) return showToast(order.error, 'error');
 
-            let paymentUI = isMobile
-                ? `<a href="${upiLink}" style="display: inline-block; background: #111827; color: #fff; padding: 0.875rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; width: 100%; box-sizing: border-box; margin-top: 1rem;">📱 Open UPI App to Pay</a>`
-                : `<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;"><p style="font-size: 0.9rem; color: #4b5563; font-weight: bold; margin-bottom: 0.5rem;">Scan with your phone to pay</p><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedUpiLink}" style="border-radius: 0.5rem; border: 4px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"></div>`;
+            if (order.key === 'rzp_test_your_key_id' || !order.key) {
+                showToast('Razorpay not configured. Add your keys to .env', 'error');
+                return;
+            }
 
-            const payChoice = await Swal.fire({
-                title: 'Release Final Payment',
-                html: `
-                    <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 1rem; border: 2px dashed #3BE477; margin-bottom: 1rem; text-align: center;">
-                        <h3 style="color: #047857; font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">₹${info.amount_due}</h3>
-                        <p style="font-weight: 600; color: #111827;">To: ${info.worker_name}</p>
-                    </div>
-                    ${paymentUI}
-                    <p style="font-size: 0.8rem; color: #ef4444; margin-top: 1.5rem; font-weight: bold;">Only click "I have paid" AFTER completing the transaction.</p>
-                `,
-                showCancelButton: true,
-                confirmButtonColor: '#3BE477',
-                cancelButtonText: '<span style="color: black;">Cancel</span>',
-                confirmButtonText: 'I have paid!'
-            });
-
-            if (!payChoice.isConfirmed) return;
-
+            // Rate worker first
             const { value: rating } = await Swal.fire({
-                title: 'Rate the Worker!',
-                text: 'How many stars do they deserve for their hard work?',
+                title: '⭐ Rate the Worker',
+                text: 'How well did they do? Payment will be processed next.',
                 icon: 'star',
                 input: 'select',
                 inputOptions: {
@@ -753,26 +740,51 @@
                 inputPlaceholder: 'Select a rating...',
                 showCancelButton: true,
                 confirmButtonColor: '#3BE477',
-                inputValidator: (value) => {
-                    if (!value) return 'You need to choose a rating to complete the task!'
-                }
+                inputValidator: (value) => { if (!value) return 'Please rate the worker to proceed!' }
             });
 
-            if (rating) {
-                const response = await fetch(`/process-payment/${taskId}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ rating: parseInt(rating) })
-                });
+            if (!rating) return;
 
-                const result = await response.json();
-                if (result.error) {
-                    showToast(result.error, 'error');
-                } else {
-                    Swal.fire('Congrats!', 'After the Worker confirms the payment, the task will be marked as complete.', 'success');
-                    loadMyTasks();
+            // Submit rating first
+            await fetch(`/process-payment/${taskId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ rating: parseInt(rating) })
+            });
+
+            // Then open Razorpay
+            const options = {
+                key: order.key,
+                amount: order.amount,
+                currency: 'INR',
+                name: 'Task-Hive',
+                description: `Final Payment – ${order.task_title}`,
+                order_id: order.order_id,
+                theme: { color: '#3BE477' },
+                handler: async function(response) {
+                    const verifyRes = await fetch('/verify-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            task_id: taskId,
+                            milestone: 'full'
+                        })
+                    });
+                    const result = await verifyRes.json();
+                    if (result.success) {
+                        Swal.fire('🎉 Complete!', 'Payment done & task marked complete!', 'success');
+                        loadMyTasks();
+                    } else {
+                        showToast(result.error || 'Verification failed.', 'error');
+                    }
                 }
-            }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
         }
 
         async function confirmReceipt(taskId, event) {
@@ -851,65 +863,54 @@
             }
         }
 
-async function processPayment(taskId, event) {
+        async function processPayment(taskId, event) {
             event.stopPropagation();
 
-            const infoRes = await fetch(`/api/payment-info/${taskId}`);
-            const info = await infoRes.json();
+            // Create Razorpay order for 50% milestone
+            const orderRes = await fetch(`/create-order/${taskId}/half`, { method: 'POST' });
+            const order = await orderRes.json();
 
-            if (info.error) return showToast(info.error, 'error');
+            if (order.error) return showToast(order.error, 'error');
 
-            if (!info.worker_upi) {
-                return Swal.fire('Cannot Pay', 'The worker has not linked a UPI ID yet. Send them a message to update their profile!', 'error');
+            // Check if Razorpay keys are configured
+            if (order.key === 'rzp_test_your_key_id' || !order.key) {
+                showToast('Razorpay not configured. Add your keys to .env', 'error');
+                return;
             }
 
-            const upiLink = `upi://pay?pa=${info.worker_upi}&pn=${info.worker_name}&am=${info.amount_due}&cu=INR`;
-            const encodedUpiLink = encodeURIComponent(upiLink);
+            const options = {
+                key: order.key,
+                amount: order.amount,
+                currency: 'INR',
+                name: 'Task-Hive',
+                description: `50% Milestone – ${order.task_title}`,
+                order_id: order.order_id,
+                theme: { color: '#3BE477' },
+                prefill: { name: order.worker_name },
+                handler: async function(response) {
+                    const verifyRes = await fetch('/verify-payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            task_id: taskId,
+                            milestone: 'half'
+                        })
+                    });
+                    const result = await verifyRes.json();
+                    if (result.success) {
+                        showToast('✅ 50% Milestone payment verified!', 'success');
+                        loadMyTasks();
+                    } else {
+                        showToast(result.error || 'Verification failed.', 'error');
+                    }
+                }
+            };
 
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-            let paymentUI = '';
-            if (isMobile) {
-                paymentUI = `
-                    <a href="${upiLink}" style="display: inline-block; background: #111827; color: #fff; padding: 0.875rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; width: 100%; box-sizing: border-box; margin-top: 1rem;">
-                        📱 Open UPI App to Pay
-                    </a>`;
-            } else {
-                paymentUI = `
-                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
-                        <p style="font-size: 0.9rem; color: #4b5563; font-weight: bold; margin-bottom: 0.5rem;">Scan with your phone to pay</p>
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedUpiLink}" alt="QR Code" style="border-radius: 0.5rem; border: 4px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                    </div>`;
-            }
-
-            const userChoice = await Swal.fire({
-                title: 'Release Milestone',
-                html: `
-                    <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 1rem; border: 2px dashed #3BE477; margin-bottom: 1rem; text-align: center;">
-                        <h3 style="color: #047857; font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">₹${info.amount_due}</h3>
-                        <p style="font-weight: 600; color: #111827;">To: ${info.worker_name}</p>
-                        <p style="color: #6b7280; font-family: monospace; font-size: 0.9rem;">${info.worker_upi}</p>
-                    </div>
-
-                    ${paymentUI}
-
-                    <p style="font-size: 0.8rem; color: #ef4444; margin-top: 1.5rem; font-weight: bold;">
-                        Only click "I have paid" AFTER completing the transaction.
-                    </p>
-                `,
-                showCancelButton: true,
-                confirmButtonColor: '#3BE477',
-                cancelButtonColor: '#e5e7eb',
-                cancelButtonText: '<span style="color: black;">Cancel</span>',
-                confirmButtonText: 'I have paid! Release funds'
-            });
-
-            if (!userChoice.isConfirmed) return;
-
-            const response = await fetch(`/process-payment/${taskId}`, { method: "POST" });
-            const result = await response.json();
-            result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
-            loadMyTasks();
+            const rzp = new Razorpay(options);
+            rzp.open();
         }
 
         async function unassignTask(taskId, event) {
@@ -1064,6 +1065,7 @@ async function processPayment(taskId, event) {
         loadMyTasks();
     </script>
 
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 
 </html>

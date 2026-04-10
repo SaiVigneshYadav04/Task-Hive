@@ -52,8 +52,8 @@
         </div>
       </div>
 
-      <div class="hero-image" style="border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(59, 228, 119, 0.2);">
-        <img src="{{ url_for('static', filename='images/hero_photo.png') }}" alt="Sleek Modern Workspace" style="width: 100%; display: block; border: 2px solid rgba(255,255,255,0.1); border-radius: 20px;">
+      <div class="hero-image">
+        <img src="{{ url_for('static', filename='images/hero_photo.png') }}" alt="Sleek Modern Workspace">
       </div>
     </div>
   </section>
@@ -63,20 +63,20 @@
   <div class="container">
     <h2 class="categories-title">Task Categories We Offer</h2>
 
-    <div class="categories-grid" style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin: 3rem 0;">
-        <div class="category-card card glass text-center flex-col items-center justify-center" style="width: 250px; overflow: hidden; padding: 0; padding-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;">
-          <img src="{{ url_for('static', filename='images/cleaning_photo.png') }}" alt="Cleaning" style="width: 100%; height: 160px; object-fit: cover; border-bottom: 2px solid rgba(59, 228, 119, 0.5); margin-bottom: 1.2rem;">
-          <p class="categories-text font-bold text-white text-uppercase" style="letter-spacing: 1.5px; font-size: 1rem;">Cleaning Tasks</p>
+    <div class="categories-grid">
+        <div class="category-card card glass text-center">
+          <img src="{{ url_for('static', filename='images/cleaning_photo.png') }}" alt="Cleaning" class="category-img">
+          <p class="categories-text">Cleaning Tasks</p>
         </div>
 
-        <div class="category-card card glass text-center flex-col items-center justify-center" style="width: 250px; overflow: hidden; padding: 0; padding-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;">
-          <img src="{{ url_for('static', filename='images/delivery_photo.png') }}" alt="Delivery" style="width: 100%; height: 160px; object-fit: cover; border-bottom: 2px solid rgba(139, 92, 246, 0.5); margin-bottom: 1.2rem;">
-          <p class="categories-text font-bold text-white text-uppercase" style="letter-spacing: 1.5px; font-size: 1rem;">Fast Delivery</p>
+        <div class="category-card card glass text-center">
+          <img src="{{ url_for('static', filename='images/delivery_photo.png') }}" alt="Delivery" class="category-img">
+          <p class="categories-text">Fast Delivery</p>
         </div>
 
-        <div class="category-card card glass text-center flex-col items-center justify-center" style="width: 250px; overflow: hidden; padding: 0; padding-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;">
-          <img src="{{ url_for('static', filename='images/repairs_photo.png') }}" alt="Repairs" style="width: 100%; height: 160px; object-fit: cover; border-bottom: 2px solid rgba(59, 228, 119, 0.5); margin-bottom: 1.2rem;">
-          <p class="categories-text font-bold text-white text-uppercase" style="letter-spacing: 1.5px; font-size: 1rem;">Home Repairs</p>
+        <div class="category-card card glass text-center">
+          <img src="{{ url_for('static', filename='images/repairs_photo.png') }}" alt="Repairs" class="category-img">
+          <p class="categories-text">Home Repairs</p>
         </div>
     </div>
   </div>
@@ -91,7 +91,7 @@
         — fast, safe, and affordable.
       </p>
 
-      <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+      <div class="features-grid">
         <div class="card glass feature-card text-center">
           <div class="feature-icon mb-2 flex justify-center text-primary" style="font-size: 3rem;">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
