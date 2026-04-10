@@ -22,12 +22,14 @@ Time is your most valuable asset. Don't waste it on trivial errands when you can
 
 ## 🔥 POWER FEATURES
 
-- **Secure Authentication:** Iron-clad registration and login systems.
-- **Bounty Board:** Post local jobs with clear, upfront compensation.
-- **Local Radar:** Scan your sector for active tasks waiting to be crushed.
-- **Instant Acceptance:** Claim tasks immediately and get to work.
-- **Sleek UI/UX:** Built with a premium, dynamic dark-mode glassmorphism aesthetic that cuts out the noise.
-- **Robust Engine:** Powered by a clean, battle-tested Flask backend.
+- **Secure Authentication:** Iron-clad registration, login, and Google OAuth integration.
+- **Bounty Board:** Post local jobs with clear, upfront compensation and milestone tracking.
+- **Razorpay Integration:** Secure, automated payment gateway for milestone and final payouts.
+- **Real-Time Notifications:** Instant glassmorphism alerts for task assignments and payment receipts.
+- **Mobile-First UI:** Fully responsive dashboard with a modern off-canvas navigation system.
+- **Reputation System:** Built-in worker rating and task history to ensure service quality.
+- **Local Radar:** Scan your sector for active tasks within a 5km radius.
+- **Sleek UI/UX:** Built with a premium, dynamic dark-mode glassmorphism aesthetic.
 
 ---
 
@@ -44,6 +46,8 @@ Built on reliable, heavy-duty technologies.
 - SQLite & SQLAlchemy (The Vault)
 - Werkzeug (Impenetrable Password Engine)
 - Jinja2 (Dynamic Templating)
+- Razorpay SDK (Payment Infrastructure)
+- Google OAuth 2.0 (Identity Layer)
 
 ---
 
@@ -94,11 +98,10 @@ http://127.0.0.1:2004
 ## 🎯 FUTURE EXPANSION
 
 A solid system can always be upgraded. The upcoming roadmap:
-- 📍 **Precision Radar:** GPS-based task mapping (5km extraction radius).
-- 💬 **Encrypted Comms:** Direct peer-to-peer chat between poster and worker.
-- ⭐ **Reputation System:** Ratings and reviews to separate the elite from the rest.
-- 🔔 **Instant Intel:** Live push notifications for task updates.
-- 💳 **Secure Treasury:** Integrated native payment gateways.
+- 📍 **Precision Radar:** GPS-mapping visualization for task locations.
+- 💬 **Encrypted Comms:** Integrated peer-to-peer chat for real-time coordination.
+- 📈 **Analytics Center:** Detailed earnings and task performance metrics for workers.
+- 🛡️ **Dispute Engine:** Automated mediation for task completion conflicts.
 
 ---
 
