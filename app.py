@@ -12,6 +12,7 @@ load_dotenv()
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from routes.auth_routes import auth_bp
 from routes.payment_routes import payment_bp
+from routes.chat_routes import chat_bp
 
 app = Flask(__name__)
 app.register_blueprint(dashboard_bp)
@@ -32,6 +33,7 @@ db.init_app(app)
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(payment_bp)
+app.register_blueprint(chat_bp)
 
 @app.route("/")
 def home():

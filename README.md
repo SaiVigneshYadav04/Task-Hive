@@ -29,6 +29,7 @@ Time is your most valuable asset. Don't waste it on trivial errands when you can
 - **Mobile-First UI:** Fully responsive dashboard with a modern off-canvas navigation system.
 - **Reputation System:** Built-in worker rating and task history to ensure service quality.
 - **Local Radar:** Scan your sector for active tasks within a 5km radius.
+- **Direct In-App Chat:** Secure, real-time peer-to-peer messaging for task coordination.
 - **Sleek UI/UX:** Built with a premium, dynamic dark-mode glassmorphism aesthetic.
 
 ---
@@ -47,6 +48,7 @@ Built on reliable, heavy-duty technologies.
 - Werkzeug (Impenetrable Password Engine)
 - Jinja2 (Dynamic Templating)
 - P2P UPI Payment Logic (Custom)
+- Real-Time Messaging (Polling-based)
 - Google OAuth 2.0 (Identity Layer)
 
 ---
@@ -99,7 +101,6 @@ http://127.0.0.1:2004
 
 A solid system can always be upgraded. The upcoming roadmap:
 - 📍 **Precision Radar:** GPS-mapping visualization for task locations.
-- 💬 **Encrypted Comms:** Integrated peer-to-peer chat for real-time coordination.
 - 📈 **Analytics Center:** Detailed earnings and task performance metrics for workers.
 - 🛡️ **Dispute Engine:** Automated mediation for task completion conflicts.
 
