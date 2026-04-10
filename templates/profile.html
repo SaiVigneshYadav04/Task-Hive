@@ -6,7 +6,6 @@
     <title>Profile - Task-Hive</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <style>
-        /* ---- Profile Page Specific Styles ---- */
         .profile-hero {
             position: relative;
             background: linear-gradient(135deg, rgba(59, 228, 119, 0.12) 0%, rgba(139, 92, 246, 0.15) 100%);
@@ -105,7 +104,7 @@
             gap: 0.4rem;
         }
 
-        /* Edit Form */
+
         .profile-form-card {
             background: rgba(30, 41, 59, 0.5);
             backdrop-filter: blur(12px);
@@ -225,7 +224,7 @@
 
         .span-full { grid-column: 1 / -1; }
 
-        /* Toast */
+
         #toast-msg {
             display: none;
             position: fixed;
@@ -247,7 +246,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Danger zone */
+
         .danger-zone {
             background: rgba(239, 68, 68, 0.06);
             border: 1px solid rgba(239, 68, 68, 0.2);
@@ -278,7 +277,6 @@
 </head>
 
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="container">
             <div class="dashboard-header-content">
@@ -308,7 +306,6 @@
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <div class="dashboard-wrapper">
-        <!-- Sidebar -->
         <aside class="sidebar">
             <nav class="sidebar-nav">
                 <a href="/dashboard" class="sidebar-link">Dashboard</a>
@@ -325,11 +322,9 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
         <main class="dashboard-main">
             <div class="container" style="max-width: 800px; padding-top: 2rem;">
 
-                <!-- Profile Hero Card -->
                 <div class="profile-hero">
                     <div class="profile-avatar-large" onclick="document.getElementById('pic-input').click()">
                         {% if user.profile_pic %}
@@ -354,11 +349,9 @@
                     </div>
                 </div>
 
-                <!-- Edit Profile Form -->
                 <form action="/update-profile" method="POST" enctype="multipart/form-data" id="profile-form">
                     <input type="file" name="profile_pic" id="pic-input" class="file-hidden" accept="image/*" onchange="previewImage(this)">
 
-                    <!-- Personal Information -->
                     <div class="profile-form-card" style="margin-bottom: 1.5rem;">
                         <h2>👤 Personal Information</h2>
                         <div class="form-grid">
@@ -396,7 +389,6 @@
                         </div>
                     </div>
 
-                    <!-- Payment Settings -->
                     <div class="profile-form-card" style="margin-bottom: 1.5rem;">
                         <h2>💳 Payment Details</h2>
                         <div class="form-grid">
@@ -411,7 +403,6 @@
                     <button type="submit" class="save-btn">💾 Save Changes</button>
                 </form>
 
-                <!-- Danger Zone -->
                 <div class="danger-zone">
                     <div>
                         <span>Logout from Task-Hive</span>
@@ -424,7 +415,6 @@
         </main>
     </div>
 
-    <!-- Footer -->
     <footer class="footer" style="margin-left: 280px; width: calc(100% - 280px);">
         <div class="container footer-content">
             <div class="footer-brand">
@@ -445,11 +435,9 @@
         </div>
     </footer>
 
-    <!-- Toast Message -->
     <div id="toast-msg"></div>
 
     <script>
-        // Preview profile picture before upload
         function previewImage(input) {
             const file = input.files[0];
             if (!file) return;
@@ -459,10 +447,9 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const hero = document.querySelector('.profile-avatar-large');
-                // Remove initials span if present
                 const initials = document.getElementById('avatar-initials');
                 if (initials) initials.remove();
-                // Update or create preview image
+
                 let img = document.getElementById('avatar-preview');
                 if (!img) {
                     img = document.createElement('img');
@@ -474,7 +461,7 @@
             reader.readAsDataURL(file);
         }
 
-        // Show success toast if redirected back (use URL param or flash)
+
         const params = new URLSearchParams(window.location.search);
         if (params.get('saved') === '1') {
             const toast = document.getElementById('toast-msg');

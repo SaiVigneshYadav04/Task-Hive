@@ -192,31 +192,6 @@ def rate_worker(task_id):
     
     return jsonify({"error": "Worker not found."}), 404
 
-@dashboard_bp.route("/confirm-receipt/<int:task_id>", methods=["POST"])
-def confirm_receipt(task_id):
-    if "user_id" not in session: return jsonify({"error": "Unauthorized"}), 401
-
-    task = Task.query.get(task_id)
-    if task.assigned_to != str(session["user_id"]):
-        return jsonify({"error": "Only the assigned worker can verify payment."}), 403
-
-    if task.payment_status == "payment_claimed":
-
-        task.payment_status = "fully_paid"
-        task.status = "completed"
-
-        worker = User.query.get(int(task.assigned_to))
-        if worker:
-            worker.tasks_completed = (worker.tasks_completed or 0) + 1
-
-        notif = Notification(user_id=task.posted_by, message=f"Payment verified! '{task.title}' is now complete.", link="/history")
-        db.session.add(notif)
-        db.session.commit()
-
-        return jsonify({"message": "Payment verified! Task moved to History."})
-
-    return jsonify({"error": "Invalid task status."}), 400
-
 @dashboard_bp.route("/post-task", methods=["POST"])
 def post_task():
 

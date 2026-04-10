@@ -22,7 +22,7 @@
                 <div class="profile-menu" style="display: flex; align-items: center; gap: 1.25rem; margin-left: auto;">
                     <div style="width: 1px; height: 28px; background: rgba(255,255,255,0.1);"></div>
                     <a href="/profile" class="avatar" title="View Profile">
-                        {% if user.profile_pic %};<img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}">{% else %}{{ user.name[0] | upper }}{% endif %}
+                        {% if user.profile_pic %}<img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}">{% else %}{{ (user.name or 'U')[0] | upper }}{% endif %}
                     </a>
                     <span class="profile-name">{{ user.name }}</span>
                 </div>
@@ -89,7 +89,7 @@
         </div>
     </footer>
     <script>
-        const taskId = {{ task.id }};
+        const taskId = parseInt("{{ task.id }}");
 
         function loadApplicants() {
             fetch(`/api/applicants/${taskId}`)
@@ -133,7 +133,7 @@
                     });
                 })
                 .catch(err => {
-                    document.getElementById("applicants-list").innerHTML = `<div style="text-align: center; padding: 2rem; color: #ef4444; font-weight: bold;">Error loading applicants. Please check your VS Code Terminal for the Python crash log!</div>`;
+                    document.getElementById("applicants-list").innerHTML = `<div style="text-align: center; padding: 2rem; color: #ef4444; font-weight: bold;">Error loading applicants. Please try again.</div>`;
                 });
         }
 

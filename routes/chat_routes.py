@@ -15,7 +15,7 @@ def send_message(task_id):
     if not task:
         return jsonify({"error": "Task not found"}), 404
         
-    # Only poster or worker can send messages
+    
     if user_id != task.posted_by and user_id != task.assigned_to:
         return jsonify({"error": "Forbidden"}), 403
         

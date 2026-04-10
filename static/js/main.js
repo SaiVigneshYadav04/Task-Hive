@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function () {
             overlay.classList.remove('active');
         });
 
-        // Close sidebar when clicking a link (on mobile)
         const sidebarLinks = document.querySelectorAll('.sidebar-link');
         sidebarLinks.forEach(link => {
             link.addEventListener('click', function () {

@@ -6,9 +6,6 @@ import os
 
 payment_bp = Blueprint("payment", __name__)
 
-# ─────────────────────────────────────────
-# Get Worker UPI ID for the Payer
-# ─────────────────────────────────────────
 @payment_bp.route("/get-worker-upi/<int:task_id>", methods=["GET"])
 def get_worker_upi(task_id):
     if "user_id" not in session:
@@ -31,10 +28,6 @@ def get_worker_upi(task_id):
         "amount": float(task.payment) / 2
     })
 
-# ─────────────────────────────────────────
-# Payer Claims "I have sent the money"
-# milestone = "half" (50%) or "full" (100%)
-# ─────────────────────────────────────────
 @payment_bp.route("/claim-payment/<int:task_id>/<milestone>", methods=["POST"])
 def claim_payment(task_id, milestone):
     if "user_id" not in session:
@@ -51,7 +44,6 @@ def claim_payment(task_id, milestone):
         task.payment_status = "full_claimed"
         msg = "Final payment claimed! Waiting for worker to confirm."
 
-    # Notify the worker
     notif = Notification(
         user_id=str(task.assigned_to),
         message=f"💰 Client claimed to have sent {milestone} payment for: {task.title}. Please check your bank and confirm.",
@@ -62,9 +54,6 @@ def claim_payment(task_id, milestone):
 
     return jsonify({"success": True, "message": msg})
 
-# ─────────────────────────────────────────
-# Worker Confirms "I have received the money"
-# ─────────────────────────────────────────
 @payment_bp.route("/confirm-receipt/<int:task_id>", methods=["POST"])
 def confirm_receipt(task_id):
     if "user_id" not in session:
@@ -83,13 +72,11 @@ def confirm_receipt(task_id):
     else:
         task.payment_status = "fully_paid"
         task.status = "completed"
-        # Update worker task count
         worker = User.query.get(int(session["user_id"]))
         if worker:
             worker.tasks_completed = (worker.tasks_completed or 0) + 1
         notif_msg = f"🏆 Full payment confirmed! Task '{task.title}' is officially complete."
 
-    # Notify the payer
     notif = Notification(
         user_id=str(task.posted_by),
         message=notif_msg,

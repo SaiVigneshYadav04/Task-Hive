@@ -94,7 +94,6 @@
     <header class="header">
         <div class="container">
             <div class="dashboard-header-content">
-                <!-- Left: Logo & Toggle -->
                 <div class="logo">
                     <button class="mobile-toggle" id="sidebar-toggle">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -108,10 +107,8 @@
                     <span class="logo-text">Task-Hive</span>
                 </div>
 
-                <!-- Right: Notifications + Profile -->
                 <div class="profile-menu" style="display: flex; align-items: center; gap: 1.25rem; margin-left: auto;">
 
-                    <!-- Notification Bell -->
                     <div style="position: relative;">
                         <button class="notif-btn" onclick="toggleNotifs()" id="notif-bell-btn">
                             <img src="{{ url_for('static', filename='images/notification.png') }}" alt="Notifications">
@@ -129,10 +126,8 @@
                         </div>
                     </div>
 
-                    <!-- Divider -->
                     <div style="width: 1px; height: 28px; background: rgba(255,255,255,0.1);"></div>
 
-                    <!-- Profile -->
                     <a href="/profile" class="avatar" title="View Profile">
                         {% if user.profile_pic %}
                         <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="Profile">
@@ -335,7 +330,6 @@
                                             `);
                                         });
 
-                                        // Ensure clicking a category updates the active button style
                                         document.addEventListener('click', function (e) {
                                             if (e.target && e.target.classList.contains('filter-btn')) {
                                                 document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -402,14 +396,12 @@
     </div>
     <div id="toast-container"></div>
 
-    <!-- Chat Overlay -->
     <div id="chat-overlay" class="chat-overlay">
         <div class="chat-header">
             <h3 id="chat-task-title">Chat</h3>
             <button class="chat-close" onclick="closeChat()">×</button>
         </div>
         <div id="chat-messages" class="chat-messages">
-            <!-- Messages go here -->
         </div>
         <div class="chat-input-area">
             <input type="text" id="chat-input" class="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMessage()">
@@ -1123,7 +1115,6 @@
             dropdown.style.display = notifsOpen ? 'block' : 'none';
         }
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', function (e) {
             const bell = document.getElementById('notif-bell-btn');
             const dropdown = document.getElementById('notif-dropdown');
@@ -1194,8 +1185,29 @@
             toggleNotifs();
 
             await fetch(`/api/notifications/read/${id}`, { method: "POST" });
+            
+            // If the link is for the dashboard hash, just refresh and scroll
+            if (link.includes('#')) {
+                const parts = link.split('#');
+                if (window.location.pathname.includes(parts[0]) || parts[0] === '/dashboard' || parts[0] === '') {
+                    loadMyTasks();
+                    loadTasks();
+                    window.location.hash = parts[1];
+                    return;
+                }
+            }
+            
             window.location.href = link;
         }
+
+        // Handle direct landing with hash
+        window.addEventListener('load', () => {
+            if (window.location.hash === '#my-tasks-section') {
+                setTimeout(() => {
+                    document.getElementById('my-tasks-section')?.scrollIntoView({ behavior: 'smooth' });
+                }, 800);
+            }
+        });
         loadNotifications();
         setInterval(loadNotifications, 30000);
         setGreeting();
