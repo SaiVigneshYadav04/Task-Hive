@@ -169,44 +169,28 @@ def add_task_update(task_id):
     return jsonify({"message": "Status & proof uploaded successfully!"})
 
 
-@dashboard_bp.route("/process-payment/<int:task_id>", methods=["POST"])
-def process_payment(task_id):
+@dashboard_bp.route("/rate-worker/<int:task_id>", methods=["POST"])
+def rate_worker(task_id):
     if "user_id" not in session: return jsonify({"error": "Unauthorized"}), 401
 
     task = Task.query.get(task_id)
     if task.posted_by != str(session["user_id"]):
-        return jsonify({"error": "Only the poster can make payments."}), 403
+        return jsonify({"error": "Only the poster can rate workers."}), 403
 
-    if task.payment_status == "unpaid":
-        task.payment_status = "half_paid"
-        msg = "50% Milestone released successfully!"
-        notif = Notification(
-            user_id=task.assigned_to,
-            message=f"50% Milestone payment released for: {task.title}!",
-            link="/dashboard#my-tasks-section"
-        )
-        db.session.add(notif)
+    data = request.get_json(silent=True) or {}
+    rating = data.get("rating")
 
-    elif task.payment_status == "half_paid":
-        data = request.get_json(silent=True) or {}
-        rating = data.get("rating")
+    if not rating:
+        return jsonify({"error": "Rating is required."}), 400
 
-        if not rating:
-            return jsonify({"error": "You must rate the worker to complete the task."}), 400
-
-        worker = User.query.get(int(task.assigned_to))
-        if worker:
-            worker.total_rating = (worker.total_rating or 0.0) + float(rating)
-            worker.rating_count = (worker.rating_count or 0) + 1
-
-        task.payment_status = "payment_claimed"
-
-        msg = "Payment claim sent! Waiting for the worker to verify receipt."
-        notif = Notification(user_id=task.assigned_to, message=f"Poster claims they paid you for '{task.title}'. Please verify!", link="/dashboard#my-tasks-section")
-        db.session.add(notif)
-
-    db.session.commit()
-    return jsonify({"message": msg})
+    worker = User.query.get(int(task.assigned_to))
+    if worker:
+        worker.total_rating = (worker.total_rating or 0.0) + float(rating)
+        worker.rating_count = (worker.rating_count or 0) + 1
+        db.session.commit()
+        return jsonify({"success": True, "message": "Rating submitted! Now proceed to pay the worker."})
+    
+    return jsonify({"error": "Worker not found."}), 404
 
 @dashboard_bp.route("/confirm-receipt/<int:task_id>", methods=["POST"])
 def confirm_receipt(task_id):

@@ -503,12 +503,13 @@
                             let isLocked = task.payment_status === "unpaid" && task.updates.some(u => u.percentage >= 50);
                             let updateFormHtml = "";
 
-                            if (task.payment_status === "fully_paid") {
+                            if (task.payment_status === "half_claimed" || task.payment_status === "full_claimed") {
+                                const m = task.payment_status === "half_claimed" ? "half" : "full";
+                                updateFormHtml = `<button onclick="confirmReceipt(${task.id}, '${m}', event)" style="margin-top: 1.5rem; text-align: center; color: #3BE477;width: 100%; font-weight: bold; padding: 1rem; border: 1px dashed #3BE477; border-radius: 0.5rem; background: rgba(59, 228, 119, 0.1)">Tick Here If You Received The Money</button>`;
+                            } else if (task.payment_status === "fully_paid") {
                                 updateFormHtml = `<div style="margin-top: 1.5rem; color: #3BE477; font-weight: bold; text-align: center; border: 1px solid #3BE477; padding: 1rem; border-radius: 0.5rem; background: rgba(59, 228, 119, 0.1);">Task Completed & Fully Paid!</div>`;
-                            } else if (task.payment_status === "payment_claimed") {
-                                updateFormHtml = `<button onclick="confirmReceipt(${task.id}, event)" style="margin-top: 1.5rem; text-align: center; color: #3BE477;width: 100%; font-weight: bold; padding: 1rem; border: 1px dashed #3BE477; border-radius: 0.5rem; background: rgba(59, 228, 119, 0.1)">Confirm You Received The Funds</button>`;
                             } else if (isLocked) {
-                                updateFormHtml = `<div style="margin-top: 1.5rem; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;">⏳ Waiting for the Client to release the 50% milestone payment.</div>`;
+                                updateFormHtml = `<div style="margin-top: 1.5rem; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;">⏳ Waiting for Client to pay the 50% milestone.</div>`;
                             } else {
                                 updateFormHtml = `
                                     <div style="margin-top: 0.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 0.75rem;">
@@ -604,10 +605,10 @@
                             const halfAmount = task.payment / 2;
 
                             if (task.payment_status === "unpaid" && task.updates.some(u => u.percentage >= 50)) {
-                                paymentBtnHtml = `<button onclick="processPayment(${task.id}, event)" style="margin-top: 1.5rem;width: 100%; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;"> Release 50% Milestone (₹${halfAmount})</button>`;
+                                paymentBtnHtml = `<button onclick="payWithUPI(${task.id}, 'half', event)" style="margin-top: 1.5rem;width: 100%; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;"> Pay 50% Milestone (₹${halfAmount})</button>`;
                             } else if (task.payment_status === "half_paid" && task.updates.some(u => u.percentage === 100)) {
-                                paymentBtnHtml = `<button onclick="releaseFinalPayment(${task.id}, event)" style="margin-top: 1.5rem;width: 100%; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;">Release Final Payment (₹${halfAmount}) & Rate Worker</button>`;
-                            } else if (task.payment_status === "payment_claimed") {
+                                paymentBtnHtml = `<button onclick="payWithUPI(${task.id}, 'full', event)" style="margin-top: 1.5rem;width: 100%; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;">Pay Final Milestone (₹${halfAmount})</button>`;
+                            } else if (task.payment_status === "half_claimed" || task.payment_status === "full_claimed") {
                                 paymentBtnHtml = `<div style="margin-top: 1.5rem; text-align: center; color: #fbbf24; font-weight: bold; padding: 1rem; border: 1px dashed #fbbf24; border-radius: 0.5rem; background: rgba(251, 191, 36, 0.1);">Waiting for worker to verify bank receipt...</div>`;
                             } else if (task.payment_status === "fully_paid") {
                                 paymentBtnHtml = `<div style="margin-top: 1.5rem; text-align: center; color: #3BE477; font-weight: bold; padding: 0.75rem; border: 1px solid #3BE477; border-radius: 0.5rem;">Fully Paid & Completed</div>`;
@@ -724,84 +725,83 @@
             }
         }
 
-        async function releaseFinalPayment(taskId, event) {
+        async function payWithUPI(taskId, milestone, event) {
             event.stopPropagation();
 
-            // Create Razorpay order for final 50%
-            const orderRes = await fetch(`/create-order/${taskId}/full`, { method: 'POST' });
-            const order = await orderRes.json();
+            // If final payment, ask for rating first
+            if (milestone === 'full') {
+                const { value: rating } = await Swal.fire({
+                    title: '⭐ Rate the Worker',
+                    text: 'How well did they do? You can pay after rating.',
+                    icon: 'star',
+                    input: 'select',
+                    inputOptions: {
+                        '5': '⭐⭐⭐⭐⭐ Excellent!',
+                        '4': '⭐⭐⭐⭐ Great job',
+                        '3': '⭐⭐⭐ It was okay',
+                        '2': '⭐⭐ Needs improvement',
+                        '1': '⭐ Poor experience'
+                    },
+                    inputPlaceholder: 'Select rating...',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3BE477',
+                    inputValidator: (value) => { if (!value) return 'Rating is required!' }
+                });
 
-            if (order.error) return showToast(order.error, 'error');
+                if (!rating) return;
 
-            if (order.key === 'rzp_test_your_key_id' || !order.key) {
-                showToast('Razorpay not configured. Add your keys to .env', 'error');
-                return;
+                const rateRes = await fetch(`/rate-worker/${taskId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rating: parseInt(rating) })
+                });
+                const rateData = await rateRes.json();
+                if (rateData.error) return showToast(rateData.error, 'error');
             }
 
-            // Rate worker first
-            const { value: rating } = await Swal.fire({
-                title: '⭐ Rate the Worker',
-                text: 'How well did they do? Payment will be processed next.',
-                icon: 'star',
-                input: 'select',
-                inputOptions: {
-                    '5': '⭐⭐⭐⭐⭐ (5/5) - Excellent!',
-                    '4': '⭐⭐⭐⭐ (4/5) - Great job',
-                    '3': '⭐⭐⭐ (3/5) - It was okay',
-                    '2': '⭐⭐ (2/5) - Needs improvement',
-                    '1': '⭐ (1/5) - Poor experience'
-                },
-                inputPlaceholder: 'Select a rating...',
+            const res = await fetch(`/get-worker-upi/${taskId}`);
+            const data = await res.json();
+
+            if (data.error) {
+                return Swal.fire('UPI Missing', data.error, 'warning');
+            }
+
+            const upiLink = `upi://pay?pa=${data.upi_id}&pn=${encodeURIComponent(data.worker_name)}&am=${data.amount}&cu=INR&tn=Task-Hive Milestone`;
+
+            const { value: confirmed } = await Swal.fire({
+                title: '💸 Manual UPI Payment',
+                html: `
+                    <div style="text-align: left; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 1rem; border: 1px solid #3BE477;">
+                        <p style="margin-bottom: 0.5rem; font-size: 0.9rem; color: #94a3b8;">Pay Directly to:</p>
+                        <p style="font-weight: bold; font-size: 1.2rem; color: #fff; margin-bottom: 0.25rem;">${data.worker_name}</p>
+                        <p style="font-family: monospace; background: #000; padding: 0.5rem; border-radius: 0.5rem; color: #3BE477; margin-bottom: 1rem;">${data.upi_id}</p>
+                        
+                        <div style="display: flex; gap: 0.5rem; flex-direction: column;">
+                            <a href="${upiLink}" class="btn btn-primary" style="text-decoration: none; text-align: center; color: black !important;">📲 Open UPI App</a>
+                            <p style="font-size: 0.75rem; color: #94a3b8; text-align: center; margin-top: 0.5rem;">(Works best on mobile browsers)</p>
+                        </div>
+                    </div>
+                    <p style="margin-top: 1.5rem; font-size: 0.9rem;">Once you have sent <b>₹${data.amount}</b>, click "I Have Paid" below.</p>
+                `,
                 showCancelButton: true,
+                confirmButtonText: 'I Have Paid ✅',
+                cancelButtonText: 'Cancel',
                 confirmButtonColor: '#3BE477',
-                inputValidator: (value) => { if (!value) return 'Please rate the worker to proceed!' }
             });
 
-            if (!rating) return;
-
-            // Submit rating first
-            await fetch(`/process-payment/${taskId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rating: parseInt(rating) })
-            });
-
-            // Then open Razorpay
-            const options = {
-                key: order.key,
-                amount: order.amount,
-                currency: 'INR',
-                name: 'Task-Hive',
-                description: `Final Payment – ${order.task_title}`,
-                order_id: order.order_id,
-                theme: { color: '#3BE477' },
-                handler: async function (response) {
-                    const verifyRes = await fetch('/verify-payment', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature,
-                            task_id: taskId,
-                            milestone: 'full'
-                        })
-                    });
-                    const result = await verifyRes.json();
-                    if (result.success) {
-                        Swal.fire('🎉 Complete!', 'Payment done & task marked complete!', 'success');
-                        loadMyTasks();
-                    } else {
-                        showToast(result.error || 'Verification failed.', 'error');
-                    }
+            if (confirmed) {
+                const claimRes = await fetch(`/claim-payment/${taskId}/${milestone}`, { method: 'POST' });
+                const result = await claimRes.json();
+                if (result.success) {
+                    Swal.fire('Payment Claimed!', result.message, 'success');
+                    loadMyTasks();
+                } else {
+                    showToast(result.error, 'error');
                 }
-            };
-
-            const rzp = new Razorpay(options);
-            rzp.open();
+            }
         }
 
-        async function confirmReceipt(taskId, event) {
+        async function confirmReceipt(taskId, milestone, event) {
             event.stopPropagation();
 
             const userChoice = await Swal.fire({
@@ -816,7 +816,11 @@
 
             if (!userChoice.isConfirmed) return;
 
-            const response = await fetch(`/confirm-receipt/${taskId}`, { method: "POST" });
+            const response = await fetch(`/confirm-receipt/${taskId}`, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ milestone: milestone })
+            });
             const result = await response.json();
 
             if (result.error) {
