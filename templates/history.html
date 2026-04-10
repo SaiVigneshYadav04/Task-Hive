@@ -12,10 +12,11 @@
             <div class="dashboard-header-content">
                 <div class="logo">
                     <img src="{{ url_for('static', filename='images/Icon.png') }}" width="40" alt="Task-Hive Logo">
-                    <span class="logo-text" style="font-size: 1.5rem; font-weight: 700; color: #1f2937;">Task-Hive</span>
+                    <span class="logo-text">Task-Hive</span>
                 </div>
-                <div class="profile-menu" style="display: flex; align-items: center; gap: 0.75rem;">
-                    <a href="/profile" class="avatar">
+                <div class="profile-menu" style="display: flex; align-items: center; gap: 1.25rem; margin-left: auto;">
+                    <div style="width: 1px; height: 28px; background: rgba(255,255,255,0.1);"></div>
+                    <a href="/profile" class="avatar" title="View Profile">
                         {% if user.profile_pic %}<img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}">{% else %}{{ user.name[0] | upper }}{% endif %}
                     </a>
                     <span class="profile-name">{{ user.name }}</span>
@@ -60,6 +61,27 @@
             </div>
         </main>
     </div>
+
+    <footer class="footer" style="margin-left: 280px; width: calc(100% - 280px);">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <div class="logo-icon">
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" alt="Task-Hive Logo">
+                </div>
+                <div>
+                    <span class="footer-logo-text">Task-Hive</span>
+                    <p class="footer-description">
+                        Hyperlocal errand marketplace connecting task<br>
+                        posters with eager workers.
+                    </p>
+                </div>
+            </div>
+
+            <div class="footer-copyright">
+                © 2026 Task-Hive. All rights reserved.
+            </div>
+        </div>
+    </footer>
 
     <script>
         let allHistoryData = [];

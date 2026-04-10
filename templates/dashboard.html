@@ -12,37 +12,44 @@
     <header class="header">
         <div class="container">
             <div class="dashboard-header-content">
+                <!-- Left: Logo -->
                 <div class="logo">
                     <img src="{{ url_for('static', filename='images/Icon.png') }}" width="40" alt="Task-Hive Logo">
                     <span class="logo-text">Task-Hive</span>
                 </div>
 
-                <div class="profile-menu" style="display: flex; align-items: center; gap: 1.5rem;">
+                <!-- Right: Notifications + Profile -->
+                <div class="profile-menu" style="display: flex; align-items: center; gap: 1.25rem; margin-left: auto;">
 
+                    <!-- Notification Bell -->
                     <div style="position: relative;">
-                        <button onclick="toggleNotifs()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; position: relative;">
-                            <img src="{{ url_for('static', filename='images/notification.png') }}" alt="Notifications" style="width: 30px; height: 30px;">
-                            <span id="notif-badge" style="display: none; position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; font-size: 0.65rem; font-weight: bold; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;">0</span>
+                        <button class="notif-btn" onclick="toggleNotifs()" id="notif-bell-btn">
+                            <img src="{{ url_for('static', filename='images/notification.png') }}" alt="Notifications">
+                            <span id="notif-badge" style="display: none; position: absolute; top: -4px; right: -4px; background: #ef4444; color: white; font-size: 0.6rem; font-weight: 800; min-width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #0f172a; padding: 0 3px;">0</span>
                         </button>
 
-                        <div id="notif-dropdown" style="display: none; position: absolute; top: 120%; right: -50px; width: 320px; background: white; border-radius: 1rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden; z-index: 100;">
-                            <div style="padding: 1rem; background: #f8fafc; border-bottom: 1px solid #e5e7eb; font-weight: 800; color: #111827;">Notifications</div>
-                            <div id="notif-list" style="max-height: 350px; overflow-y: auto;">
-                                </div>
+                        <div id="notif-dropdown" class="notif-dropdown">
+                            <div class="notif-header">
+                                <span class="notif-header-title">🔔 Notifications</span>
+                                <span id="notif-unread-count" class="notif-header-badge" style="display:none;">0 new</span>
+                            </div>
+                            <div id="notif-list" class="notif-list"></div>
                         </div>
                     </div>
 
-                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                        <a href="/profile" class="avatar">
-                            {% if user.profile_pic %}
-                            <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="Profile">
-                            {% else %}
-                            {{ user.name[0] | upper }}
-                            {% endif %}
-                        </a>
-                        <span class="profile-name">{{ user.name }}</span>
-                        <a href="/logout" class="logout-link">Logout</a>
-                    </div>
+                    <!-- Divider -->
+                    <div style="width: 1px; height: 28px; background: rgba(255,255,255,0.1);"></div>
+
+                    <!-- Profile -->
+                    <a href="/profile" class="avatar" title="View Profile">
+                        {% if user.profile_pic %}
+                        <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" alt="Profile">
+                        {% else %}
+                        {{ user.name[0] | upper }}
+                        {% endif %}
+                    </a>
+                    <span class="profile-name">{{ user.name }}</span>
+                    <a href="/logout" class="logout-link">Logout</a>
                 </div>
             </div>
         </div>
@@ -259,7 +266,7 @@
 
         </main>
     </div>
-    <footer class="footer" style="margin-left: 262px; width: calc(100% - 262px);">
+    <footer class="footer" style="margin-left: 280px; width: calc(100% - 280px);">
         <div class="container footer-content">
             <div class="footer-brand">
                 <div class="logo-icon">
@@ -977,12 +984,23 @@ async function processPayment(taskId, event) {
             dropdown.style.display = notifsOpen ? 'block' : 'none';
         }
 
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const bell = document.getElementById('notif-bell-btn');
+            const dropdown = document.getElementById('notif-dropdown');
+            if (notifsOpen && !bell.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+                notifsOpen = false;
+            }
+        });
+
         function loadNotifications() {
             fetch("/api/notifications")
                 .then(res => res.json())
                 .then(data => {
                     const list = document.getElementById("notif-list");
                     const badge = document.getElementById("notif-badge");
+                    const unreadCountEl = document.getElementById("notif-unread-count");
                     list.innerHTML = "";
 
                     let unreadCount = data.filter(n => !n.is_read).length;
@@ -990,23 +1008,26 @@ async function processPayment(taskId, event) {
                     if (unreadCount > 0) {
                         badge.style.display = "flex";
                         badge.innerText = unreadCount;
+                        unreadCountEl.style.display = "inline-block";
+                        unreadCountEl.innerText = unreadCount + " new";
                     } else {
                         badge.style.display = "none";
+                        unreadCountEl.style.display = "none";
                     }
 
                     if (data.length === 0) {
-                        list.innerHTML = `<div style="padding: 1.5rem; text-align: center; color: #6b7280; font-size: 0.9rem;">You have no new notifications.</div>`;
+                        list.innerHTML = `<div class="notif-empty">🎉 You're all caught up!</div>`;
                         return;
                     }
 
                     data.forEach(n => {
-                        let bg = n.is_read ? 'white' : '#f0fdf4';
-                        let dot = n.is_read ? '' : `<div class="unread-dot" style="width: 8px; height: 8px; background: #3BE477; border-radius: 50%; flex-shrink: 0;"></div>`;
+                        const dot = !n.is_read ? `<div class="notif-dot"></div>` : `<div style="width:8px;flex-shrink:0;"></div>`;
+                        const itemClass = n.is_read ? 'notif-item' : 'notif-item unread';
 
                         list.innerHTML += `
-                            <div onclick="readNotif(${n.id}, '${n.link}', this)" style="padding: 1rem; border-bottom: 1px solid #e5e7eb; background: ${bg}; cursor: pointer; display: flex; align-items: center; gap: 0.75rem; transition: background 0.2s;">
+                            <div onclick="readNotif(${n.id}, '${n.link}', this)" class="${itemClass}">
                                 ${dot}
-                                <span style="font-size: 0.85rem; color: #374151; line-height: 1.4;">${n.message}</span>
+                                <span class="notif-text">${n.message}</span>
                             </div>
                         `;
                     });
