@@ -499,7 +499,7 @@ def update_profile():
 
             user.profile_pic = unique_filename
     db.session.commit()
-    return redirect(url_for("dashboard.profile_page"))
+    return redirect(url_for("dashboard.profile_page") + "?saved=1")
 
 
 @dashboard_bp.route("/history")
