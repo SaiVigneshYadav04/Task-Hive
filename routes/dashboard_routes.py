@@ -220,8 +220,9 @@ def confirm_receipt(task_id):
 @dashboard_bp.route("/post-task", methods=["POST"])
 def post_task():
 
-    if "user_id" not in session:
-        return redirect(url_for("auth.login_page"))
+    user = User.query.get(session["user_id"])
+    if not user.upi_id:
+        return redirect("/profile?missing_upi=1")
 
     new_task = Task(
         title=request.form["title"],
@@ -242,9 +243,10 @@ def post_task():
 
 @dashboard_bp.route("/apply-task/<int:task_id>", methods=["POST"])
 def apply_task(task_id):
-    if "user_id" not in session: return jsonify({"error": "Unauthorized"}), 401
-
     user_id = session["user_id"]
+    worker = User.query.get(user_id)
+    if not worker.upi_id:
+        return jsonify({"error": "upi_missing"}), 400
     data = request.get_json()
     message = data.get("message", "I can help with this!")
 
@@ -468,7 +470,10 @@ def update_profile():
     user.phone = request.form.get("phone")
     user.gender = request.form.get("gender")
     user.dob = request.form.get("dob")
-    user.upi_id = request.form.get("upi_id")
+    upi_id = request.form.get("upi_id")
+    if not upi_id:
+        return redirect("/profile?missing_upi=1")
+    user.upi_id = upi_id
 
     if 'profile_pic' in request.files:
         file = request.files['profile_pic']

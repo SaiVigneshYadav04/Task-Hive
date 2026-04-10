@@ -319,7 +319,6 @@
         </div>
     </div>
     <div id="toast-container"></div>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function showToast(message, type = 'success') {
@@ -869,6 +868,22 @@
                 });
 
                 const result = await response.json();
+                
+                if (result.error === "upi_missing") {
+                    Swal.fire({
+                        title: '💳 UPI ID Required',
+                        text: "To get paid for this task, you must add your UPI ID to your profile first.",
+                        icon: 'warning',
+                        confirmButtonText: 'Go to Profile',
+                        confirmButtonColor: '#3BE477',
+                        showCancelButton: true,
+                        cancelButtonColor: '#ef4444'
+                    }).then((r) => {
+                        if (r.isConfirmed) window.location.href = "/profile?missing_upi=1";
+                    });
+                    return;
+                }
+
                 result.error ? showToast(result.error, 'error') : showToast(result.message, 'success');
 
                 loadTasks();
@@ -881,55 +896,6 @@
             }
         }
 
-        async function processPayment(taskId, event) {
-            event.stopPropagation();
-
-            // Create Razorpay order for 50% milestone
-            const orderRes = await fetch(`/create-order/${taskId}/half`, { method: 'POST' });
-            const order = await orderRes.json();
-
-            if (order.error) return showToast(order.error, 'error');
-
-            // Check if Razorpay keys are configured
-            if (order.key === 'rzp_test_your_key_id' || !order.key) {
-                showToast('Razorpay not configured. Add your keys to .env', 'error');
-                return;
-            }
-
-            const options = {
-                key: order.key,
-                amount: order.amount,
-                currency: 'INR',
-                name: 'Task-Hive',
-                description: `50% Milestone – ${order.task_title}`,
-                order_id: order.order_id,
-                theme: { color: '#3BE477' },
-                prefill: { name: order.worker_name },
-                handler: async function (response) {
-                    const verifyRes = await fetch('/verify-payment', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature,
-                            task_id: taskId,
-                            milestone: 'half'
-                        })
-                    });
-                    const result = await verifyRes.json();
-                    if (result.success) {
-                        showToast('✅ 50% Milestone payment verified!', 'success');
-                        loadMyTasks();
-                    } else {
-                        showToast(result.error || 'Verification failed.', 'error');
-                    }
-                }
-            };
-
-            const rzp = new Razorpay(options);
-            rzp.open();
-        }
 
         async function unassignTask(taskId, event) {
             event.stopPropagation();

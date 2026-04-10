@@ -401,8 +401,8 @@
                         <h2>💳 Payment Details</h2>
                         <div class="form-grid">
                             <div class="span-full">
-                                <label class="form-label-styled">UPI ID (to receive payments)</label>
-                                <input type="text" name="upi_id" value="{{ user.upi_id or '' }}" class="form-input-styled" placeholder="e.g. yourname@upi">
+                                <label class="form-label-styled">UPI ID (to receive payments) <span style="color: #ef4444;">*</span></label>
+                                <input type="text" name="upi_id" value="{{ user.upi_id or '' }}" class="form-input-styled" placeholder="e.g. yourname@upi" required>
                                 <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.4rem;">Workers receive task payments through this UPI ID. Keep it accurate.</p>
                             </div>
                         </div>
@@ -481,6 +481,14 @@
             toast.innerText = '✅ Profile updated successfully!';
             toast.style.display = 'block';
             setTimeout(() => toast.style.display = 'none', 3000);
+        } else if (params.get('missing_upi') === '1') {
+            const toast = document.getElementById('toast-msg');
+            toast.innerText = '⚠️ Please add your UPI ID to continue!';
+            toast.style.background = 'rgba(239, 68, 68, 0.15)';
+            toast.style.color = '#ef4444';
+            toast.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 5000);
         }
     </script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
