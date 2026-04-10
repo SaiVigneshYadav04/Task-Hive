@@ -24,7 +24,7 @@ Time is your most valuable asset. Don't waste it on trivial errands when you can
 
 - **Secure Authentication:** Iron-clad registration, login, and Google OAuth integration.
 - **Bounty Board:** Post local jobs with clear, upfront compensation and milestone tracking.
-- **Razorpay Integration:** Secure, automated payment gateway for milestone and final payouts.
+- **P2P UPI Payments:** Secure, fee-free manual verification system for milestone and final payouts.
 - **Real-Time Notifications:** Instant glassmorphism alerts for task assignments and payment receipts.
 - **Mobile-First UI:** Fully responsive dashboard with a modern off-canvas navigation system.
 - **Reputation System:** Built-in worker rating and task history to ensure service quality.
@@ -46,7 +46,7 @@ Built on reliable, heavy-duty technologies.
 - SQLite & SQLAlchemy (The Vault)
 - Werkzeug (Impenetrable Password Engine)
 - Jinja2 (Dynamic Templating)
-- Razorpay SDK (Payment Infrastructure)
+- P2P UPI Payment Logic (Custom)
 - Google OAuth 2.0 (Identity Layer)
 
 ---
