@@ -87,6 +87,134 @@
             font-weight: bold;
             cursor: pointer;
         }
+        
+        /* Tab Styling */
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+        }
+        
+        .tab-btn {
+            cursor: pointer;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
+        }
+        
+        .tab-btn.active {
+            background: #3BE477;
+            color: #000;
+            border: 1px solid #3BE477;
+            box-shadow: 0 0 10px rgba(59, 228, 119, 0.3);
+        }
+        
+        /* Percentage Pills Styling */
+        .percentage-pills {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .perc-pill {
+            flex: 1;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        .perc-pill:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: #3BE477;
+        }
+
+        /* Floating App Dock Styles */
+        .app-dock {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            max-width: 95vw;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .app-dock::-webkit-scrollbar { display: none; }
+        .dock-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            text-decoration: none;
+            gap: 0.3rem;
+            min-width: 60px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0.5rem;
+            border-radius: 18px;
+            position: relative;
+        }
+        .dock-item:hover, .dock-item.active {
+            color: #3BE477;
+            background: rgba(59, 228, 119, 0.1);
+            transform: translateY(-5px);
+        }
+        .dock-item svg {
+            width: 24px;
+            height: 24px;
+            stroke-width: 2;
+            transition: all 0.3s ease;
+        }
+        .dock-item span {
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .dock-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            width: 4px;
+            height: 4px;
+            background: #3BE477;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #3BE477;
+        }
+        .dock-divider {
+            width: 1px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        @media (max-width: 768px) {
+            .app-dock { bottom: 1rem; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 30px; }
+            .dock-item { min-width: 50px; }
+            .dock-item span { display: none; } /* Icon only on mobile */
+            .dock-divider { margin: 0 0.25rem; }
+        }
+        /* Override sidebar spacing globally */
+        .dashboard-main { margin-left: 0 !important; max-width: 100% !important; padding-bottom: 8rem !important; }
+        .sidebar { display: none !important; }
+        .sidebar-overlay { display: none !important; }
     </style>
 </head>
 
@@ -95,15 +223,7 @@
         <div class="container">
             <div class="dashboard-header-content">
                 <div class="logo">
-                    <button class="mobile-toggle" id="sidebar-toggle">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="3" y1="12" x2="21" y2="12"></line>
-                            <line x1="3" y1="6" x2="21" y2="6"></line>
-                            <line x1="3" y1="18" x2="21" y2="18"></line>
-                        </svg>
-                    </button>
-                    <img src="{{ url_for('static', filename='images/Icon.png') }}" width="40" alt="Task-Hive Logo">
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" width="40" alt="Task-Hive Logo" style="margin-right: 0.5rem;">
                     <span class="logo-text">Task-Hive</span>
                 </div>
 
@@ -118,7 +238,7 @@
 
                         <div id="notif-dropdown" class="notif-dropdown">
                             <div class="notif-header">
-                                <span class="notif-header-title">🔔 Notifications</span>
+                                <span class="notif-header-title">� Notifications</span>
                                 <span id="notif-unread-count" class="notif-header-badge" style="display:none;">0
                                     new</span>
                             </div>
@@ -141,222 +261,198 @@
             </div>
         </div>
     </header>
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <div class="dashboard-wrapper">
+        <main class="dashboard-main" style="margin-left: 0;">
+            <div class="container" style="max-width: 1100px;">
 
-        <aside class="sidebar">
-            <nav class="sidebar-nav">
-                <a href="/dashboard" class="sidebar-link active">Dashboard</a>
-                <a href="/dashboard#available-tasks-section" class="sidebar-link">Available Tasks</a>
-                <a href="/dashboard#post-task-section" class="sidebar-link">Post a Task</a>
-                <a href="/dashboard#my-tasks-section" class="sidebar-link">My Tasks</a>
-                <a href="/leaderboard" class="sidebar-link">Leaderboard</a>
-                <a href="/history" class="sidebar-link">History</a>
-            </nav>
-
-            <div style="margin-top: auto;">
-                <a href="/profile" class="sidebar-link" style="display: block;">Profile</a>
-                <a href="/logout" class="sidebar-link"
-                    style="display: block; color: #ef4444; margin-top: 1rem;">Logout</a>
-            </div>
-        </aside>
-
-        <main class="dashboard-main">
-            <div class="container" style="max-width: 800px;">
-                <h1 class="welcome-title">
-                    <span id="greeting-text"></span> {{ user.name }}
-                    <img src="{{ url_for('static', filename='images/hello-icon.png') }}" alt="Wave"
-                        class="welcome-icon">
-                </h1>
-                <p class="welcome-subtitle">What do you need help with today?</p>
-
-                <div class="card glass" id="post-task-section" style="margin-bottom: 2rem;">
-                    <h2 class="mb-3">Post a Task</h2>
-                    <form action="/post-task" method="POST" class="post-task-form">
-                        <input type="hidden" name="latitude" id="form-lat">
-                        <input type="hidden" name="longitude" id="form-lng">
-                        <div style="display: flex; gap: 1rem;">
-                            <input type="text" name="title" placeholder="What needs to be done?" required
-                                style="flex: 1.8;">
-                            <input type="text" name="duration" placeholder="When? (e.g., 5-6 PM for 1 Month)" required
-                                style="flex: 1.2;">
+                <!-- ========== HOME PAGE ========== -->
+                <div id="home-pane" class="page-pane active">
+                    <div style="display: flex; flex-direction: column; gap: 2rem;">
+                        <!-- Welcome Block -->
+                        <div style="display: flex; align-items: center; gap: 1.5rem; padding: 2rem; background: linear-gradient(135deg, rgba(59,228,119,0.08), rgba(139,92,246,0.08)); border-radius: 20px; border: 1px solid rgba(255,255,255,0.07);">
+                            <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.8rem; color: #000; overflow: hidden; flex-shrink: 0; border: 3px solid rgba(59,228,119,0.4); box-shadow: 0 0 20px rgba(59,228,119,0.2);">
+                                {% if user.profile_pic %}
+                                <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" style="width:100%;height:100%;object-fit:cover;">
+                                {% else %}
+                                {{ user.name[0] | upper }}
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h1 style="font-size: 2rem; font-weight: 900; color: #fff; margin: 0; letter-spacing: -0.5px;">Welcome back, <span style="color: var(--primary);">{{ user.name }}</span></h1>
+                                <p style="color: #94a3b8; margin: 0.25rem 0 0; font-size: 1rem;">Ready to make an impact today? ✨</p>
+                            </div>
                         </div>
 
-                        <textarea name="description" placeholder="Provide some details..." required></textarea>
-
-                        <div style="display: flex; gap: 1rem;">
-                            <select name="category" required style="flex: 1;">
-                                <option value="">Select Category...</option>
-
-                                <optgroup label="Household">
-                                    <option value="cleaning">Cleaning</option>
-                                    <option value="cooking">Cooking / Meal Prep</option>
-                                    <option value="laundry">Laundry / Ironing</option>
-                                    <option value="dishwashing">Dishwashing</option>
-                                    <option value="organizing">Home Organization</option>
-                                </optgroup>
-
-                                <optgroup label="Shopping & Errands">
-                                    <option value="grocery">Grocery Shopping</option>
-                                    <option value="medicine">Medicine Pickup</option>
-                                    <option value="parcel">Parcel Pickup/Drop</option>
-                                    <option value="bill">Bill Payments</option>
-                                    <option value="queue">Queue Standing</option>
-                                </optgroup>
-
-                                <optgroup label="Delivery & Transport">
-                                    <option value="food_delivery">Food Delivery</option>
-                                    <option value="package_delivery">Package Delivery</option>
-                                    <option value="document_delivery">Document Delivery</option>
-                                    <option value="ride">Ride Assistance</option>
-                                </optgroup>
-
-                                <optgroup label="Repairs & Maintenance">
-                                    <option value="electrical">Electrical Work</option>
-                                    <option value="plumbing">Plumbing</option>
-                                    <option value="furniture">Furniture Repair</option>
-                                    <option value="appliance">Appliance Fixing</option>
-                                    <option value="handyman">General Handyman</option>
-                                </optgroup>
-
-                                <optgroup label="Academic & Study Help">
-                                    <option value="assignment">Assignment Help</option>
-                                    <option value="notes">Notes Making</option>
-                                    <option value="tutoring">Tutoring</option>
-                                    <option value="project">Project Assistance</option>
-                                    <option value="presentation">Presentation Help</option>
-                                </optgroup>
-
-                                <optgroup label="Digital & Tech">
-                                    <option value="data_entry">Data Entry</option>
-                                    <option value="typing">Typing Work</option>
-                                    <option value="design">Graphic Design</option>
-                                    <option value="website">Website Help</option>
-                                    <option value="software">App/Software Setup</option>
-                                </optgroup>
-
-                                <optgroup label="Personal Assistance">
-                                    <option value="elderly">Elderly Assistance</option>
-                                    <option value="babysitting">Babysitting</option>
-                                    <option value="petcare">Pet Care</option>
-                                    <option value="companion">Companion Help</option>
-                                </optgroup>
-
-                                <optgroup label="Events & Occasions">
-                                    <option value="setup">Event Setup</option>
-                                    <option value="decoration">Decoration</option>
-                                    <option value="photography">Photography/Videography</option>
-                                    <option value="crowd">Crowd Management</option>
-                                    <option value="invitation">Invitation Distribution</option>
-                                </optgroup>
-
-                                <optgroup label="Beauty & Grooming">
-                                    <option value="makeup">Makeup</option>
-                                    <option value="mehndi">Mehndi / Henna</option>
-                                    <option value="hair">Hair Styling</option>
-                                    <option value="skincare">Skincare / Facials</option>
-                                    <option value="nails">Nail Care</option>
-                                    <option value="grooming">Groom Styling</option>
-                                </optgroup>
-
-                                <optgroup label="Miscellaneous">
-                                    <option value="moving">Moving Help</option>
-                                    <option value="waiting">Waiting Tasks</option>
-                                    <option value="small_tasks">Small Favors</option>
-                                    <option value="other">Other</option>
-                                </optgroup>
-                            </select>
-
-                            <input type="number" name="payment" placeholder="Budget (₹)" required style="flex: 1;">
-                        </div>
-
-                        <button type="submit" class="btn btn-primary mt-4" style="width: 100%;">Post Task</button>
-                    </form>
-                </div>
-                <div id="my-tasks-section">
-                    <div class="tasks-section" id="my-accepted-section" style="display: none;">
-                        <div class="tasks-header">
-                            <h2 class="section-title" style="margin-bottom: 0; color: rgb(43, 75, 43);">Your Active
-                                Tasks</h2>
-                        </div>
-                        <div id="my-accepted-list" class="tasks-feed"></div>
-                    </div>
-
-                    <div class="tasks-section" id="my-posted-section" style="display: none;">
-                        <div class="tasks-header">
-                            <h2 class="section-title" style="margin-bottom: 0;">Tasks You Posted</h2>
-                        </div>
-                        <div id="my-posted-list" class="tasks-feed"></div>
-                    </div>
-
-                    <div id="available-tasks-section">
-                        <div class="tasks-section">
-                            <div class="tasks-header"
-                                style="flex-direction: column; align-items: flex-start; gap: 1.5rem;">
-                                <h2 class="section-title" style="margin-bottom: 0;">Available Tasks Near You</h2>
-
-                                <div class="filter-buttons"
-                                    style="width: 100%; display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 0rem; padding-bottom: 1.5rem;">
-                                    <script>
-                                        const categories = [
-                                            { id: 'all', name: 'All' },
-                                            { id: 'household', name: 'Household' },
-                                            { id: 'shopping', name: 'Shopping' },
-                                            { id: 'delivery', name: 'Delivery' },
-                                            { id: 'repairs', name: 'Repairs' },
-                                            { id: 'academic', name: 'Academic' },
-                                            { id: 'tech', name: 'Tech' },
-                                            { id: 'personal', name: 'Personal Assistance' },
-                                            { id: 'events', name: 'Events' },
-                                            { id: 'beauty', name: 'Beauty' },
-                                            { id: 'misc', name: 'Misc' }
-                                        ];
-
-                                        categories.forEach(cat => {
-                                            document.write(`
-                                                <button class="btn filter-btn ${cat.id === 'all' ? 'active' : ''}" onclick="filterCategory('${cat.id}', this)"
-                                                    style="background: ${cat.id === 'all' ? 'var(--primary)' : 'rgba(255,255,255,0.05)'}; 
-                                                           color: ${cat.id === 'all' ? '#000' : 'white'}; 
-                                                           border: 1px solid ${cat.id === 'all' ? 'var(--primary)' : 'rgba(255,255,255,0.1)'}; 
-                                                           border-radius: 9999px; 
-                                                           padding: 0.4rem 1rem; 
-                                                           font-weight: 600; 
-                                                           font-size: 0.85rem; 
-                                                           cursor: pointer;
-                                                           transition: 0.3s;
-                                                           box-shadow: ${cat.id === 'all' ? '0 0 10px rgba(59, 228, 119, 0.3)' : 'none'};">
-                                                    ${cat.name}
-                                                </button>
-                                            `);
-                                        });
-
-                                        document.addEventListener('click', function (e) {
-                                            if (e.target && e.target.classList.contains('filter-btn')) {
-                                                document.querySelectorAll('.filter-btn').forEach(btn => {
-                                                    btn.style.background = 'rgba(255,255,255,0.05)';
-                                                    btn.style.color = 'white';
-                                                    btn.style.border = '1px solid rgba(255,255,255,0.1)';
-                                                    btn.style.boxShadow = 'none';
-                                                });
-                                                e.target.style.background = 'var(--primary)';
-                                                e.target.style.color = '#000';
-                                                e.target.style.border = '1px solid var(--primary)';
-                                                e.target.style.boxShadow = '0 0 10px rgba(59, 228, 119, 0.3)';
-                                            }
-                                        });
-                                    </script>
+                        <!-- Quick Stats -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <div class="card glass" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(59, 228, 119, 0.15); display: flex; align-items: center; justify-content: center; color: #3BE477;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.5rem; color: #fff; margin: 0; font-weight: 800;">₹{{ user.balance | default(0) }}</h3>
+                                    <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 0; font-weight: 600;">Wallet Balance</p>
                                 </div>
                             </div>
+                            <div class="card glass" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(139, 92, 246, 0.15); display: flex; align-items: center; justify-content: center; color: #8b5cf6;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.5rem; color: #fff; margin: 0; font-weight: 800;">{{ user.active_tasks | default(0) }}</h3>
+                                    <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 0; font-weight: 600;">Active Tasks</p>
+                                </div>
+                            </div>
+                            <div class="card glass" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                                <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(236, 72, 153, 0.15); display: flex; align-items: center; justify-content: center; color: #ec4899;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                </div>
+                                <div>
+                                    <h3 style="font-size: 1.5rem; color: #fff; margin: 0; font-weight: 800;">{{ user.tasks_completed | default(0) }}</h3>
+                                    <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 0; font-weight: 600;">Tasks Done</p>
+                                </div>
+                            </div>
+                        </div>
 
-                            <div id="task-list" class="tasks-feed"></div>
+                        <!-- Quick Actions -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+                            <button onclick="showPage('tasks')" class="card glass" style="padding: 1.5rem; text-align: left; border: none; cursor: pointer; transition: 0.3s; background: rgba(59,228,119,0.05); border: 1px solid rgba(59,228,119,0.2);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                                <div style="color:#3BE477; margin-bottom:0.75rem;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></div>
+                                <h3 style="color:#fff; margin:0; font-size:1.1rem; font-weight:800;">Browse Tasks</h3>
+                                <p style="color:#94a3b8; margin:0.3rem 0 0; font-size:0.85rem;">Find nearby tasks to earn money</p>
+                            </button>
+                            <button onclick="showPage('post')" class="card glass" style="padding: 1.5rem; text-align: left; border: none; cursor: pointer; transition: 0.3s; background: rgba(236,72,153,0.05); border: 1px solid rgba(236,72,153,0.2);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                                <div style="color:#ec4899; margin-bottom:0.75rem;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></div>
+                                <h3 style="color:#fff; margin:0; font-size:1.1rem; font-weight:800;">Post a Task</h3>
+                                <p style="color:#94a3b8; margin:0.3rem 0 0; font-size:0.85rem;">Get help from your community</p>
+                            </button>
+                            <button onclick="showPage('activity')" class="card glass" style="padding: 1.5rem; text-align: left; border: none; cursor: pointer; transition: 0.3s; background: rgba(139,92,246,0.05); border: 1px solid rgba(139,92,246,0.2);" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                                <div style="color:#8b5cf6; margin-bottom:0.75rem;"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+                                <h3 style="color:#fff; margin:0; font-size:1.1rem; font-weight:800;">My Activity</h3>
+                                <p style="color:#94a3b8; margin:0.3rem 0 0; font-size:0.85rem;">Track your tasks and progress</p>
+                            </button>
                         </div>
                     </div>
+                </div>
 
+                <!-- ========== TASKS PAGE ========== -->
+                <div id="tasks-pane" class="page-pane" style="display:none;">
+                    <div class="tasks-section">
+                        <div style="margin-bottom: 1.5rem;">
+                            <h2 style="font-size: 1.8rem; font-weight: 900; color: #fff; margin: 0;">Available Tasks</h2>
+                            <p style="color: #94a3b8; margin: 0.25rem 0 0;">Find tasks near you and start earning</p>
+                        </div>
+                        <div class="filter-buttons" style="width: 100%; display: flex; gap: 1.5rem; padding-bottom: 1.5rem; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
+                            <button class="filter-btn-new active" onclick="filterCategory('all', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                                <span>All</span>
+                            </button>
+                            <button class="filter-btn-new" onclick="filterCategory('household', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                                <span>Household</span>
+                            </button>
+                            <button class="filter-btn-new" onclick="filterCategory('shopping', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                                <span>Shopping</span>
+                            </button>
+                            <button class="filter-btn-new" onclick="filterCategory('delivery', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                                <span>Delivery</span>
+                            </button>
+                            <button class="filter-btn-new" onclick="filterCategory('repairs', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                                <span>Repairs</span>
+                            </button>
+                            <button class="filter-btn-new" onclick="filterCategory('academic', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                                <span>Academic</span>
+                            </button>
+                            <button class="filter-btn-new" onclick="filterCategory('tech', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                                <span>Tech</span>
+                            </button>
+                            <button class="filter-btn-new" onclick="filterCategory('personal', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                <span>Personal</span>
+                            </button>
+                            <button class="filter-btn-new" onclick="filterCategory('events', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                <span>Events</span>
+                            </button>
+                            <button class="filter-btn-new" onclick="filterCategory('beauty', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                <span>Beauty</span>
+                            </button>
+                            <button class="filter-btn-new" onclick="filterCategory('misc', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                                <span>More</span>
+                            </button>
+                        </div>
+                        <div id="task-list" class="tasks-feed"></div>
+                    </div>
+                </div>
+
+                <!-- ========== POST TASK PAGE ========== -->
+                <div id="post-pane" class="page-pane" style="display:none;">
+                    <div style="margin-bottom: 2rem;">
+                        <h2 style="font-size: 1.8rem; font-weight: 900; color: #fff; margin: 0;">Post a Task</h2>
+                        <p style="color: #94a3b8; margin: 0.25rem 0 0;">Describe what you need done and set your budget</p>
+                    </div>
+                    <div id="post-task-section">
+                        <form action="/post-task" method="POST" class="post-task-form">
+                            <input type="hidden" name="latitude" id="form-lat">
+                            <input type="hidden" name="longitude" id="form-lng">
+                            <div style="display: flex; gap: 1rem;">
+                                <input type="text" name="title" placeholder="What needs to be done?" required style="flex: 1.8;">
+                                <input type="text" name="duration" placeholder="When? (e.g., 5-6 PM for 1 Month)" required style="flex: 1.2;">
+                            </div>
+                            <textarea name="description" placeholder="Provide some details..." required></textarea>
+                            <div style="display: flex; gap: 1rem;">
+                                <select name="category" required style="flex: 1;">
+                                    <option value="">Select Category...</option>
+                                    <optgroup label="Household"><option value="cleaning">Cleaning</option><option value="cooking">Cooking / Meal Prep</option><option value="laundry">Laundry / Ironing</option><option value="dishwashing">Dishwashing</option><option value="organizing">Home Organization</option></optgroup>
+                                    <optgroup label="Shopping & Errands"><option value="grocery">Grocery Shopping</option><option value="medicine">Medicine Pickup</option><option value="parcel">Parcel Pickup/Drop</option><option value="bill">Bill Payments</option><option value="queue">Queue Standing</option></optgroup>
+                                    <optgroup label="Delivery & Transport"><option value="food_delivery">Food Delivery</option><option value="package_delivery">Package Delivery</option><option value="document_delivery">Document Delivery</option><option value="ride">Ride Assistance</option></optgroup>
+                                    <optgroup label="Repairs & Maintenance"><option value="electrical">Electrical Work</option><option value="plumbing">Plumbing</option><option value="furniture">Furniture Repair</option><option value="appliance">Appliance Fixing</option><option value="handyman">General Handyman</option></optgroup>
+                                    <optgroup label="Academic & Study Help"><option value="assignment">Assignment Help</option><option value="notes">Notes Making</option><option value="tutoring">Tutoring</option><option value="project">Project Assistance</option><option value="presentation">Presentation Help</option></optgroup>
+                                    <optgroup label="Digital & Tech"><option value="data_entry">Data Entry</option><option value="typing">Typing Work</option><option value="design">Graphic Design</option><option value="website">Website Help</option><option value="software">App/Software Setup</option></optgroup>
+                                    <optgroup label="Personal Assistance"><option value="elderly">Elderly Assistance</option><option value="babysitting">Babysitting</option><option value="petcare">Pet Care</option><option value="companion">Companion Help</option></optgroup>
+                                    <optgroup label="Events & Occasions"><option value="setup">Event Setup</option><option value="decoration">Decoration</option><option value="photography">Photography/Videography</option><option value="crowd">Crowd Management</option><option value="invitation">Invitation Distribution</option></optgroup>
+                                    <optgroup label="Beauty & Grooming"><option value="makeup">Makeup</option><option value="mehndi">Mehndi / Henna</option><option value="hair">Hair Styling</option><option value="skincare">Skincare / Facials</option><option value="nails">Nail Care</option><option value="grooming">Groom Styling</option></optgroup>
+                                    <optgroup label="Miscellaneous"><option value="moving">Moving Help</option><option value="waiting">Waiting Tasks</option><option value="small_tasks">Small Favors</option><option value="other">Other</option></optgroup>
+                                </select>
+                                <input type="number" name="payment" placeholder="Budget (₹)" required style="flex: 1;">
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-4" style="width: 100%;">Post Task</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ========== ACTIVITY PAGE ========== -->
+                <div id="activity-pane" class="page-pane" style="display:none;">
+                    <div style="margin-bottom: 2rem;">
+                        <h2 style="font-size: 1.8rem; font-weight: 900; color: #fff; margin: 0;">My Activity</h2>
+                        <p style="color: #94a3b8; margin: 0.25rem 0 0;">Your posted and accepted tasks</p>
+                    </div>
+                    <div id="my-tasks-section">
+                        <div class="tasks-section" id="my-accepted-section" style="display: none;">
+                            <div class="tasks-header">
+                                <h2 class="section-title" style="margin-bottom: 0; color: #3BE477;">Your Active Tasks</h2>
+                            </div>
+                            <div id="my-accepted-list" class="tasks-feed"></div>
+                        </div>
+                        <div class="tasks-section" id="my-posted-section" style="display: none;">
+                            <div class="tasks-header">
+                                <h2 class="section-title" style="margin-bottom: 0;">Tasks You Posted</h2>
+                            </div>
+                            <div id="my-posted-list" class="tasks-feed"></div>
+                        </div>
+                    </div>
                 </div>
 
         </main>
     </div>
-    <footer class="footer" style="margin-left: 280px; width: calc(100% - 280px);">
+    <footer class="footer" style="margin-left: 0; width: 100%; padding-bottom: 8rem;">
         <div class="container footer-content">
             <div class="footer-brand">
                 <div class="logo-icon">
@@ -376,6 +472,62 @@
             </div>
         </div>
     </footer>
+    
+    <style>
+        .page-pane { display: none; }
+        .page-pane.active { display: block; }
+    </style>
+    <script>
+        function showPage(page) {
+            document.querySelectorAll('.page-pane').forEach(p => { p.style.display = 'none'; p.classList.remove('active'); });
+            document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('active'));
+            const pane = document.getElementById(page + '-pane');
+            if (pane) { pane.style.display = 'block'; pane.classList.add('active'); }
+            const dockMap = { home: 'dock-home', tasks: 'dock-tasks', post: 'dock-post', activity: 'dock-activity' };
+            const dockEl = document.getElementById(dockMap[page]);
+            if (dockEl) dockEl.classList.add('active');
+            // Load tasks data when switching to tasks page
+            if (page === 'tasks') { if (typeof loadTasks === 'function') loadTasks(); }
+            if (page === 'activity') { if (typeof loadMyTasks === 'function') loadMyTasks(); }
+            window.scrollTo(0, 0);
+        }
+        // Initialize home as default
+        document.addEventListener('DOMContentLoaded', () => showPage('home'));
+    </script>
+
+    <!-- Floating App Dock Navigation -->
+    <nav class="app-dock">
+        <div class="dock-item active" id="dock-home" onclick="showPage('home')" style="cursor:pointer;" title="Home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Home</span>
+        </div>
+        <div class="dock-item" id="dock-tasks" onclick="showPage('tasks')" style="cursor:pointer;" title="Browse Tasks">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            <span>Tasks</span>
+        </div>
+        <div class="dock-item" id="dock-post" onclick="showPage('post')" style="cursor:pointer;" title="Post a Task">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#ec4899;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <span>Post</span>
+        </div>
+        <div class="dock-item" onclick="showTab('activity', event); document.querySelectorAll('.dock-item').forEach(i=>i.classList.remove('active')); this.classList.add('active');" style="cursor: pointer;" title="My Tasks">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <span>Activity</span>
+        </div>
+        <div class="dock-divider"></div>
+        <a href="/leaderboard" class="dock-item" title="Trust & Reputation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#fbbf24;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            <span>Trust ⭐</span>
+        </a>
+        <div class="dock-divider"></div>
+        <a href="/profile" class="dock-item" title="Profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Profile</span>
+        </a>
+        <a href="/logout" class="dock-item" title="Logout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#ef4444;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span>Logout</span>
+        </a>
+    </nav>
     <div id="apply-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 class="modal-title">Apply for Task</h3>
@@ -410,6 +562,41 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // TAB NAVIGATION FUNCTION
+        function showTab(tabName, event) {
+            if (event) event.preventDefault();
+
+            // Hide all panes
+            const panes = document.querySelectorAll('.tab-pane');
+            panes.forEach(pane => pane.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Remove active class from sidebar links
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            sidebarLinks.forEach(link => link.classList.remove('active'));
+
+            // Show selected pane
+            const selectedPane = document.getElementById(tabName + '-pane');
+            if (selectedPane) {
+                selectedPane.classList.add('active');
+            }
+
+            // Add active class to clicked button
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+
+            // Load appropriate data based on tab
+            if (tabName === 'marketplace') {
+                loadTasks();
+            } else if (tabName === 'activity') {
+                loadMyTasks();
+            }
+        }
+
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
 
@@ -655,14 +842,14 @@
                                 updateFormHtml = `
                                     <div style="margin-top: 0.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 0.75rem;">
                                         <label style="color: #ffffff; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Post New Update</label>
-                                        <div style="display: flex; gap: 0.5rem;">
-                                            <input type="number" id="perc-${task.id}" placeholder="%" min="0" max="100"
-                                                style="width: 80px; background: rgba(0,0,0,0.6); color: white; border: 1px solid #3BE477; border-radius: 0.5rem; padding: 0.75rem; font-size: 1rem; font-weight: bold; outline: none; text-align: center;"
-                                                oninput="toggleProofInput(${task.id})" onclick="event.stopPropagation();">
-                                            <input type="text" id="msg-${task.id}" placeholder="What did you just complete?"
-                                                style="flex: 1; background: rgba(0,0,0,0.6); color: white; border: 1px solid #3BE477; border-radius: 0.5rem; padding: 0.75rem; font-size: 1rem; outline: none;"
+                                        <div class="percentage-pills">
+                                            <div id="pill-50-${task.id}" class="perc-pill" onclick="selectPercentage(${task.id}, 50, event)">50% (Half)</div>
+                                            <div id="pill-100-${task.id}" class="perc-pill" onclick="selectPercentage(${task.id}, 100, event)">100% (Done)</div>
+                                            <input type="hidden" id="perc-${task.id}" value="">
+                                         </div>
+                                        <input type="text" id="msg-${task.id}" placeholder="What did you just complete?"
+                                                style="width: 100%; background: rgba(0,0,0,0.6); color: white; border: 1px solid #3BE477; border-radius: 0.5rem; padding: 0.75rem; font-size: 1rem; outline: none;"
                                                 onclick="event.stopPropagation();">
-                                        </div>
                                         <div id="proof-container-${task.id}" style="display: none; background: rgba(59, 228, 119, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px dashed #3BE477; margin-top: 0.5rem;">
                                             <label style="display: block; color: #3BE477; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem;">📸 Upload Proof of Work (Required for 50% & 100%)</label>
                                             <input type="file" id="proof-${task.id}" style="width: 100%; color: white; font-size: 0.9rem;" onclick="event.stopPropagation();">
@@ -817,6 +1004,50 @@
                         });
                     } else { postedSection.style.display = "none"; }
                 });
+        }
+
+        function selectPercentage(taskId, percentage, event) {
+            event.stopPropagation();
+            
+            // Set the hidden input value
+            document.getElementById(`perc-${taskId}`).value = percentage;
+            
+            // Update pill styling
+            const pill50 = document.getElementById(`pill-50-${taskId}`);
+            const pill100 = document.getElementById(`pill-100-${taskId}`);
+            
+            // Reset all pills
+            if (pill50) {
+                pill50.style.background = 'rgba(255,255,255,0.1)';
+                pill50.style.color = 'white';
+                pill50.style.border = '1px solid rgba(255,255,255,0.2)';
+            }
+            if (pill100) {
+                pill100.style.background = 'rgba(255,255,255,0.1)';
+                pill100.style.color = 'white';
+                pill100.style.border = '1px solid rgba(255,255,255,0.2)';
+            }
+            
+            // Highlight selected pill
+            if (percentage === 50 && pill50) {
+                pill50.style.background = '#3BE477';
+                pill50.style.color = '#000';
+                pill50.style.border = '1px solid #3BE477';
+                pill50.style.fontWeight = 'bold';
+            } else if (percentage === 100 && pill100) {
+                pill100.style.background = '#3BE477';
+                pill100.style.color = '#000';
+                pill100.style.border = '1px solid #3BE477';
+                pill100.style.fontWeight = 'bold';
+            }
+            
+            // Show/hide proof input
+            const proofContainer = document.getElementById(`proof-container-${taskId}`);
+            if (percentage == 50 || percentage == 100) {
+                proofContainer.style.display = 'block';
+            } else {
+                proofContainer.style.display = 'none';
+            }
         }
 
         async function postTaskUpdate(taskId, event) {
@@ -1091,13 +1322,16 @@
 
         function setGreeting() {
             const hour = new Date().getHours();
-            let greeting = 'Good evening,';
+            let greeting = 'Good evening';
+            let emoji = '🌙';
             if (hour < 12) {
-                greeting = 'Good morning,';
+                greeting = 'Good morning';
+                emoji = '☀️';
             } else if (hour < 18) {
-                greeting = 'Good afternoon,';
+                greeting = 'Good afternoon';
+                emoji = '👋';
             }
-            document.getElementById('greeting-text').innerText = greeting;
+            document.getElementById('greeting-text').innerHTML = greeting + ' ' + emoji + ',';
         }
 
         function setActive(clickedElement) {
@@ -1211,6 +1445,13 @@
         loadNotifications();
         setInterval(loadNotifications, 30000);
         setGreeting();
+        // Fix notification emoji - updated approach
+        setTimeout(function() {
+            const notifHeader = document.querySelector('.notif-header-title');
+            if (notifHeader) {
+                notifHeader.innerHTML = '🔔 Notifications';
+            }
+        }, 100);
         loadTasks();
         loadMyTasks();
     </script>

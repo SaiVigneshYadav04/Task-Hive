@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard - Task-Hive</title>
+    <title>Trust & Reputation - Task-Hive</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css', v='2.0') }}">
 </head>
 <body>
@@ -11,10 +11,7 @@
         <div class="container">
             <div class="dashboard-header-content">
                 <div class="logo">
-                    <button class="mobile-toggle" id="sidebar-toggle">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                    </button>
-                    <img src="{{ url_for('static', filename='images/Icon.png') }}" width="40" alt="Task-Hive Logo">
+                    <img src="{{ url_for('static', filename='images/Icon.png') }}" width="40" alt="Task-Hive Logo" style="margin-right: 0.5rem;">
                     <span class="logo-text">Task-Hive</span>
                 </div>
                 <div class="profile-menu" style="display: flex; align-items: center; gap: 1.25rem; margin-left: auto;">
@@ -33,130 +30,92 @@
         </div>
     </header>
 
-    <div class="sidebar-overlay" id="sidebar-overlay"></div>
-
     <div class="dashboard-wrapper">
-        
-        <aside class="sidebar">
-            <nav class="sidebar-nav">
-                <a href="/dashboard" class="sidebar-link">Dashboard</a>
-                <a href="/dashboard#available-tasks-section" class="sidebar-link">Available Tasks</a>
-                <a href="/dashboard#post-task-section" class="sidebar-link">Post a Task</a>
-                <a href="/dashboard#my-tasks-section" class="sidebar-link">My Tasks</a>
-                <a href="/leaderboard" class="sidebar-link active">Leaderboard</a>
-                <a href="/history" class="sidebar-link">History</a>
-            </nav>
-
-            <div style="margin-top: auto;">
-                <a href="/profile" class="sidebar-link" style="display: block;">Profile</a>
-                <a href="/logout" class="sidebar-link"
-                    style="display: block; color: #ef4444; margin-top: 1rem;">Logout</a>
-            </div>
-        </aside>
-
         <main class="dashboard-main">
-            <div class="container" style="max-width: 800px; padding-top: 2rem;">
+            <div class="container" style="max-width: 900px; padding-top: 2rem;">
                 
                 <div style="text-align: center; margin-bottom: 3rem;">
-                    <h1 style="font-size: 3rem; font-weight: 800; color: #fff; letter-spacing: -1px; margin-bottom: 0.5rem;">Wall of Fame</h1>
-                    <p style="color: var(--text-muted); font-size: 1.1rem;">The most trusted and active members of the Task-Hive community.</p>
+                    <h1 style="font-size: 3rem; font-weight: 900; color: #fff; letter-spacing: -1px; margin-bottom: 0.5rem;">Trust & Reputation</h1>
+                    <p style="color: var(--text-muted); font-size: 1.1rem;">Your community standing based on task successes and peer reviews.</p>
                 </div>
 
-                <div style="margin-bottom: 2.5rem; display: flex; justify-content: center;">
-                    <div style="width: 100%; max-width: 400px;">
-                        <label for="category-filter" style="display: block; font-size: 0.85rem; font-weight: 700; color: #4b5563; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; text-align: center;">Filter by Specialty</label>
-                        <select id="category-filter" onchange="loadLeaderboard(this.value)" style="width: 100%; padding: 0.75rem 1rem; border-radius: 0.5rem; border: 1px solid #d1d5db; font-size: 1rem; color: #111827; background-color: white; cursor: pointer; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); appearance: none; outline: none;">
-                            <option value="all">All Categories</option>
+                {% set r_count = user.rating_count or 0 %}
+                {% set t_rating = user.total_rating or 0.0 %}
+                {% set avg_rating = (t_rating / r_count) | round(1) if r_count > 0 else 0.0 %}
+                {% set t_done = user.tasks_completed or 0 %}
 
-                            <optgroup label="Household">
-                                <option value="cleaning">Cleaning</option>
-                                <option value="cooking">Cooking / Meal Prep</option>
-                                <option value="laundry">Laundry / Ironing</option>
-                                <option value="dishwashing">Dishwashing</option>
-                                <option value="organizing">Home Organization</option>
-                            </optgroup>
+                {% set badge = 'Novice Starter' %}
+                {% set badge_color = '#94a3b8' %}
+                {% if t_done >= 50 %}
+                    {% set badge = 'Task Master 👑' %}
+                    {% set badge_color = '#fbbf24' %}
+                {% elif t_done >= 10 %}
+                    {% set badge = 'Trusted Pro ⭐' %}
+                    {% set badge_color = '#3BE477' %}
+                {% elif t_done > 0 %}
+                    {% set badge = 'Rising Star ✨' %}
+                    {% set badge_color = '#ec4899' %}
+                {% endif %}
 
-                            <optgroup label="Shopping & Errands">
-                                <option value="grocery">Grocery Shopping</option>
-                                <option value="medicine">Medicine Pickup</option>
-                                <option value="parcel">Parcel Pickup/Drop</option>
-                                <option value="bill">Bill Payments</option>
-                                <option value="queue">Queue Standing</option>
-                            </optgroup>
-
-                            <optgroup label="Delivery & Transport">
-                                <option value="food_delivery">Food Delivery</option>
-                                <option value="package_delivery">Package Delivery</option>
-                                <option value="document_delivery">Document Delivery</option>
-                                <option value="ride">Ride Assistance</option>
-                            </optgroup>
-
-                            <optgroup label="Repairs & Maintenance">
-                                <option value="electrical">Electrical Work</option>
-                                <option value="plumbing">Plumbing</option>
-                                <option value="furniture">Furniture Repair</option>
-                                <option value="appliance">Appliance Fixing</option>
-                                <option value="handyman">General Handyman</option>
-                            </optgroup>
-
-                            <optgroup label="Academic & Study Help">
-                                <option value="assignment">Assignment Help</option>
-                                <option value="notes">Notes Making</option>
-                                <option value="tutoring">Tutoring</option>
-                                <option value="project">Project Assistance</option>
-                                <option value="presentation">Presentation Help</option>
-                            </optgroup>
-
-                            <optgroup label="Digital & Tech">
-                                <option value="data_entry">Data Entry</option>
-                                <option value="typing">Typing Work</option>
-                                <option value="design">Graphic Design</option>
-                                <option value="website">Website Help</option>
-                                <option value="software">App/Software Setup</option>
-                            </optgroup>
-
-                            <optgroup label="Personal Assistance">
-                                <option value="elderly">Elderly Assistance</option>
-                                <option value="babysitting">Babysitting</option>
-                                <option value="petcare">Pet Care</option>
-                                <option value="companion">Companion Help</option>
-                            </optgroup>
-
-                            <optgroup label="Events & Occasions">
-                                <option value="setup">Event Setup</option>
-                                <option value="decoration">Decoration</option>
-                                <option value="photography">Photography/Videography</option>
-                                <option value="crowd">Crowd Management</option>
-                                <option value="invitation">Invitation Distribution</option>
-                            </optgroup>
-
-                            <optgroup label="Beauty & Grooming">
-                                <option value="makeup">Makeup</option>
-                                <option value="mehndi">Mehndi / Henna</option>
-                                <option value="hair">Hair Styling</option>
-                                <option value="skincare">Skincare / Facials</option>
-                                <option value="nails">Nail Care</option>
-                                <option value="grooming">Groom Styling</option>
-                            </optgroup>
-
-                            <optgroup label="Miscellaneous">
-                                <option value="moving">Moving Help</option>
-                                <option value="waiting">Waiting Tasks</option>
-                                <option value="small_tasks">Small Favors</option>
-                                <option value="other">Other</option>
-                            </optgroup>
-                        </select>
+                <!-- Main Trust Score Card -->
+                <div class="card glass flex items-center justify-between" style="padding: 2.5rem; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); background: linear-gradient(135deg, rgba(30,41,59,0.8) 0%, rgba(15,23,42,0.95) 100%); margin-bottom: 3rem; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="display: flex; align-items: center; gap: 2rem;">
+                        <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 3rem; color: #000; overflow: hidden; border: 4px solid var(--primary); box-shadow: 0 0 20px var(--primary-glow);">
+                            {% if user.profile_pic %}
+                            <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            {{ user.name[0] | upper }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h2 style="margin: 0 0 0.5rem 0; font-size: 2rem; font-weight: 800; color: #fff;">{{ user.name }}</h2>
+                            <span style="background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 50px; font-weight: 800; font-size: 0.85rem; color: {{ badge_color }}; border: 1px solid {{ badge_color }}; box-shadow: 0 0 10px {{ badge_color }}40;">{{ badge }}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end;">
+                        <div style="font-size: 4rem; font-weight: 900; color: #fff; line-height: 1; display: flex; align-items: center; gap: 0.5rem;">
+                            {{ avg_rating }} <span style="font-size: 2rem; color: #fbbf24;">⭐</span>
+                        </div>
+                        <span style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 1px; margin-top: 0.5rem;">Based on {{ r_count }} reviews</span>
                     </div>
                 </div>
 
-                <div id="leaderboard-list" style="display: flex; flex-direction: column; gap: 1rem; margin-bottom: 4rem;">
+                <!-- Trust Metrics Grid -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 4rem;">
+                    
+                    <div class="card glass" style="padding: 2rem; text-align: left;">
+                        <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(59, 228, 119, 0.15); display: flex; align-items: center; justify-content: center; color: #3BE477; margin-bottom: 1rem;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                        <h3 style="font-size: 2.5rem; color: #fff; margin: 0; font-weight: 900;">{{ t_done }}</h3>
+                        <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 0; font-weight: 700;">Lifetime Tasks</p>
+                    </div>
+
+                    <div class="card glass" style="padding: 2rem; text-align: left;">
+                        <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; color: #38bdf8; margin-bottom: 1rem;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </div>
+                        <h3 style="font-size: 2.5rem; color: #fff; margin: 0; font-weight: 900;">100%</h3>
+                        <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 0; font-weight: 700;">Completion Rate</p>
+                    </div>
+
+                    <div class="card glass" style="padding: 2rem; text-align: left;">
+                        <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(168, 85, 247, 0.15); display: flex; align-items: center; justify-content: center; color: #a855f7; margin-bottom: 1rem;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </div>
+                        <h3 style="font-size: 2.5rem; color: #fff; margin: 0; font-weight: 900;">High</h3>
+                        <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 0; font-weight: 700;">Response Speed</p>
+                    </div>
+
                 </div>
+
             </div>
         </main>
 
     </div>
 
-<footer class="footer" style="margin-left: 280px; width: calc(100% - 280px);">
+<footer class="footer">
     <div class="container footer-content">
       <div class="footer-brand">
         <div class="logo-icon">
@@ -176,60 +135,41 @@
       </div>
     </div>
   </footer>
-<script>
-        function loadLeaderboard(category = "all") {
-            fetch(`/api/leaderboard?category=${category}`)
-                .then(res => res.json())
-                .then(data => {
-                    const container = document.getElementById("leaderboard-list");
-                    container.innerHTML = "";
 
-                    if (data.length === 0) {
-                        container.innerHTML = `<div style="text-align: center; padding: 3rem; background: white; border-radius: 1rem; border: 1px solid #e5e7eb;"><p style="color: #6b7280; font-size: 1.1rem;">No one has completed a task in this category yet. Be the first to claim the #1 spot!</p></div>`;
-                        return;
-                    }
+    <!-- Floating App Dock Navigation -->
+    <nav class="app-dock">
+        <a href="/dashboard" class="dock-item" title="Dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+            <span>Home</span>
+        </a>
+        <a href="/dashboard" class="dock-item" title="Available Tasks">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            <span>Tasks</span>
+        </a>
+        <a href="/dashboard" class="dock-item" title="Post a Task">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#ec4899;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            <span>Post</span>
+        </a>
+        <a href="/dashboard" class="dock-item" title="My Tasks">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <span>Activity</span>
+        </a>
+        <div class="dock-divider"></div>
+        <a href="/leaderboard" class="dock-item active" title="Trust & Reputation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#fbbf24;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            <span>Trust ⭐</span>
+        </a>
+        <div class="dock-divider"></div>
+        <a href="/profile" class="dock-item" title="Profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Profile</span>
+        </a>
+        <a href="/logout" class="dock-item" title="Logout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#ef4444;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span>Logout</span>
+        </a>
+    </nav>
 
-                    data.forEach((worker, index) => {
-                        let rankMedal = `#${index + 1}`;
-                        let cardStyle = "background: white; border: 1px solid #e5e7eb;";
-                        
-                        if (index === 0) {
-                            rankMedal = '🥇';
-                            cardStyle = "background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(217, 119, 6, 0.4) 100%); border: 2px solid #fbbf24; transform: scale(1.02); z-index: 10;";
-                        } else if (index === 1) {
-                            rankMedal = '🥈';
-                            cardStyle = "background: linear-gradient(135deg, rgba(156, 163, 175, 0.2) 0%, rgba(75, 85, 99, 0.4) 100%); border: 2px solid #9ca3af;";
-                        } else if (index === 2) {
-                            rankMedal = '🥉';
-                            cardStyle = "background: linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(202, 138, 4, 0.4) 100%); border: 2px solid #d97706;";
-                        }
-
-                        let stars = '⭐'.repeat(Math.round(worker.rating));
-
-                        container.innerHTML += `
-                            <div class="card glass flex items-center justify-between" style="padding: 1.25rem 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.2); ${cardStyle}; transition: 0.3s; margin-bottom: 1rem;">
-                                <div style="display: flex; align-items: center; gap: 1.5rem;">
-                                    <span style="font-size: 1.75rem; font-weight: 900; color: #fff; width: 45px; text-align: center;">${rankMedal}</span>
-                                    <div style="width: 55px; height: 55px; border-radius: 50%; background: var(--primary); color: #000; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5rem; overflow: hidden; border: 2px solid white;">
-                                        ${worker.profile_pic ? `<img src="/static/uploads/${worker.profile_pic}" style="width: 100%; height: 100%; object-fit: cover;">` : worker.name.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div>
-                                        <h3 style="margin: 0; font-size: 1.2rem; font-weight: 800; color: #fff;">${worker.name}</h3>
-                                        <div style="font-size: 0.95rem; color: #fbbf24; margin-top: 0.25rem;">${stars} <span style="color: var(--text-muted); font-weight: 600; margin-left: 0.25rem;">(${worker.rating})</span></div>
-                                    </div>
-                                </div>
-                                <div style="text-align: right;">
-                                    <span style="display: block; font-size: 1.75rem; font-weight: 900; color: var(--primary);">${worker.tasks_completed}</span>
-                                    <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Tasks Done</span>
-                                </div>
-                            </div>
-                        `;
-                    });
-                });
-        }
-
-        loadLeaderboard();
-    </script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
