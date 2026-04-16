@@ -420,7 +420,7 @@
 
                         <div id="notif-dropdown" class="notif-dropdown">
                             <div class="notif-header">
-                                <span class="notif-header-title">� Notifications</span>
+                                <span class="notif-header-title">🔔 Notifications</span>
                                 <span id="notif-unread-count" class="notif-header-badge" style="display:none;">0
                                     new</span>
                             </div>
@@ -737,9 +737,7 @@
             const dockMap = { home: 'dock-home', tasks: 'dock-tasks', post: 'dock-post', activity: 'dock-activity' };
             const dockEl = document.getElementById(dockMap[page]);
             if (dockEl) dockEl.classList.add('active');
-            // Load tasks data when switching to tasks page
-            if (page === 'tasks') { if (typeof loadTasks === 'function') loadTasks(); }
-            if (page === 'activity') { if (typeof loadMyTasks === 'function') loadMyTasks(); }
+            
             window.scrollTo(0, 0);
         }
         // Initialize home as default
@@ -898,7 +896,7 @@
                 <div style="text-align: center; padding: 4rem 2rem;">
                     <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
                     <div style="display: inline-block; width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.1); border-left-color: #3BE477; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                    <p style="color: #000000; margin-top: 1rem; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px;">Finding nearby tasks...</p>
+                    <p style="color: #ffffff; margin-top: 1rem; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px;">Finding nearby tasks...</p>
                 </div>
             `;
 
@@ -945,7 +943,7 @@
                     container.innerHTML = "";
 
                     if (data.length === 0) {
-                        container.innerHTML = `<p style="text-align: center; color: #000000; padding: 2rem;">No tasks found within 5km right now. Try expanding your search later!</p>`;
+                        container.innerHTML = `<p style="text-align: center; color: #ffffff; padding: 2rem;">No tasks found within 5km right now. Try expanding your search later!</p>`;
                         return;
                     }
 
@@ -984,18 +982,22 @@
         }
 
         function filterCategory(category, buttonElement) {
+            // Update UI
             document.querySelectorAll('.filter-btn-new').forEach(btn => btn.classList.remove('active'));
             if (buttonElement) {
                 buttonElement.classList.add('active');
             }
 
-            // If tasks pane is not active, switch to it
+            // Ensure Tasks pane is visible
             const tasksPane = document.getElementById('tasks-pane');
             if (!tasksPane || tasksPane.style.display === 'none') {
                 showPage('tasks');
             }
 
-            loadTasks(category);
+            // Explicitly load tasks for this category
+            setTimeout(() => {
+                loadTasks(category);
+            }, 50);
         }
 
         async function acceptTask(taskId) {
