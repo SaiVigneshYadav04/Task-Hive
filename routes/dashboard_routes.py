@@ -386,20 +386,23 @@ def update_profile():
         return redirect(url_for("auth.login_page"))
 
     user = User.query.get(session["user_id"])
-
+    # Check for phone number changes BEFORE updating the model
+    old_phone = user.phone
+    new_phone = request.form.get("phone")
+    
     user.name = request.form.get("name")
-    user.phone = request.form.get("phone")
+    user.phone = new_phone
     user.gender = request.form.get("gender")
     user.dob = request.form.get("dob")
+
+    upi_id = request.form.get("upi_id")
     if not upi_id:
         return redirect("/profile?missing_upi=1")
     user.upi_id = upi_id
 
     # If phone number was changed, it MUST be re-verified
-    new_phone = request.form.get("phone")
-    if new_phone and new_phone != user.phone:
-        user.phone = new_phone
-        user.is_phone_verified = False # Reset verification on change
+    if new_phone and new_phone != old_phone:
+        user.is_phone_verified = False
 
     if 'profile_pic' in request.files:
         file = request.files['profile_pic']

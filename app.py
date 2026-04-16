@@ -41,6 +41,16 @@ db.init_app(app)
 # Create tables if they don't exist (Important for deployment)
 with app.app_context():
     db.create_all()
+    # Migration helper: Check if is_phone_verified exists, add if missing
+    try:
+        from sqlalchemy import text
+        db.session.execute(text("ALTER TABLE user ADD COLUMN is_phone_verified BOOLEAN DEFAULT 0"))
+        db.session.commit()
+        print("Database Migration: Added is_phone_verified column.")
+    except Exception:
+        db.session.rollback()
+        # Column likely already exists, ignore
+        pass
 
 # Register site sections (Blueprints)
 app.register_blueprint(dashboard_bp)
