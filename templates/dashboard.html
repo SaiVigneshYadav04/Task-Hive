@@ -760,7 +760,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#ec4899;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
             <span>Post</span>
         </div>
-        <div class="dock-item" onclick="showTab('activity', event); document.querySelectorAll('.dock-item').forEach(i=>i.classList.remove('active')); this.classList.add('active');" style="cursor: pointer;" title="My Tasks">
+        <div class="dock-item" id="dock-activity" onclick="showPage('activity')" style="cursor: pointer;" title="My Tasks">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
             <span>Activity</span>
         </div>
@@ -813,40 +813,7 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // TAB NAVIGATION FUNCTION
-        function showTab(tabName, event) {
-            if (event) event.preventDefault();
-
-            // Hide all panes
-            const panes = document.querySelectorAll('.tab-pane');
-            panes.forEach(pane => pane.classList.remove('active'));
-
-            // Remove active class from all buttons
-            const buttons = document.querySelectorAll('.tab-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-
-            // Remove active class from sidebar links
-            const sidebarLinks = document.querySelectorAll('.sidebar-link');
-            sidebarLinks.forEach(link => link.classList.remove('active'));
-
-            // Show selected pane
-            const selectedPane = document.getElementById(tabName + '-pane');
-            if (selectedPane) {
-                selectedPane.classList.add('active');
-            }
-
-            // Add active class to clicked button
-            if (event && event.target) {
-                event.target.classList.add('active');
-            }
-
-            // Load appropriate data based on tab
-            if (tabName === 'marketplace') {
-                loadTasks();
-            } else if (tabName === 'activity') {
-                loadMyTasks();
-            }
-        }
+        // TAB NAVIGATION FUNCTION - DEPRECATED (Use showPage instead)
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -1022,6 +989,12 @@
                 buttonElement.classList.add('active');
             }
 
+            // If tasks pane is not active, switch to it
+            const tasksPane = document.getElementById('tasks-pane');
+            if (!tasksPane || tasksPane.style.display === 'none') {
+                showPage('tasks');
+            }
+
             loadTasks(category);
         }
 
@@ -1031,7 +1004,7 @@
             });
 
             const result = await response.json();
-            alert(result.message || result.error);
+            showToast(result.message || result.error, result.error ? 'error' : 'success');
             loadTasks();
         }
 
@@ -1758,18 +1731,11 @@
                 }, 800);
             }
         });
+        loadTasks();
+        loadMyTasks();
         loadNotifications();
         setInterval(loadNotifications, 30000);
         setGreeting();
-        // Fix notification emoji - updated approach
-        setTimeout(function() {
-            const notifHeader = document.querySelector('.notif-header-title');
-            if (notifHeader) {
-                notifHeader.innerHTML = '🔔 Notifications';
-            }
-        }, 100);
-        loadTasks();
-        loadMyTasks();
     </script>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
