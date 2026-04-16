@@ -211,6 +211,188 @@
             .dock-item span { display: none; } /* Icon only on mobile */
             .dock-divider { margin: 0 0.25rem; }
         }
+        /* Filter Buttons Redesign */
+        .filter-buttons {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.5rem 0.25rem 1.5rem;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            mask-image: linear-gradient(to right, black 85%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+        }
+        .filter-buttons::-webkit-scrollbar { display: none; }
+
+        .filter-btn-new {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 1.25rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 100px;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn-new svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2.2;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn-new:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Active & Category Color Logic */
+        .filter-btn-new.active {
+            color: #fff;
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+            border-color: transparent;
+        }
+
+        /* Category Accents */
+        .filter-btn-new[data-cat="all"].active { background: #3BE477; box-shadow: 0 8px 20px rgba(59, 228, 119, 0.3); color: #000; }
+        .filter-btn-new[data-cat="household"].active { background: #10b981; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+        .filter-btn-new[data-cat="shopping"].active { background: #3b82f6; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
+        .filter-btn-new[data-cat="delivery"].active { background: #f59e0b; box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); }
+        .filter-btn-new[data-cat="repairs"].active { background: #ef4444; box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3); }
+        .filter-btn-new[data-cat="academic"].active { background: #8b5cf6; box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3); }
+        .filter-btn-new[data-cat="tech"].active { background: #06b6d4; box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3); }
+        .filter-btn-new[data-cat="personal"].active { background: #ec4899; box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3); }
+        .filter-btn-new[data-cat="events"].active { background: #6366f1; box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); }
+        .filter-btn-new[data-cat="beauty"].active { background: #f43f5e; box-shadow: 0 8px 20px rgba(244, 63, 94, 0.3); }
+        .filter-btn-new[data-cat="misc"].active { background: #64748b; box-shadow: 0 8px 20px rgba(100, 116, 139, 0.3); }
+
+        .filter-btn-new.active svg { transform: scale(1.1); stroke-width: 2.5; }
+
+        @media (max-width: 768px) {
+            .filter-btn-new { padding: 0.5rem 1rem; font-size: 0.85rem; }
+            .filter-btn-new svg { width: 16px; height: 16px; }
+        }
+
+        /* Custom Category Dropdown Styles */
+        .custom-dropdown-container {
+            position: relative;
+            flex: 1;
+            z-index: 100;
+        }
+
+        .dropdown-trigger {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dropdown-trigger:hover {
+            border-color: var(--primary);
+            background: rgba(30, 41, 59, 0.6);
+        }
+
+        .dropdown-trigger .arrow {
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+            transform: rotate(45deg);
+            transition: transform 0.3s ease;
+            margin-right: 5px;
+            margin-bottom: 3px;
+        }
+
+        .custom-dropdown-container.open .dropdown-trigger .arrow {
+            transform: rotate(-135deg);
+            margin-bottom: -3px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: #0f172a;
+            border: 1px solid rgba(59, 228, 119, 0.3);
+            border-radius: 12px;
+            z-index: 1000;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: dropdownSlideDown 0.3s ease;
+        }
+
+        @keyframes dropdownSlideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-search {
+            position: sticky;
+            top: 0;
+            background: #0f172a;
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 10;
+        }
+
+        .dropdown-search input {
+            padding: 0.6rem !important;
+            font-size: 0.85rem !important;
+            background: rgba(255,255,255,0.05) !important;
+            border-radius: 8px !important;
+        }
+
+        .dropdown-group-label {
+            padding: 0.75rem 1rem 0.25rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .dropdown-option {
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-option:hover {
+            background: rgba(59, 228, 119, 0.1);
+            color: var(--primary);
+            padding-left: 1.5rem;
+        }
+
+        .dropdown-option.selected {
+            background: rgba(59, 228, 119, 0.15);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
         /* Override sidebar spacing globally */
         .dashboard-main { margin-left: 0 !important; max-width: 100% !important; padding-bottom: 8rem !important; }
         .sidebar { display: none !important; }
@@ -342,50 +524,50 @@
                             <h2 style="font-size: 1.8rem; font-weight: 900; color: #fff; margin: 0;">Available Tasks</h2>
                             <p style="color: #94a3b8; margin: 0.25rem 0 0;">Find tasks near you and start earning</p>
                         </div>
-                        <div class="filter-buttons" style="width: 100%; display: flex; gap: 1.5rem; padding-bottom: 1.5rem; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;">
-                            <button class="filter-btn-new active" onclick="filterCategory('all', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        <div class="filter-buttons">
+                            <button class="filter-btn-new active" onclick="filterCategory('all', this)" data-cat="all">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
                                 <span>All</span>
                             </button>
-                            <button class="filter-btn-new" onclick="filterCategory('household', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                            <button class="filter-btn-new" onclick="filterCategory('household', this)" data-cat="household">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                                 <span>Household</span>
                             </button>
-                            <button class="filter-btn-new" onclick="filterCategory('shopping', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                            <button class="filter-btn-new" onclick="filterCategory('shopping', this)" data-cat="shopping">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                                 <span>Shopping</span>
                             </button>
-                            <button class="filter-btn-new" onclick="filterCategory('delivery', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            <button class="filter-btn-new" onclick="filterCategory('delivery', this)" data-cat="delivery">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                                 <span>Delivery</span>
                             </button>
-                            <button class="filter-btn-new" onclick="filterCategory('repairs', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                            <button class="filter-btn-new" onclick="filterCategory('repairs', this)" data-cat="repairs">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                                 <span>Repairs</span>
                             </button>
-                            <button class="filter-btn-new" onclick="filterCategory('academic', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                            <button class="filter-btn-new" onclick="filterCategory('academic', this)" data-cat="academic">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                                 <span>Academic</span>
                             </button>
-                            <button class="filter-btn-new" onclick="filterCategory('tech', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                            <button class="filter-btn-new" onclick="filterCategory('tech', this)" data-cat="tech">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                                 <span>Tech</span>
                             </button>
-                            <button class="filter-btn-new" onclick="filterCategory('personal', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            <button class="filter-btn-new" onclick="filterCategory('personal', this)" data-cat="personal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 <span>Personal</span>
                             </button>
-                            <button class="filter-btn-new" onclick="filterCategory('events', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            <button class="filter-btn-new" onclick="filterCategory('events', this)" data-cat="events">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                                 <span>Events</span>
                             </button>
-                            <button class="filter-btn-new" onclick="filterCategory('beauty', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <button class="filter-btn-new" onclick="filterCategory('beauty', this)" data-cat="beauty">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                                 <span>Beauty</span>
                             </button>
-                            <button class="filter-btn-new" onclick="filterCategory('misc', this)">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
-                                <span>More</span>
+                            <button class="filter-btn-new" onclick="filterCategory('misc', this)" data-cat="misc">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                                <span>Misc</span>
                             </button>
                         </div>
                         <div id="task-list" class="tasks-feed"></div>
@@ -407,20 +589,89 @@
                                 <input type="text" name="duration" placeholder="When? (e.g., 5-6 PM for 1 Month)" required style="flex: 1.2;">
                             </div>
                             <textarea name="description" placeholder="Provide some details..." required></textarea>
-                            <div style="display: flex; gap: 1rem;">
-                                <select name="category" required style="flex: 1;">
-                                    <option value="">Select Category...</option>
-                                    <optgroup label="Household"><option value="cleaning">Cleaning</option><option value="cooking">Cooking / Meal Prep</option><option value="laundry">Laundry / Ironing</option><option value="dishwashing">Dishwashing</option><option value="organizing">Home Organization</option></optgroup>
-                                    <optgroup label="Shopping & Errands"><option value="grocery">Grocery Shopping</option><option value="medicine">Medicine Pickup</option><option value="parcel">Parcel Pickup/Drop</option><option value="bill">Bill Payments</option><option value="queue">Queue Standing</option></optgroup>
-                                    <optgroup label="Delivery & Transport"><option value="food_delivery">Food Delivery</option><option value="package_delivery">Package Delivery</option><option value="document_delivery">Document Delivery</option><option value="ride">Ride Assistance</option></optgroup>
-                                    <optgroup label="Repairs & Maintenance"><option value="electrical">Electrical Work</option><option value="plumbing">Plumbing</option><option value="furniture">Furniture Repair</option><option value="appliance">Appliance Fixing</option><option value="handyman">General Handyman</option></optgroup>
-                                    <optgroup label="Academic & Study Help"><option value="assignment">Assignment Help</option><option value="notes">Notes Making</option><option value="tutoring">Tutoring</option><option value="project">Project Assistance</option><option value="presentation">Presentation Help</option></optgroup>
-                                    <optgroup label="Digital & Tech"><option value="data_entry">Data Entry</option><option value="typing">Typing Work</option><option value="design">Graphic Design</option><option value="website">Website Help</option><option value="software">App/Software Setup</option></optgroup>
-                                    <optgroup label="Personal Assistance"><option value="elderly">Elderly Assistance</option><option value="babysitting">Babysitting</option><option value="petcare">Pet Care</option><option value="companion">Companion Help</option></optgroup>
-                                    <optgroup label="Events & Occasions"><option value="setup">Event Setup</option><option value="decoration">Decoration</option><option value="photography">Photography/Videography</option><option value="crowd">Crowd Management</option><option value="invitation">Invitation Distribution</option></optgroup>
-                                    <optgroup label="Beauty & Grooming"><option value="makeup">Makeup</option><option value="mehndi">Mehndi / Henna</option><option value="hair">Hair Styling</option><option value="skincare">Skincare / Facials</option><option value="nails">Nail Care</option><option value="grooming">Groom Styling</option></optgroup>
-                                    <optgroup label="Miscellaneous"><option value="moving">Moving Help</option><option value="waiting">Waiting Tasks</option><option value="small_tasks">Small Favors</option><option value="other">Other</option></optgroup>
-                                </select>
+                            <div style="display: flex; gap: 1rem; position: relative; z-index: 100;">
+                                <div class="custom-dropdown-container" id="category-dropdown">
+                                    <div class="dropdown-trigger" onclick="toggleDropdown()">
+                                        <span id="selected-category-text">Select Category...</span>
+                                        <div class="arrow"></div>
+                                    </div>
+                                    <input type="hidden" name="category" id="hidden-category" required>
+                                    
+                                    <div class="dropdown-menu" id="dropdown-menu">
+                                        <div class="dropdown-search">
+                                            <input type="text" placeholder="Search categories..." onkeyup="filterDropdown(this)">
+                                        </div>
+                                        <div class="dropdown-options-list">
+                                            <div class="dropdown-group-label">Household</div>
+                                            <div class="dropdown-option" onclick="selectOption('cleaning', 'Cleaning')">Cleaning</div>
+                                            <div class="dropdown-option" onclick="selectOption('cooking', 'Cooking / Meal Prep')">Cooking / Meal Prep</div>
+                                            <div class="dropdown-option" onclick="selectOption('laundry', 'Laundry / Ironing')">Laundry / Ironing</div>
+                                            <div class="dropdown-option" onclick="selectOption('dishwashing', 'Dishwashing')">Dishwashing</div>
+                                            <div class="dropdown-option" onclick="selectOption('organizing', 'Home Organization')">Home Organization</div>
+                                            
+                                            <div class="dropdown-group-label">Shopping & Errands</div>
+                                            <div class="dropdown-option" onclick="selectOption('grocery', 'Grocery Shopping')">Grocery Shopping</div>
+                                            <div class="dropdown-option" onclick="selectOption('medicine', 'Medicine Pickup')">Medicine Pickup</div>
+                                            <div class="dropdown-option" onclick="selectOption('parcel', 'Parcel Pickup/Drop')">Parcel Pickup/Drop</div>
+                                            <div class="dropdown-option" onclick="selectOption('bill', 'Bill Payments')">Bill Payments</div>
+                                            <div class="dropdown-option" onclick="selectOption('queue', 'Queue Standing')">Queue Standing</div>
+                                            
+                                            <div class="dropdown-group-label">Delivery & Transport</div>
+                                            <div class="dropdown-option" onclick="selectOption('food_delivery', 'Food Delivery')">Food Delivery</div>
+                                            <div class="dropdown-option" onclick="selectOption('package_delivery', 'Package Delivery')">Package Delivery</div>
+                                            <div class="dropdown-option" onclick="selectOption('document_delivery', 'Document Delivery')">Document Delivery</div>
+                                            <div class="dropdown-option" onclick="selectOption('ride', 'Ride Assistance')">Ride Assistance</div>
+                                            
+                                            <div class="dropdown-group-label">Repairs & Maintenance</div>
+                                            <div class="dropdown-option" onclick="selectOption('electrical', 'Electrical Work')">Electrical Work</div>
+                                            <div class="dropdown-option" onclick="selectOption('plumbing', 'Plumbing')">Plumbing</div>
+                                            <div class="dropdown-option" onclick="selectOption('furniture', 'Furniture Repair')">Furniture Repair</div>
+                                            <div class="dropdown-option" onclick="selectOption('appliance', 'Appliance Fixing')">Appliance Fixing</div>
+                                            <div class="dropdown-option" onclick="selectOption('handyman', 'General Handyman')">General Handyman</div>
+                                            
+                                            <div class="dropdown-group-label">Academic & Study Help</div>
+                                            <div class="dropdown-option" onclick="selectOption('assignment', 'Assignment Help')">Assignment Help</div>
+                                            <div class="dropdown-option" onclick="selectOption('notes', 'Notes Making')">Notes Making</div>
+                                            <div class="dropdown-option" onclick="selectOption('tutoring', 'Tutoring')">Tutoring</div>
+                                            <div class="dropdown-option" onclick="selectOption('project', 'Project Assistance')">Project Assistance</div>
+                                            <div class="dropdown-option" onclick="selectOption('presentation', 'Presentation Help')">Presentation Help</div>
+                                            
+                                            <div class="dropdown-group-label">Digital & Tech</div>
+                                            <div class="dropdown-option" onclick="selectOption('data_entry', 'Data Entry')">Data Entry</div>
+                                            <div class="dropdown-option" onclick="selectOption('typing', 'Typing Work')">Typing Work</div>
+                                            <div class="dropdown-option" onclick="selectOption('design', 'Graphic Design')">Graphic Design</div>
+                                            <div class="dropdown-option" onclick="selectOption('website', 'Website Help')">Website Help</div>
+                                            <div class="dropdown-option" onclick="selectOption('software', 'App/Software Setup')">App/Software Setup</div>
+                                            
+                                            <div class="dropdown-group-label">Personal Assistance</div>
+                                            <div class="dropdown-option" onclick="selectOption('elderly', 'Elderly Assistance')">Elderly Assistance</div>
+                                            <div class="dropdown-option" onclick="selectOption('babysitting', 'Babysitting')">Babysitting</div>
+                                            <div class="dropdown-option" onclick="selectOption('petcare', 'Pet Care')">Pet Care</div>
+                                            <div class="dropdown-option" onclick="selectOption('companion', 'Companion Help')">Companion Help</div>
+                                            
+                                            <div class="dropdown-group-label">Events & Occasions</div>
+                                            <div class="dropdown-option" onclick="selectOption('setup', 'Event Setup')">Event Setup</div>
+                                            <div class="dropdown-option" onclick="selectOption('decoration', 'Decoration')">Decoration</div>
+                                            <div class="dropdown-option" onclick="selectOption('photography', 'Photography/Videography')">Photography/Videography</div>
+                                            <div class="dropdown-option" onclick="selectOption('crowd', 'Crowd Management')">Crowd Management</div>
+                                            <div class="dropdown-option" onclick="selectOption('invitation', 'Invitation Distribution')">Invitation Distribution</div>
+                                            
+                                            <div class="dropdown-group-label">Beauty & Grooming</div>
+                                            <div class="dropdown-option" onclick="selectOption('makeup', 'Makeup')">Makeup</div>
+                                            <div class="dropdown-option" onclick="selectOption('mehndi', 'Mehndi / Henna')">Mehndi / Henna</div>
+                                            <div class="dropdown-option" onclick="selectOption('hair', 'Hair Styling')">Hair Styling</div>
+                                            <div class="dropdown-option" onclick="selectOption('skincare', 'Skincare / Facials')">Skincare / Facials</div>
+                                            <div class="dropdown-option" onclick="selectOption('nails', 'Nail Care')">Nail Care</div>
+                                            <div class="dropdown-option" onclick="selectOption('grooming', 'Groom Styling')">Groom Styling</div>
+                                            
+                                            <div class="dropdown-group-label">Miscellaneous</div>
+                                            <div class="dropdown-option" onclick="selectOption('moving', 'Moving Help')">Moving Help</div>
+                                            <div class="dropdown-option" onclick="selectOption('waiting', 'Waiting Tasks')">Waiting Tasks</div>
+                                            <div class="dropdown-option" onclick="selectOption('small_tasks', 'Small Favors')">Small Favors</div>
+                                            <div class="dropdown-option" onclick="selectOption('other', 'Other')">Other</div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <input type="number" name="payment" placeholder="Budget (₹)" required style="flex: 1;">
                             </div>
                             <button type="submit" class="btn btn-primary mt-4" style="width: 100%;">Post Task</button>
@@ -766,7 +1017,7 @@
         }
 
         function filterCategory(category, buttonElement) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.filter-btn-new').forEach(btn => btn.classList.remove('active'));
             if (buttonElement) {
                 buttonElement.classList.add('active');
             }
@@ -1431,8 +1682,73 @@
                 }
             }
             
-            window.location.href = link;
+        /* Custom Dropdown Logic */
+        function toggleDropdown() {
+            const container = document.getElementById('category-dropdown');
+            const menu = document.getElementById('dropdown-menu');
+            const isOpen = container.classList.contains('open');
+            
+            if (isOpen) {
+                container.classList.remove('open');
+                menu.style.display = 'none';
+            } else {
+                container.classList.add('open');
+                menu.style.display = 'block';
+                // Focus search input
+                menu.querySelector('input').focus();
+            }
         }
+
+        function selectOption(val, text) {
+            document.getElementById('hidden-category').value = val;
+            document.getElementById('selected-category-text').innerText = text;
+            document.getElementById('selected-category-text').style.color = '#3BE477';
+            
+            // Mark as selected in UI
+            document.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+            
+            toggleDropdown(); // Close
+        }
+
+        function filterDropdown(input) {
+            const filter = input.value.toLowerCase();
+            const options = document.querySelectorAll('.dropdown-option');
+            const groups = document.querySelectorAll('.dropdown-group-label');
+            
+            options.forEach(opt => {
+                const text = opt.innerText.toLowerCase();
+                if (text.includes(filter)) {
+                    opt.style.display = 'block';
+                } else {
+                    opt.style.display = 'none';
+                }
+            });
+
+            // Hide group labels if no options under them are visible
+            groups.forEach(group => {
+                let next = group.nextElementSibling;
+                let hasVisible = false;
+                while (next && next.classList.contains('dropdown-option')) {
+                    if (next.style.display !== 'none') {
+                        hasVisible = true;
+                        break;
+                    }
+                    next = next.nextElementSibling;
+                }
+                group.style.display = hasVisible ? 'block' : 'none';
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.onclick = function(e) {
+            const container = document.getElementById('category-dropdown');
+            if (container && !container.contains(e.target)) {
+                container.classList.remove('open');
+                const menu = document.getElementById('dropdown-menu');
+                if (menu) menu.style.display = 'none';
+            }
+        };
 
         // Handle direct landing with hash
         window.addEventListener('load', () => {
