@@ -1,3 +1,4 @@
+# Routes for sending and receiving chat messages in tasks
 from flask import Blueprint, request, jsonify, session
 from models import db
 from models.task import Task, ChatMessage
@@ -5,6 +6,7 @@ from datetime import datetime
 
 chat_bp = Blueprint('chat', __name__)
 
+# Send a new message
 @chat_bp.route("/api/chat/<int:task_id>/send", methods=["POST"])
 def send_message(task_id):
     if "user_id" not in session: return jsonify({"error": "Unauthorized"}), 401
@@ -15,7 +17,7 @@ def send_message(task_id):
     if not task:
         return jsonify({"error": "Task not found"}), 404
         
-    
+    # Only the poster or the worker can chat
     if user_id != task.posted_by and user_id != task.assigned_to:
         return jsonify({"error": "Forbidden"}), 403
         
@@ -23,7 +25,7 @@ def send_message(task_id):
     msg_text = data.get("message")
     
     if not msg_text:
-        return jsonify({"error": "Message empty"}), 400
+        return jsonify({"error": "Message cannot be empty"}), 400
         
     new_msg = ChatMessage(
         task_id=task_id,
@@ -35,6 +37,7 @@ def send_message(task_id):
     
     return jsonify({"success": True})
 
+# Fetch recent messages for a task
 @chat_bp.route("/api/chat/<int:task_id>/messages", methods=["GET"])
 def get_messages(task_id):
     if "user_id" not in session: return jsonify({"error": "Unauthorized"}), 401
@@ -48,6 +51,7 @@ def get_messages(task_id):
     if user_id != task.posted_by and user_id != task.assigned_to:
         return jsonify({"error": "Forbidden"}), 403
         
+    # Get all messages for this task ordered by time
     messages = ChatMessage.query.filter_by(task_id=task_id).order_by(ChatMessage.timestamp.asc()).all()
     
     return jsonify([{

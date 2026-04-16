@@ -1,3 +1,4 @@
+# Routes for User Authentication (Sign up, Login, Google Auth)
 from flask import Blueprint, jsonify, request, redirect, url_for, render_template, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.user import User
@@ -14,12 +15,14 @@ load_dotenv()
 
 auth_bp = Blueprint("auth", __name__)
 
+# Email credentials from .env
 SENDER_EMAIL = os.environ.get("MAIL_USERNAME")
 SENDER_PASSWORD = os.environ.get("MAIL_PASSWORD")
 
+# Helper function to send email verification codes
 def send_otp_email(recipient_email, otp):
     if not SENDER_EMAIL or not SENDER_PASSWORD:
-        print(f"\n[DEV MODE] SMTP not configured. Simulated sending OTP to {recipient_email}: {otp}\n")
+        print(f"SMTP not configured. Verification code for {recipient_email} is: {otp}")
         return True
 
     msg = MIMEText(f"""Hii! 
@@ -40,14 +43,15 @@ Task-Hive Team""")
         server.quit()
         return True
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        print(f"Error sending email: {e}")
         return False
 
+# Registration Page
 @auth_bp.route("/register")
 def register_page():
     return render_template("register.html")
 
-
+# Handle user sign up form
 @auth_bp.route("/register-user", methods=["POST"])
 def register_user():
     data = request.json
@@ -56,11 +60,12 @@ def register_user():
     phone = data.get("phone")
     password = data.get("password")
 
+    # Check if user already exists
     existing_user = User.query.filter_by(email=email).first()
-
     if existing_user:
         return jsonify({"error": "This email is already registered."}), 400
 
+    # Generate 6-digit code
     otp = str(random.randint(100000, 999999))
     session['temp_user'] = {
         "name": name,
@@ -70,14 +75,15 @@ def register_user():
     }
     session['otp'] = otp
 
+    # Send the email
     email_sent = send_otp_email(email, otp)
     
     if email_sent:
         return jsonify({"message": "OTP sent successfully!"})
     else:
-        return jsonify({"error": "Failed to send email. Please check your server console."}), 500
+        return jsonify({"error": "Failed to send email. Check server settings."}), 500
 
-
+# Verify the OTP code
 @auth_bp.route("/confirm-otp", methods=["POST"])
 def confirm_otp():
     data = request.json
@@ -87,6 +93,7 @@ def confirm_otp():
     if user_entered_otp and user_entered_otp == real_otp:
         temp_user = session.get("temp_user")
         
+        # Save user to database
         new_user = User(
             name=temp_user["name"],
             email=temp_user["email"],
@@ -97,6 +104,7 @@ def confirm_otp():
         db.session.add(new_user)
         db.session.commit()
 
+        # Log them in automatically
         session["user_id"] = new_user.id  
         session.pop("temp_user", None)
         session.pop("otp", None)
@@ -105,10 +113,12 @@ def confirm_otp():
     else:
         return jsonify({"error": "Incorrect code. Please try again."}), 400
 
+# Login Page
 @auth_bp.route("/login")
 def login_page():
     return render_template("login_page.html")
 
+# Handle login form
 @auth_bp.route("/login-user", methods=["POST"])
 def login_user():
     email = request.form["email"]
@@ -125,10 +135,10 @@ def login_user():
     session["user_id"] = user.id
     return redirect(url_for("dashboard.dashboard_page"))
 
-
+# Password Reset Email helper
 def send_password_reset_email(recipient_email, otp):
     if not SENDER_EMAIL or not SENDER_PASSWORD:
-        print(f"\n[DEV MODE] SMTP not configured. Simulated sending Reset OTP to {recipient_email}: {otp}\n")
+        print(f"Reset code for {recipient_email} is: {otp}")
         return True
 
     msg = MIMEText(f"""Hello,
@@ -152,9 +162,10 @@ Task-Hive Team""")
         server.quit()
         return True
     except Exception as e:
-        print(f"Failed to send email: {e}")
+        print(f"Error: {e}")
         return False
 
+# Trigger password reset
 @auth_bp.route("/send-reset-otp", methods=["POST"])
 def send_reset_otp():
     data = request.json
@@ -171,8 +182,9 @@ def send_reset_otp():
     if send_password_reset_email(email, otp):
         return jsonify({"message": "OTP sent successfully! Check your inbox."})
     else:
-        return jsonify({"error": "Failed to send email. Check VS Code console."}), 500
+        return jsonify({"error": "Failed to send email."}), 500
 
+# Finalize password reset
 @auth_bp.route("/reset-password", methods=["POST"])
 def reset_password():
     data = request.json
@@ -200,9 +212,10 @@ def reset_password():
         return jsonify({"error": "Invalid OTP. Please try again."}), 400
     
 
+# --- Google OAuth Section ---
+
 @auth_bp.route("/google-login")
 def google_login():
-
     google_auth_url = "https://accounts.google.com/o/oauth2/v2/auth"
     params = {
         "client_id": os.environ.get("GOOGLE_CLIENT_ID"),
@@ -216,11 +229,11 @@ def google_login():
 
 @auth_bp.route("/google-callback")
 def google_callback():
-
     code = request.args.get("code")
     if not code:
         return redirect(url_for("auth.login_page"))
 
+    # Exchange code for token
     token_url = "https://oauth2.googleapis.com/token"
     data = {
         "code": code,
@@ -235,6 +248,7 @@ def google_callback():
     if not access_token:
         return redirect(url_for("auth.login_page"))
 
+    # Get user details from Google
     userinfo_url = "https://www.googleapis.com/oauth2/v3/userinfo"
     headers = {"Authorization": f"Bearer {access_token}"}
     user_info = requests.get(userinfo_url, headers=headers).json()
@@ -242,6 +256,7 @@ def google_callback():
     email = user_info.get("email")
     name = user_info.get("name")
 
+    # Log in or create user
     user = User.query.filter_by(email=email).first()
 
     if not user:

@@ -1,3 +1,4 @@
+# Routes for handling payments and milestone claims
 from flask import Blueprint, request, jsonify, session
 from models.task import Task, Notification
 from models.user import User
@@ -6,6 +7,7 @@ import os
 
 payment_bp = Blueprint("payment", __name__)
 
+# Get worker's UPI details and the amount due (50% milestone)
 @payment_bp.route("/get-worker-upi/<int:task_id>", methods=["GET"])
 def get_worker_upi(task_id):
     if "user_id" not in session:
@@ -20,7 +22,7 @@ def get_worker_upi(task_id):
 
     worker = User.query.get(int(task.assigned_to))
     if not worker or not worker.upi_id:
-        return jsonify({"error": "Worker has not provided a UPI ID yet."}), 400
+        return jsonify({"error": "Worker hasn't added UPI ID yet."}), 400
 
     return jsonify({
         "upi_id": worker.upi_id,
@@ -28,6 +30,7 @@ def get_worker_upi(task_id):
         "amount": float(task.payment) / 2
     })
 
+# Mark a payment (Half or Full) as claimed by the poster
 @payment_bp.route("/claim-payment/<int:task_id>/<milestone>", methods=["POST"])
 def claim_payment(task_id, milestone):
     if "user_id" not in session:
@@ -39,14 +42,14 @@ def claim_payment(task_id, milestone):
 
     if milestone == "half":
         task.payment_status = "half_claimed"
-        msg = "50% milestone payment claimed! Waiting for worker to confirm."
+        msg = "50% payment claimed! Waiting for worker to confirm."
     else:
         task.payment_status = "full_claimed"
         msg = "Final payment claimed! Waiting for worker to confirm."
 
     notif = Notification(
         user_id=str(task.assigned_to),
-        message=f"💰 Client claimed to have sent {milestone} payment for: {task.title}. Please check your bank and confirm.",
+        message=f"💰 Payment for {milestone} was claimed for: {task.title}. Please confirm if received.",
         link="/dashboard#my-tasks-section"
     )
     db.session.add(notif)
@@ -54,6 +57,7 @@ def claim_payment(task_id, milestone):
 
     return jsonify({"success": True, "message": msg})
 
+# Worker confirms they actually received the money
 @payment_bp.route("/confirm-receipt/<int:task_id>", methods=["POST"])
 def confirm_receipt(task_id):
     if "user_id" not in session:
@@ -68,14 +72,14 @@ def confirm_receipt(task_id):
 
     if milestone == "half":
         task.payment_status = "half_paid"
-        notif_msg = f"✅ Payment for 50% milestone confirmed for: {task.title}"
+        notif_msg = f"✅ 50% Milestone payment confirmed for: {task.title}"
     else:
         task.payment_status = "fully_paid"
         task.status = "completed"
         worker = User.query.get(int(session["user_id"]))
         if worker:
             worker.tasks_completed = (worker.tasks_completed or 0) + 1
-        notif_msg = f"🏆 Full payment confirmed! Task '{task.title}' is officially complete."
+        notif_msg = f"🏆 Full payment confirmed! Task '{task.title}' is finished."
 
     notif = Notification(
         user_id=str(task.posted_by),
@@ -85,4 +89,4 @@ def confirm_receipt(task_id):
     db.session.add(notif)
     db.session.commit()
 
-    return jsonify({"success": True, "message": "Receipt confirmed. Task state updated."})
+    return jsonify({"success": True, "message": "Payment confirmed!"})
