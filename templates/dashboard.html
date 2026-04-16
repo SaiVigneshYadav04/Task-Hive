@@ -397,6 +397,94 @@
         .dashboard-main { margin-left: 0 !important; max-width: 100% !important; padding-bottom: 8rem !important; }
         .sidebar { display: none !important; }
         .sidebar-overlay { display: none !important; }
+
+        /* Verification Overlay */
+        #verification-gate {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .gate-card {
+            max-width: 500px;
+            padding: 3rem;
+            border-radius: 30px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 228, 119, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .gate-btn {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 1rem 2.5rem;
+            background: var(--primary);
+            color: #000;
+            font-weight: 800;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: var(--transition);
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+
+        .gate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px var(--primary-glow);
+        }
+
+        /* Scoped Location Gate */
+        .location-gate-scoped {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            border-radius: 20px;
+        }
+
+        .guide-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-align: left;
+            font-size: 0.85rem;
+            max-width: 350px;
+        }
+
+        .guide-step {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-num {
+            background: var(--primary);
+            color: #000;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 
@@ -420,7 +508,10 @@
 
                         <div id="notif-dropdown" class="notif-dropdown">
                             <div class="notif-header">
-                                <span class="notif-header-title">🔔 Notifications</span>
+                                <span class="notif-header-title" style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                                    Notifications
+                                </span>
                                 <span id="notif-unread-count" class="notif-header-badge" style="display:none;">0
                                     new</span>
                             </div>
@@ -444,6 +535,19 @@
         </div>
     </header>
     <div class="dashboard-wrapper">
+        {% if not is_verified %}
+        <div id="verification-gate">
+            <div class="gate-card glass">
+                <div style="font-size: 4rem; margin-bottom: 1.5rem;">🛡️</div>
+                <h2 style="font-size: 2rem; margin-bottom: 1rem;">Verification Required</h2>
+                <p style="color: var(--text-muted); line-height: 1.6;">
+                    To keep Task-Hive safe, we require all users to verify their phone number before posting or browsing tasks.
+                </p>
+                <a href="/profile?force_verification=1" class="gate-btn">Verify Now →</a>
+            </div>
+        </div>
+        {% endif %}
+
         <main class="dashboard-main" style="margin-left: 0;">
             <div class="container" style="max-width: 1100px;">
 
@@ -517,8 +621,35 @@
                     </div>
                 </div>
 
-                <!-- ========== TASKS PAGE ========== -->
-                <div id="tasks-pane" class="page-pane" style="display:none;">
+                <!-- ========== TASKS PAGE (MARKETPLACE) ========== -->
+                <div id="tasks-pane" class="page-pane" style="display:none; position: relative;">
+                    <div id="tasks-location-gate" class="location-gate-scoped">
+                        <div class="card glass" style="max-width: 450px; padding: 2rem; border-color: rgba(59, 228, 119, 0.3);">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📍</div>
+                            <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Location Access Required</h3>
+                            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
+                                Task-Hive is hyperlocal. We need your location to show tasks within a 5km radius of you.
+                            </p>
+                            
+                            <div class="guide-box">
+                                <div style="font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; font-size: 0.8rem; text-transform: uppercase;">How to enable:</div>
+                                <div class="guide-step">
+                                    <div class="step-num">1</div>
+                                    <div>Click the <b>Lock 🔒</b> icon in your browser address bar.</div>
+                                </div>
+                                <div class="guide-step">
+                                    <div class="step-num">2</div>
+                                    <div>Find <b>Location</b> and set it to <b>Allow</b>.</div>
+                                </div>
+                                <div class="guide-step">
+                                    <div class="step-num">3</div>
+                                    <div><b>Refresh</b> the page to see tasks near you!</div>
+                                </div>
+                            </div>
+                            <button class="gate-btn" onclick="window.location.reload()" style="margin-top: 1.5rem; padding: 0.8rem 2rem;">I've enabled it, Refresh! 🔄</button>
+                        </div>
+                    </div>
+
                     <div class="tasks-section">
                         <div style="margin-bottom: 1.5rem;">
                             <h2 style="font-size: 1.8rem; font-weight: 900; color: #fff; margin: 0;">Available Tasks</h2>
@@ -575,13 +706,40 @@
                 </div>
 
                 <!-- ========== POST TASK PAGE ========== -->
-                <div id="post-pane" class="page-pane" style="display:none;">
+                <div id="post-pane" class="page-pane" style="display:none; position: relative;">
+                    <div id="post-location-gate" class="location-gate-scoped">
+                        <div class="card glass" style="max-width: 450px; padding: 2rem; border-color: rgba(59, 228, 119, 0.3);">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📍</div>
+                            <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Location Required to Post</h3>
+                            <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
+                                To post a task, we need your GPS coordinates to show it to workers nearby.
+                            </p>
+                            
+                            <div class="guide-box">
+                                <div style="font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; font-size: 0.8rem; text-transform: uppercase;">How to enable:</div>
+                                <div class="guide-step">
+                                    <div class="step-num">1</div>
+                                    <div>Click the <b>Lock 🔒</b> icon in your browser address bar.</div>
+                                </div>
+                                <div class="guide-step">
+                                    <div class="step-num">2</div>
+                                    <div>Find <b>Location</b> and set it to <b>Allow</b>.</div>
+                                </div>
+                                <div class="guide-step">
+                                    <div class="step-num">3</div>
+                                    <div><b>Refresh</b> the page to start posting!</div>
+                                </div>
+                            </div>
+                            <button class="gate-btn" onclick="window.location.reload()" style="margin-top: 1.5rem; padding: 0.8rem 2rem;">I've enabled it, Refresh! 🔄</button>
+                        </div>
+                    </div>
+
                     <div style="margin-bottom: 2rem;">
                         <h2 style="font-size: 1.8rem; font-weight: 900; color: #fff; margin: 0;">Post a Task</h2>
                         <p style="color: #94a3b8; margin: 0.25rem 0 0;">Describe what you need done and set your budget</p>
                     </div>
                     <div id="post-task-section">
-                        <form action="/post-task" method="POST" class="post-task-form">
+                        <form action="/post-task" method="POST" class="post-task-form" onsubmit="return validatePostLocation()">
                             <input type="hidden" name="latitude" id="form-lat">
                             <input type="hidden" name="longitude" id="form-lng">
                             <div style="display: flex; gap: 1rem;">
@@ -885,22 +1043,39 @@
                 fetchMessages();
             } catch (e) { console.error("Chat send error", e); }
         }
-        let cachedLat = null;
         let cachedLng = null;
         let locationResolved = false;
 
+        function validatePostLocation() {
+            if (!cachedLat || !cachedLng) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Location Error',
+                    text: 'We could not detect your location. Please enable location permissions and refresh the page to post a task.',
+                    background: '#1e293b',
+                    color: '#fff'
+                });
+                return false;
+            }
+            return true;
+        }
+
         function loadTasks(category = "all") {
             const container = document.getElementById("task-list");
+            const tasksGate = document.getElementById("tasks-location-gate");
+            const postGate = document.getElementById("post-location-gate");
 
-            container.innerHTML = `
-                <div style="text-align: center; padding: 4rem 2rem;">
-                    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
-                    <div style="display: inline-block; width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.1); border-left-color: #3BE477; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                    <p style="color: #ffffff; margin-top: 1rem; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px;">Finding nearby tasks...</p>
-                </div>
-            `;
-
-            if (locationResolved) {
+            if (locationResolved && cachedLat && cachedLng) {
+                if (tasksGate) tasksGate.style.display = 'none';
+                if (postGate) postGate.style.display = 'none';
+                
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 4rem 2rem;">
+                        <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+                        <div style="display: inline-block; width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.1); border-left-color: #3BE477; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                        <p style="color: #ffffff; margin-top: 1rem; font-weight: 700; font-size: 1.1rem; letter-spacing: 0.5px;">Finding nearby tasks...</p>
+                    </div>
+                `;
                 fetchTasksFromAPI(category, cachedLat, cachedLng);
             }
             else if (navigator.geolocation) {
@@ -909,6 +1084,9 @@
                         cachedLat = position.coords.latitude;
                         cachedLng = position.coords.longitude;
                         locationResolved = true;
+
+                        if (tasksGate) tasksGate.style.display = 'none';
+                        if (postGate) postGate.style.display = 'none';
 
                         const latInput = document.getElementById("form-lat");
                         const lngInput = document.getElementById("form-lng");
@@ -920,12 +1098,21 @@
                     (error) => {
                         console.warn("Location access denied or unavailable.");
                         locationResolved = true;
-                        fetchTasksFromAPI(category, null, null);
+                        cachedLat = null;
+                        cachedLng = null;
+                        
+                        // Show gates
+                        if (tasksGate) tasksGate.style.display = 'flex';
+                        if (postGate) postGate.style.display = 'flex';
+                        
+                        container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 2rem;">Location access is required to view tasks.</p>`;
                     }
                 );
             } else {
                 locationResolved = true;
-                fetchTasksFromAPI(category, null, null);
+                if (tasksGate) tasksGate.style.display = 'flex';
+                if (postGate) postGate.style.display = 'flex';
+                container.innerHTML = `<p style="text-align: center; color: #94a3b8; padding: 2rem;">Geolocation is not supported by this browser.</p>`;
             }
         }
 
@@ -1606,7 +1793,7 @@
                     }
 
                     if (data.length === 0) {
-                        list.innerHTML = `<div class="notif-empty">🎉 You're all caught up!</div>`;
+                        list.innerHTML = `<div class="notif-empty" style="text-align: center; padding: 2rem; color: var(--text-muted);">You're all caught up!</div>`;
                         return;
                     }
 

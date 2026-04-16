@@ -33,7 +33,10 @@ def dashboard_page():
         return redirect(url_for("auth.login_page"))
 
     user = User.query.get(session["user_id"])
-    return render_template("dashboard.html", user=user)
+    
+    # Pass verification status to frontend
+    is_verified = user.phone and user.is_phone_verified
+    return render_template("dashboard.html", user=user, is_verified=is_verified)
 
 # Get tasks nearby (within 5km) based on category
 @dashboard_bp.route("/tasks", methods=["GET"])
@@ -43,6 +46,15 @@ def get_tasks():
 
     user_lat = request.args.get("lat", type=float)
     user_lng = request.args.get("lng", type=float)
+
+    # Enforce phone verification
+    user = User.query.get(user_id)
+    if not user.phone or not user.is_phone_verified:
+        return jsonify({"error": "verification_required"}), 403
+
+    # Enforce mandatory location
+    if user_lat is None or user_lng is None:
+        return jsonify({"error": "location_required"}), 400
 
     # Filter tasks that are open and not posted by the current user
     query = Task.query.filter(
@@ -147,6 +159,11 @@ def get_my_tasks():
 @dashboard_bp.route("/post-task", methods=["POST"])
 def post_task():
     user = User.query.get(session["user_id"])
+    
+    # Enforce phone verification
+    if not user.phone or not user.is_phone_verified:
+        return redirect("/profile?force_verification=1")
+
     if not user.upi_id:
         return redirect("/profile?missing_upi=1")
 
@@ -374,10 +391,15 @@ def update_profile():
     user.phone = request.form.get("phone")
     user.gender = request.form.get("gender")
     user.dob = request.form.get("dob")
-    upi_id = request.form.get("upi_id")
     if not upi_id:
         return redirect("/profile?missing_upi=1")
     user.upi_id = upi_id
+
+    # If phone number was changed, it MUST be re-verified
+    new_phone = request.form.get("phone")
+    if new_phone and new_phone != user.phone:
+        user.phone = new_phone
+        user.is_phone_verified = False # Reset verification on change
 
     if 'profile_pic' in request.files:
         file = request.files['profile_pic']

@@ -165,6 +165,36 @@ Task-Hive Team""")
         print(f"Error: {e}")
         return False
 
+# Phone Verification Email helper
+def send_phone_verification_email(recipient_email, otp, phone):
+    if not SENDER_EMAIL or not SENDER_PASSWORD:
+        print(f"Phone verification code for {phone} sent to {recipient_email} is: {otp}")
+        return True
+
+    msg = MIMEText(f"""Hello,
+You are verifying the phone number: {phone} on Task-Hive.
+
+Your 6-digit verification code is: {otp}
+
+If you did not request this, please ignore this email.
+
+Thanks,
+Task-Hive Team""")
+    msg['Subject'] = "Task-Hive: Phone Verification Code"
+    msg['From'] = SENDER_EMAIL
+    msg['To'] = recipient_email
+
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
+        server.sendmail(SENDER_EMAIL, recipient_email, msg.as_string())
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
+
 # Trigger password reset
 @auth_bp.route("/send-reset-otp", methods=["POST"])
 def send_reset_otp():
@@ -270,4 +300,63 @@ def google_callback():
         db.session.commit()
 
     session["user_id"] = user.id
+
+    # If phone is missing or unverified, redirect to profile
+    if not user.phone or not user.is_phone_verified:
+        return redirect(url_for("dashboard.profile_page") + "?force_verification=1")
+        
     return redirect(url_for("dashboard.dashboard_page"))
+
+# --- Phone Verification API ---
+
+@auth_bp.route("/api/send-phone-otp", methods=["POST"])
+def send_phone_otp():
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+    
+    data = request.get_json()
+    phone = data.get("phone")
+    
+    if not phone:
+        return jsonify({"error": "Phone number is required."}), 400
+        
+    user = User.query.get(session["user_id"])
+    
+    # Generate 6-digit OTP
+    otp = str(random.randint(100000, 999999))
+    session['phone_otp'] = otp
+    session['verifying_phone'] = phone
+    
+    # Send the code to the user's registered email
+    email_sent = send_phone_verification_email(user.email, otp, phone)
+    
+    if email_sent:
+        return jsonify({
+            "message": f"Verification code sent to your email: {user.email}",
+            "simulated_otp": otp # Still display this for testing
+        })
+    else:
+        return jsonify({"error": "Failed to send email. Check server settings."}), 500
+
+@auth_bp.route("/api/verify-phone-otp", methods=["POST"])
+def verify_phone_otp():
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+    data = request.get_json()
+    user_otp = data.get("otp")
+    real_otp = session.get("phone_otp")
+    phone = session.get("verifying_phone")
+    
+    if user_otp and user_otp == real_otp:
+        user = User.query.get(session["user_id"])
+        user.phone = phone
+        user.is_phone_verified = True
+        db.session.commit()
+        
+        session.pop("phone_otp", None)
+        session.pop("verifying_phone", None)
+        
+        return jsonify({"success": True, "message": "Phone number verified successfully!"})
+    else:
+        return jsonify({"error": "Invalid code. Please try again."}), 400

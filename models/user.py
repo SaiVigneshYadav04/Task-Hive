@@ -21,3 +21,6 @@ class User(db.Model):
     
     # Payments
     upi_id = db.Column(db.String(100), nullable=True)
+    
+    # Verification
+    is_phone_verified = db.Column(db.Boolean, default=False)

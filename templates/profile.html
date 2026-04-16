@@ -273,7 +273,38 @@
             display: block;
             margin-bottom: 0.25rem;
         }
+
+        /* Verification Specific Styles */
+        .verification-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+        .v-verified { background: rgba(59, 228, 119, 0.15); color: var(--primary); border: 1px solid rgba(59, 228, 119, 0.3); }
+        .v-unverified { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        .verify-btn {
+            background: var(--primary);
+            color: #000;
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 0.5rem;
+        }
+        .verify-btn:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--primary-glow); }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -323,6 +354,9 @@
                             <span class="stat-chip">✅ {{ user.tasks_completed or 0 }} Tasks Done</span>
                             <span class="stat-chip">⭐ {{ avg_rating }} Rating</span>
                             {% if user.gender %}<span class="stat-chip">{{ '♂️' if user.gender == 'male' else '♀️' if user.gender == 'female' else '⚧️' }} {{ user.gender | capitalize }}</span>{% endif %}
+                            {% if user.is_phone_verified %}
+                            <span class="stat-chip" style="background: rgba(59, 228, 119, 0.2); border-color: var(--primary);">🛡️ Phone Verified</span>
+                            {% endif %}
                             {% if user.upi_id %}<span class="stat-chip">💳 UPI Linked</span>{% endif %}
                         </div>
                     </div>
@@ -343,8 +377,18 @@
                                 <input type="email" value="{{ user.email }}" class="form-input-styled" readonly title="Email cannot be changed">
                             </div>
                             <div>
-                                <label class="form-label-styled">Phone Number</label>
-                                <input type="text" name="phone" value="{{ user.phone or '' }}" class="form-input-styled" placeholder="+91 XXXXX XXXXX">
+                                <label class="form-label-styled">Phone Number <span style="color: #ef4444;">*</span></label>
+                                <div style="display: flex; flex-direction: column;">
+                                    <input type="text" name="phone" id="profile-phone" value="{{ user.phone or '' }}" class="form-input-styled" placeholder="+91 XXXXX XXXXX" required>
+                                    <div id="verification-status-container">
+                                        {% if user.is_phone_verified %}
+                                        <div class="verification-badge v-verified">✅ Verified</div>
+                                        {% else %}
+                                        <div class="verification-badge v-unverified">⚠️ Unverified</div>
+                                        <button type="button" class="verify-btn" onclick="sendOTP()">Verify Now</button>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
                             <div>
                                 <label class="form-label-styled">Date of Birth</label>
@@ -489,6 +533,83 @@
             toast.style.borderColor = 'rgba(239, 68, 68, 0.4)';
             toast.style.display = 'block';
             setTimeout(() => toast.style.display = 'none', 5000);
+        } else if (params.get('force_verification') === '1') {
+            const toast = document.getElementById('toast-msg');
+            toast.innerText = '🛡️ Please verify your phone number to use all features!';
+            toast.style.background = 'rgba(59, 228, 119, 0.15)';
+            toast.style.color = 'var(--primary)';
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 6000);
+        }
+
+        async function sendOTP() {
+            const phone = document.getElementById('profile-phone').value;
+            if (!phone) {
+                Swal.fire({ icon: 'error', title: 'Oops...', text: 'Please enter a phone number first!', background: '#1e293b', color: '#fff' });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Sending OTP...',
+                html: 'We are sending a security code to ' + phone,
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                const res = await fetch('/api/send-phone-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone })
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    Swal.fire({
+                        title: 'Enter Verification Code',
+                        text: 'We have sent a security code to your registered email: ' + data.message.split(': ')[1],
+                        input: 'text',
+                        inputAttributes: { autocapitalize: 'off', maxlength: 6 },
+                        showCancelButton: true,
+                        confirmButtonText: 'Verify',
+                        showLoaderOnConfirm: true,
+                        background: '#1e293b',
+                        color: '#fff',
+                        footer: '<span style="color: #3BE477; font-weight:700;">Simulated Code (from logs): ' + data.simulated_otp + '</span>',
+                        preConfirm: async (otp) => {
+                            try {
+                                const verifyRes = await fetch('/api/verify-phone-otp', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ otp: otp })
+                                });
+                                const verifyData = await verifyRes.json();
+                                if (!verifyRes.ok) throw new Error(verifyData.error);
+                                return verifyData;
+                            } catch (error) {
+                                Swal.showValidationMessage(`Request failed: ${error}`);
+                            }
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Verified!',
+                                text: 'Your phone number has been verified successfully.',
+                                background: '#1e293b',
+                                color: '#fff'
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        }
+                    });
+                } else {
+                    Swal.fire({ icon: 'error', title: 'Error', text: data.error, background: '#1e293b', color: '#fff' });
+                }
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to connect to server.', background: '#1e293b', color: '#fff' });
+            }
         }
     </script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
