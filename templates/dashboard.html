@@ -629,7 +629,7 @@
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
                                 </div>
                                 <div>
-                                    <h3 style="font-size: 1.5rem; color: #fff; margin: 0; font-weight: 800;">₹{{ user.balance | default(0) }}</h3>
+                                    <h3 style="font-size: 1.5rem; color: #fff; margin: 0; font-weight: 800;">&#8377;{{ user.balance | default(0) }}</h3>
                                     <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 0; font-weight: 600;">Wallet Balance</p>
                                 </div>
                             </div>
@@ -887,7 +887,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <input type="number" name="payment" placeholder="Budget (₹)" required style="flex: 1;">
+                                <input type="number" name="payment" placeholder="Budget (&#8377;)" required style="flex: 1;">
                             </div>
                             <button type="submit" class="btn btn-primary mt-4" style="width: 100%;">Post Task</button>
                         </form>
@@ -1206,7 +1206,7 @@
                                     </div>
                                     <div class="task-payment">
                                         <span class="payment-label" style="color: #000000; font-weight: 700;">Amount offered</span>
-                                        <span class="task-amount">₹${task.payment}</span>
+                                        <span class="task-amount">&#8377;${task.payment}</span>
                                     </div>
                                 </div>
 
@@ -1343,7 +1343,7 @@
                                     </div>
                                         <div class="task-payment">
                                             <span class="payment-label" style="color: #ffffff; font-weight: 700;">You Earn</span>
-                                            <span class="task-amount">₹${task.payment}</span>
+                                            <span class="task-amount">&#8377;${task.payment}</span>
                                         </div>
                                     </div>
                                     <div class="task-description">
@@ -1409,9 +1409,9 @@
                             const halfAmount = task.payment / 2;
 
                             if (task.payment_status === "unpaid" && task.updates.some(u => u.percentage >= 50)) {
-                                paymentBtnHtml = `<button onclick="payWithUPI(${task.id}, 'half', event)" style="margin-top: 1.5rem;width: 100%; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;"> Pay 50% Milestone (₹${halfAmount})</button>`;
+                                paymentBtnHtml = `<button onclick="payWithUPI(${task.id}, 'half', event)" style="margin-top: 1.5rem;width: 100%; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;"> Pay 50% Milestone (&#8377;${halfAmount})</button>`;
                             } else if (task.payment_status === "half_paid" && task.updates.some(u => u.percentage === 100)) {
-                                paymentBtnHtml = `<button onclick="payWithUPI(${task.id}, 'full', event)" style="margin-top: 1.5rem;width: 100%; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;">Pay Final Milestone (₹${halfAmount})</button>`;
+                                paymentBtnHtml = `<button onclick="payWithUPI(${task.id}, 'full', event)" style="margin-top: 1.5rem;width: 100%; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;">Pay Final Milestone (&#8377;${halfAmount})</button>`;
                             } else if (task.payment_status === "half_claimed" || task.payment_status === "full_claimed") {
                                 paymentBtnHtml = `<div style="margin-top: 1.5rem; text-align: center; color: #fbbf24; font-weight: bold; padding: 1rem; border: 1px dashed #fbbf24; border-radius: 0.5rem; background: rgba(251, 191, 36, 0.1);">Waiting for worker to verify bank receipt...</div>`;
                             } else if (task.payment_status === "fully_paid") {
@@ -1453,7 +1453,7 @@
                                     </div>
                                         <div class="task-payment">
                                             <span class="payment-label" style="color: #000000; font-weight: 700;">Budget</span>
-                                            <span class="task-amount" style="color: #295539;">₹${task.payment}</span>
+                                            <span class="task-amount" style="color: #295539;">&#8377;${task.payment}</span>
                                         </div>
                                     </div>
                                     <div class="task-description">
@@ -1636,7 +1636,7 @@
                             <p style="font-size: 0.75rem; color: #94a3b8; text-align: center; margin-top: 0.5rem;">(Works best on mobile browsers)</p>
                         </div>
                     </div>
-                    <p style="margin-top: 1.5rem; font-size: 0.9rem;">Once you have sent <b>₹${data.amount}</b>, click "I Have Paid" below.</p>
+                    <p style="margin-top: 1.5rem; font-size: 0.9rem;">Once you have sent <b>&#8377;${data.amount}</b>, click "I Have Paid" below.</p>
                 `,
                 showCancelButton: true,
                 confirmButtonText: 'I Have Paid',
