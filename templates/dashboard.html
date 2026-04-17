@@ -618,7 +618,7 @@
                             </div>
                             <div>
                                 <h1 style="font-size: 2rem; font-weight: 900; color: #fff; margin: 0; letter-spacing: -0.5px;">Welcome back, <span style="color: var(--primary);">{{ user.name }}</span></h1>
-                                <p style="color: #94a3b8; margin: 0.25rem 0 0; font-size: 1rem;">Ready to make an impact today? ✨</p>
+                                <p style="color: #94a3b8; margin: 0.25rem 0 0; font-size: 1rem;">Ready to make an impact today?</p>
                             </div>
                         </div>
 
@@ -701,7 +701,7 @@
                                     <div><b>Refresh</b> the page to see tasks near you!</div>
                                 </div>
                             </div>
-                            <button class="gate-btn" onclick="window.location.reload()" style="margin-top: 1.5rem; padding: 0.8rem 2rem;">I've enabled it, Refresh! 🔄</button>
+                            <button class="gate-btn" onclick="window.location.reload()" style="margin-top: 1.5rem; padding: 0.8rem 2rem;">I've enabled it, Refresh!</button>
                         </div>
                     </div>
 
@@ -787,7 +787,7 @@
                                     <div><b>Refresh</b> the page to start posting!</div>
                                 </div>
                             </div>
-                            <button class="gate-btn" onclick="window.location.reload()" style="margin-top: 1.5rem; padding: 0.8rem 2rem;">I've enabled it, Refresh! 🔄</button>
+                            <button class="gate-btn" onclick="window.location.reload()" style="margin-top: 1.5rem; padding: 0.8rem 2rem;">I've enabled it, Refresh!</button>
                         </div>
                     </div>
 
@@ -980,7 +980,7 @@
         <div class="dock-divider"></div>
         <a href="/leaderboard" class="dock-item" title="Trust & Reputation">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#fbbf24;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
-            <span>Trust ⭐</span>
+            <span>Trust</span>
         </a>
         <div class="dock-divider"></div>
         <a href="/profile" class="dock-item" title="Profile">
@@ -1026,15 +1026,13 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // TAB NAVIGATION FUNCTION - DEPRECATED (Use showPage instead)
-
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
 
             const toast = document.createElement('div');
             toast.className = `custom-toast ${type}`;
 
-            const icon = type === 'success' ? '✓' : '!';
+            const icon = type === 'success' ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
 
             toast.innerHTML = `<span class="toast-icon">${icon}</span> <span>${message}</span>`;
 
@@ -1100,6 +1098,7 @@
                 fetchMessages();
             } catch (e) { console.error("Chat send error", e); }
         }
+        let cachedLat = null;
         let cachedLng = null;
         let locationResolved = false;
 
@@ -1470,7 +1469,7 @@
                                             </div>` : ''}
                                         </div>
 
-                                        <button class="btn" onclick="openChat(${task.id}, '${task.title.replace(/'/g, "\\'")}', event)" style="margin-bottom: 1.25rem; width: 100%; background: rgba(59, 228, 119, 0.1); color: #3BE477; border: 1px solid #3BE477; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem;">💬 Chat with Worker</button>
+                                        <button class="btn" onclick="openChat(${task.id}, '${task.title.replace(/'/g, "\\'")}', event)" style="margin-bottom: 1.25rem; width: 100%; background: rgba(59, 228, 119, 0.1); color: #3BE477; border: 1px solid #3BE477; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Chat with Worker</button>
 
                                         <span style="color: #ffffff; font-size: 0.8rem; text-transform: uppercase; font-weight: bold;">Live Progress Tracker</span><br>
                                         ${timelineHTML}
@@ -1589,7 +1588,7 @@
                 const { value: rating } = await Swal.fire({
                     title: 'Rate the Worker',
                     text: 'How well did they do? You can pay after rating.',
-                    icon: 'star',
+                    icon: 'info',
                     input: 'select',
                     inputOptions: {
                         '5': 'Excellent!',
