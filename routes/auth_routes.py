@@ -276,7 +276,8 @@ def google_callback():
     access_token = token_res.get("access_token")
 
     if not access_token:
-        return redirect(url_for("auth.login_page"))
+        print(f"Google Token Exchange Failed: {token_res}")
+        return redirect(url_for("auth.login_page") + "?error=google_auth_failed")
 
     # Get user details from Google
     userinfo_url = "https://www.googleapis.com/oauth2/v3/userinfo"

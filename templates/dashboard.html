@@ -954,9 +954,30 @@
             if (dockEl) dockEl.classList.add('active');
             
             window.scrollTo(0, 0);
+
+            // Trigger data loading if switching to specific panes
+            if (page === 'tasks') loadTasks();
+            if (page === 'activity') loadMyTasks();
         }
-        // Initialize home as default
-        document.addEventListener('DOMContentLoaded', () => showPage('home'));
+
+        // Initialize based on Hash or default to home
+        document.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '');
+            const params = new URLSearchParams(window.location.search);
+            const category = params.get('category');
+
+            if (hash && ['home', 'tasks', 'post', 'activity'].includes(hash)) {
+                showPage(hash);
+                if (hash === 'tasks' && category) {
+                    setTimeout(() => {
+                        const btn = document.querySelector(`.filter-btn-new[data-cat="${category}"]`);
+                        if (btn) filterCategory(category, btn);
+                    }, 100);
+                }
+            } else {
+                showPage('home');
+            }
+        });
     </script>
 
     <!-- Floating App Dock Navigation -->

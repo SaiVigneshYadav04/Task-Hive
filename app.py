@@ -18,7 +18,10 @@ from routes.auth_routes import auth_bp
 from routes.payment_routes import payment_bp
 from routes.chat_routes import chat_bp
 
+from werkzeug.middleware.proxy_fix import ProxyFix
+
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1)
 
 # Folder for profile pictures/proof images
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')

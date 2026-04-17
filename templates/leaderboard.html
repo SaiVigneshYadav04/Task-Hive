@@ -45,16 +45,16 @@
                 {% set t_done = user.tasks_completed or 0 %}
 
                 {% set badge = 'Novice Starter' %}
-                {% set badge_color = '#94a3b8' %}
+                {% set badge_class = 'badge-slate' %}
                 {% if t_done >= 50 %}
                     {% set badge = 'Task Master 👑' %}
-                    {% set badge_color = '#fbbf24' %}
+                    {% set badge_class = 'badge-gold' %}
                 {% elif t_done >= 10 %}
                     {% set badge = 'Trusted Pro ⭐' %}
-                    {% set badge_color = '#3BE477' %}
+                    {% set badge_class = 'badge-green' %}
                 {% elif t_done > 0 %}
                     {% set badge = 'Rising Star ✨' %}
-                    {% set badge_color = '#ec4899' %}
+                    {% set badge_class = 'badge-pink' %}
                 {% endif %}
 
                 <!-- Main Trust Score Card -->
@@ -69,7 +69,7 @@
                         </div>
                         <div>
                             <h2 style="margin: 0 0 0.5rem 0; font-size: 2rem; font-weight: 800; color: #fff;">{{ user.name }}</h2>
-                            <span style="background: rgba(255,255,255,0.1); padding: 0.4rem 1rem; border-radius: 50px; font-weight: 800; font-size: 0.85rem; color: {{ badge_color }}; border: 1px solid {{ badge_color }}; box-shadow: 0 0 10px {{ badge_color }}40;">{{ badge }}</span>
+                            <span class="trust-badge {{ badge_class }}">{{ badge }}</span>
                         </div>
                     </div>
                     
@@ -138,19 +138,19 @@
 
     <!-- Floating App Dock Navigation -->
     <nav class="app-dock">
-        <a href="/dashboard" class="dock-item" title="Dashboard">
+        <a href="/dashboard#home" class="dock-item" title="Dashboard">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             <span>Home</span>
         </a>
-        <a href="/dashboard" class="dock-item" title="Available Tasks">
+        <a href="/dashboard#tasks" class="dock-item" title="Available Tasks">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
             <span>Tasks</span>
         </a>
-        <a href="/dashboard" class="dock-item" title="Post a Task">
+        <a href="/dashboard#post" class="dock-item" title="Post a Task">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#ec4899;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
             <span>Post</span>
         </a>
-        <a href="/dashboard" class="dock-item" title="My Tasks">
+        <a href="/dashboard#activity" class="dock-item" title="My Tasks">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
             <span>Activity</span>
         </a>

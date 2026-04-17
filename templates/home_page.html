@@ -28,28 +28,27 @@
     </div>
   </header>
 
-  <section class="hero-enhanced" style="position: relative; overflow: hidden; padding: 8rem 1rem 6rem; margin-top: -1px; text-align: center;">
-    <!-- Background Design Decor -->
-    <div style="position: absolute; top: -10%; left: -10%; width: 50%; height: 50%; background: radial-gradient(circle, rgba(59, 228, 119, 0.25) 0%, transparent 60%); filter: blur(60px); animation: float 6s infinite ease-in-out; z-index: 0;"></div>
-    <div style="position: absolute; bottom: -10%; right: -10%; width: 50%; height: 50%; background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 60%); filter: blur(60px); animation: float 8s infinite ease-in-out reverse; z-index: 0;"></div>
+  <section class="hero-enhanced">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
     
     <div class="container hero-content" style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 3rem;">
       <div class="hero-text" style="max-width: 800px;">
-        <h1 class="hero-title" style="font-size: clamp(2.5rem, 5vw, 4.5rem); margin-bottom: 1.5rem; line-height: 1.1; font-weight: 800; animation: fadeUp 1s ease-out;">
+        <h1 class="hero-title" style="font-size: clamp(2.5rem, 5vw, 4.5rem); margin-bottom: 1.5rem; line-height: 1.1; font-weight: 800;">
           Organize Your Tasks,<br>
-          <span class="text-gradient" style="background: linear-gradient(90deg, #3BE477, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 4s linear infinite;">Achieve Your Goals</span>
+          <span class="text-gradient">Achieve Your Goals</span>
         </h1>
-        <p class="hero-description" style="font-size: 1.15rem; color: #cbd5e1; margin-bottom: 2.5rem; animation: fadeUp 1s ease-out 0.2s both;">
+        <p class="hero-description" style="font-size: 1.15rem; color: #cbd5e1; margin-bottom: 2.5rem;">
           Task-Hive helps you create, manage, and complete tasks efficiently with intuitive organization, deadline
           tracking, and real-time payment integration for local services. Join your community today.
         </p>
-        <div class="hero-buttons" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; animation: fadeUp 1s ease-out 0.4s both;">
+        <div class="hero-buttons" style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
           <a href="{{ url_for('auth.register_page') }}" class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 1.1rem; border-radius: 50px;">Start Free Today</a>
           <a href="{{ url_for('auth.login_page') }}" class="btn btn-secondary" style="padding: 1rem 2.5rem; font-size: 1.1rem; border-radius: 50px;">Sign In</a>
         </div>
       </div>
 
-      <div class="hero-stats glass" style="display: flex; gap: 2.5rem; padding: 2rem 4rem; border-radius: 24px; animation: fadeUp 1s ease-out 0.6s both; flex-wrap: wrap; justify-content: center; border-color: rgba(255,255,255,0.15); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);">
+      <div class="hero-stats glass" style="display: flex; gap: 2.5rem; padding: 2rem 4rem; border-radius: 24px; flex-wrap: wrap; justify-content: center;">
         <div style="text-align: center;">
           <h3 style="font-size: 2.5rem; color: #3BE477; margin-bottom: 0.5rem; font-weight: 800;">5K+</h3>
           <p style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.8rem; font-weight: 600; color: #94a3b8;">Active Users</p>
@@ -65,26 +64,6 @@
           <p style="text-transform: uppercase; letter-spacing: 1.5px; font-size: 0.8rem; font-weight: 600; color: #94a3b8;">User Rating</p>
         </div>
       </div>
-
-      <style>
-        @keyframes float {
-          0% { transform: translate(0, 0) scale(1); }
-          50% { transform: translate(30px, -30px) scale(1.1); }
-          100% { transform: translate(0, 0) scale(1); }
-        }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes shine {
-          to { background-position: 200% center; }
-        }
-        @media (max-width: 768px) {
-          .hero-enhanced { padding: 4rem 1rem; }
-          .hero-stats { padding: 1.5rem !important; gap: 1.5rem !important; flex-direction: column; width: 100%; }
-          .stat-divider { width: 100% !important; height: 1px !important; margin: 0.5rem 0 !important; }
-        }
-      </style>
     </div>
   </section>
 
@@ -94,74 +73,31 @@
       <p style="color: #64748b; font-size: 1.05rem;">Post any task imaginable — someone nearby is ready to help.</p>
     </div>
 
-    <style>
-      .marquee-wrapper { position: relative; overflow: hidden; }
-      .marquee-wrapper::before, .marquee-wrapper::after {
-        content: ''; position: absolute; top: 0; width: 120px; height: 100%; z-index: 2; pointer-events: none;
-      }
-      .marquee-wrapper::before { left: 0; background: linear-gradient(to right, var(--bg-color, #0a0f1a), transparent); }
-      .marquee-wrapper::after { right: 0; background: linear-gradient(to left, var(--bg-color, #0a0f1a), transparent); }
-      .marquee-track {
-        display: flex; gap: 1.25rem; width: max-content;
-        animation: marquee-scroll 30s linear infinite;
-      }
-      .marquee-track:hover { animation-play-state: paused; }
-      .marquee-track-2 {
-        display: flex; gap: 1.25rem; width: max-content;
-        animation: marquee-scroll 25s linear infinite reverse;
-        margin-top: 1.25rem;
-      }
-      .marquee-track-2:hover { animation-play-state: paused; }
-      @keyframes marquee-scroll {
-        from { transform: translateX(0); }
-        to { transform: translateX(-50%); }
-      }
-      .category-tag {
-        display: inline-flex; align-items: center; gap: 0.65rem;
-        padding: 0.85rem 1.75rem; border-radius: 50px; white-space: nowrap;
-        font-weight: 700; font-size: 0.95rem; letter-spacing: 0.3px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
-        color: #cbd5e1;
-        transition: all 0.3s ease;
-        cursor: default;
-      }
-      .category-tag:hover {
-        background: rgba(255,255,255,0.1);
-        border-color: rgba(255,255,255,0.2);
-        color: #fff;
-        transform: scale(1.04);
-      }
-      .category-tag .dot {
-        width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-      }
-    </style>
-
     <!-- Sliding Category List -->
     <div class="marquee-wrapper">
       <div class="marquee-track">
         <!-- Loop 1 -->
-        <div class="category-tag"><span class="dot" style="background:#3BE477;"></span>Deep Cleaning</div>
-        <div class="category-tag"><span class="dot" style="background:#8b5cf6;"></span>Grocery Delivery</div>
-        <div class="category-tag"><span class="dot" style="background:#ec4899;"></span>Plumbing Repair</div>
-        <div class="category-tag"><span class="dot" style="background:#fbbf24;"></span>PC Setup Help</div>
-        <div class="category-tag"><span class="dot" style="background:#38bdf8;"></span>Math Tutoring</div>
-        <div class="category-tag"><span class="dot" style="background:#a855f7;"></span>Waiting in Queue</div>
-        <div class="category-tag"><span class="dot" style="background:#f43f5e;"></span>Dog Walking</div>
-        <div class="category-tag"><span class="dot" style="background:#10b981;"></span>Event Decoration</div>
-        <div class="category-tag"><span class="dot" style="background:#f97316;"></span>Furniture Moving</div>
-        <div class="category-tag"><span class="dot" style="background:#06b6d4;"></span>Babysitting</div>
+        <a href="/dashboard?category=household#tasks" class="category-tag"><span class="dot" style="background:#3BE477;"></span>Deep Cleaning</a>
+        <a href="/dashboard?category=shopping#tasks" class="category-tag"><span class="dot" style="background:#8b5cf6;"></span>Grocery Delivery</a>
+        <a href="/dashboard?category=repairs#tasks" class="category-tag"><span class="dot" style="background:#ec4899;"></span>Plumbing Repair</a>
+        <a href="/dashboard?category=tech#tasks" class="category-tag"><span class="dot" style="background:#fbbf24;"></span>PC Setup Help</a>
+        <a href="/dashboard?category=academic#tasks" class="category-tag"><span class="dot" style="background:#38bdf8;"></span>Math Tutoring</a>
+        <a href="/dashboard?category=misc#tasks" class="category-tag"><span class="dot" style="background:#a855f7;"></span>Waiting in Queue</a>
+        <a href="/dashboard?category=personal#tasks" class="category-tag"><span class="dot" style="background:#f43f5e;"></span>Dog Walking</a>
+        <a href="/dashboard?category=events#tasks" class="category-tag"><span class="dot" style="background:#10b981;"></span>Event Decoration</a>
+        <a href="/dashboard?category=household#tasks" class="category-tag"><span class="dot" style="background:#f97316;"></span>Furniture Moving</a>
+        <a href="/dashboard?category=personal#tasks" class="category-tag"><span class="dot" style="background:#06b6d4;"></span>Babysitting</a>
         <!-- Duplicate for seamless loop -->
-        <div class="category-tag"><span class="dot" style="background:#3BE477;"></span>Deep Cleaning</div>
-        <div class="category-tag"><span class="dot" style="background:#8b5cf6;"></span>Grocery Delivery</div>
-        <div class="category-tag"><span class="dot" style="background:#ec4899;"></span>Plumbing Repair</div>
-        <div class="category-tag"><span class="dot" style="background:#fbbf24;"></span>PC Setup Help</div>
-        <div class="category-tag"><span class="dot" style="background:#38bdf8;"></span>Math Tutoring</div>
-        <div class="category-tag"><span class="dot" style="background:#a855f7;"></span>Waiting in Queue</div>
-        <div class="category-tag"><span class="dot" style="background:#f43f5e;"></span>Dog Walking</div>
-        <div class="category-tag"><span class="dot" style="background:#10b981;"></span>Event Decoration</div>
-        <div class="category-tag"><span class="dot" style="background:#f97316;"></span>Furniture Moving</div>
-        <div class="category-tag"><span class="dot" style="background:#06b6d4;"></span>Babysitting</div>
+        <a href="/dashboard?category=household#tasks" class="category-tag"><span class="dot" style="background:#3BE477;"></span>Deep Cleaning</a>
+        <a href="/dashboard?category=shopping#tasks" class="category-tag"><span class="dot" style="background:#8b5cf6;"></span>Grocery Delivery</a>
+        <a href="/dashboard?category=repairs#tasks" class="category-tag"><span class="dot" style="background:#ec4899;"></span>Plumbing Repair</a>
+        <a href="/dashboard?category=tech#tasks" class="category-tag"><span class="dot" style="background:#fbbf24;"></span>PC Setup Help</a>
+        <a href="/dashboard?category=academic#tasks" class="category-tag"><span class="dot" style="background:#38bdf8;"></span>Math Tutoring</a>
+        <a href="/dashboard?category=misc#tasks" class="category-tag"><span class="dot" style="background:#a855f7;"></span>Waiting in Queue</a>
+        <a href="/dashboard?category=personal#tasks" class="category-tag"><span class="dot" style="background:#f43f5e;"></span>Dog Walking</a>
+        <a href="/dashboard?category=events#tasks" class="category-tag"><span class="dot" style="background:#10b981;"></span>Event Decoration</a>
+        <a href="/dashboard?category=household#tasks" class="category-tag"><span class="dot" style="background:#f97316;"></span>Furniture Moving</a>
+        <a href="/dashboard?category=personal#tasks" class="category-tag"><span class="dot" style="background:#06b6d4;"></span>Babysitting</a>
       </div>
     </div>
 
@@ -169,27 +105,27 @@
     <div class="marquee-wrapper" style="margin-top: 1rem;">
       <div class="marquee-track-2">
         <!-- First copy -->
-        <div class="category-tag"><span class="dot" style="background:#e879f9;"></span>Mehndi Design</div>
-        <div class="category-tag"><span class="dot" style="background:#4ade80;"></span>Assignment Help</div>
-        <div class="category-tag"><span class="dot" style="background:#fb923c;"></span>Electrician Visit</div>
-        <div class="category-tag"><span class="dot" style="background:#60a5fa;"></span>Medicine Pickup</div>
-        <div class="category-tag"><span class="dot" style="background:#34d399;"></span>Cooking Meals</div>
-        <div class="category-tag"><span class="dot" style="background:#f472b6;"></span>Photography</div>
-        <div class="category-tag"><span class="dot" style="background:#a78bfa;"></span>Data Entry</div>
-        <div class="category-tag"><span class="dot" style="background:#fde68a;"></span>Ironing Clothes</div>
-        <div class="category-tag"><span class="dot" style="background:#6ee7b7;"></span>Pet Care</div>
-        <div class="category-tag"><span class="dot" style="background:#93c5fd;"></span>Parcel Delivery</div>
+        <a href="/dashboard?category=beauty#tasks" class="category-tag"><span class="dot" style="background:#e879f9;"></span>Mehndi Design</a>
+        <a href="/dashboard?category=academic#tasks" class="category-tag"><span class="dot" style="background:#4ade80;"></span>Assignment Help</a>
+        <a href="/dashboard?category=repairs#tasks" class="category-tag"><span class="dot" style="background:#fb923c;"></span>Electrician Visit</a>
+        <a href="/dashboard?category=shopping#tasks" class="category-tag"><span class="dot" style="background:#60a5fa;"></span>Medicine Pickup</a>
+        <a href="/dashboard?category=household#tasks" class="category-tag"><span class="dot" style="background:#34d399;"></span>Cooking Meals</a>
+        <a href="/dashboard?category=events#tasks" class="category-tag"><span class="dot" style="background:#f472b6;"></span>Photography</a>
+        <a href="/dashboard?category=tech#tasks" class="category-tag"><span class="dot" style="background:#a78bfa;"></span>Data Entry</a>
+        <a href="/dashboard?category=household#tasks" class="category-tag"><span class="dot" style="background:#fde68a;"></span>Ironing Clothes</a>
+        <a href="/dashboard?category=personal#tasks" class="category-tag"><span class="dot" style="background:#6ee7b7;"></span>Pet Care</a>
+        <a href="/dashboard?category=delivery#tasks" class="category-tag"><span class="dot" style="background:#93c5fd;"></span>Parcel Delivery</a>
         <!-- Duplicate for seamless loop -->
-        <div class="category-tag"><span class="dot" style="background:#e879f9;"></span>Mehndi Design</div>
-        <div class="category-tag"><span class="dot" style="background:#4ade80;"></span>Assignment Help</div>
-        <div class="category-tag"><span class="dot" style="background:#fb923c;"></span>Electrician Visit</div>
-        <div class="category-tag"><span class="dot" style="background:#60a5fa;"></span>Medicine Pickup</div>
-        <div class="category-tag"><span class="dot" style="background:#34d399;"></span>Cooking Meals</div>
-        <div class="category-tag"><span class="dot" style="background:#f472b6;"></span>Photography</div>
-        <div class="category-tag"><span class="dot" style="background:#a78bfa;"></span>Data Entry</div>
-        <div class="category-tag"><span class="dot" style="background:#fde68a;"></span>Ironing Clothes</div>
-        <div class="category-tag"><span class="dot" style="background:#6ee7b7;"></span>Pet Care</div>
-        <div class="category-tag"><span class="dot" style="background:#93c5fd;"></span>Parcel Delivery</div>
+        <a href="/dashboard?category=beauty#tasks" class="category-tag"><span class="dot" style="background:#e879f9;"></span>Mehndi Design</a>
+        <a href="/dashboard?category=academic#tasks" class="category-tag"><span class="dot" style="background:#4ade80;"></span>Assignment Help</a>
+        <a href="/dashboard?category=repairs#tasks" class="category-tag"><span class="dot" style="background:#fb923c;"></span>Electrician Visit</a>
+        <a href="/dashboard?category=shopping#tasks" class="category-tag"><span class="dot" style="background:#60a5fa;"></span>Medicine Pickup</a>
+        <a href="/dashboard?category=household#tasks" class="category-tag"><span class="dot" style="background:#34d399;"></span>Cooking Meals</a>
+        <a href="/dashboard?category=events#tasks" class="category-tag"><span class="dot" style="background:#f472b6;"></span>Photography</a>
+        <a href="/dashboard?category=tech#tasks" class="category-tag"><span class="dot" style="background:#a78bfa;"></span>Data Entry</a>
+        <a href="/dashboard?category=household#tasks" class="category-tag"><span class="dot" style="background:#fde68a;"></span>Ironing Clothes</a>
+        <a href="/dashboard?category=personal#tasks" class="category-tag"><span class="dot" style="background:#6ee7b7;"></span>Pet Care</a>
+        <a href="/dashboard?category=delivery#tasks" class="category-tag"><span class="dot" style="background:#93c5fd;"></span>Parcel Delivery</a>
       </div>
     </div>
   </section>
