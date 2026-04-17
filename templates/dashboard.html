@@ -608,7 +608,7 @@
                 <div id="home-pane" class="page-pane active">
                     <div style="display: flex; flex-direction: column; gap: 2rem;">
                         <!-- Welcome Block -->
-                        <div style="display: flex; align-items: center; gap: 1.5rem; padding: 2rem; background: linear-gradient(135deg, rgba(59,228,119,0.08), rgba(139,92,246,0.08)); border-radius: 20px; border: 1px solid rgba(255,255,255,0.07);">
+                        <div class="mobile-stack" style="display: flex; align-items: center; gap: 1.5rem; padding: 2rem; background: linear-gradient(135deg, rgba(59,228,119,0.08), rgba(139,92,246,0.08)); border-radius: 20px; border: 1px solid rgba(255,255,255,0.07);">
                             <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.8rem; color: #000; overflow: hidden; flex-shrink: 0; border: 3px solid rgba(59,228,119,0.4); box-shadow: 0 0 20px rgba(59,228,119,0.2);">
                                 {% if user.profile_pic %}
                                 <img src="{{ url_for('static', filename='uploads/' + user.profile_pic) }}" style="width:100%;height:100%;object-fit:cover;">
@@ -623,7 +623,7 @@
                         </div>
 
                         <!-- Quick Stats -->
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                        <div class="mobile-stack" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
                             <div class="card glass" style="padding: 1.5rem; display: flex; align-items: center; gap: 1rem;">
                                 <div style="width: 50px; height: 50px; border-radius: 12px; background: rgba(59, 228, 119, 0.15); display: flex; align-items: center; justify-content: center; color: #3BE477;">
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
@@ -979,7 +979,7 @@
         </div>
         <div class="dock-divider"></div>
         <a href="/leaderboard" class="dock-item" title="Trust & Reputation">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#fbbf24;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
             <span>Trust</span>
         </a>
         <div class="dock-divider"></div>

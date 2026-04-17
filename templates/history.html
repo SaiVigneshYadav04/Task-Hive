@@ -89,7 +89,7 @@
         <div class="dock-divider"></div>
         <a href="/leaderboard" class="dock-item" title="Trust & Reputation">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="color:#fbbf24;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
-            <span>Trust ⭐</span>
+            <span>Trust</span>
         </a>
         <div class="dock-divider"></div>
         <a href="/profile" class="dock-item" title="Profile">
@@ -141,14 +141,14 @@
 
                 container.innerHTML += `
                     <div class="card glass mb-3">
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center mobile-stack">
                             <div>
                                 ${roleTag}
                                 <h3 style="margin: 0.5rem 0 0 0; font-size: 1.25rem; font-weight: 800; color: #fff;">${task.title}</h3>
                                 <span style="font-size: 0.85rem; color: var(--text-muted); text-transform: capitalize;">${task.category} • ${interactionText}</span>
                             </div>
-                            <div style="text-align: right;">
-                                <span style="display: block; font-size: 1.5rem; font-weight: 900; color: var(--primary);">₹${task.payment}</span>
+                            <div style="text-align: right;" class="mobile-amount-right">
+                                <span style="display: block; font-size: 1.5rem; font-weight: 900; color: var(--primary);">&#8377;${task.payment}</span>
                                 <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Fully Paid</span>
                             </div>
                         </div>
