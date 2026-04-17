@@ -141,55 +141,64 @@ a:hover {
     position: relative;
 }
 
-/* Mobile Nav Toggle */
+/* Mobile Nav Toggle - Removed and replaced with compact horizontal nav */
 .mobile-nav-toggle {
-    display: none;
-    background: transparent;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    padding: 5px;
-    z-index: 2001;
-}
-
-.mobile-nav-toggle svg {
-    width: 28px;
-    height: 28px;
-    stroke-width: 2.5;
+    display: none !important;
 }
 
 @media (max-width: 768px) {
-    .mobile-nav-toggle {
-        display: block;
+    .header-content {
+        padding: 0.5rem 0;
+        gap: 0.4rem;
+        flex-wrap: nowrap;
     }
 
     .nav {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: rgba(15, 23, 42, 0.98);
-        flex-direction: column;
-        padding: 2rem;
-        gap: 1.5rem;
-        text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(20px);
-        z-index: 2000;
-        animation: slideDown 0.3s ease-out;
+        display: flex;
+        gap: 0.35rem;
+        align-items: center;
+        flex-shrink: 1;
     }
 
-    .nav.mobile-active {
-        display: flex;
+    .nav-link {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.3rem;
+        white-space: nowrap;
     }
 
     .header-content .btn-primary {
-        display: none; /* Hide 'Get Started' on mobile header to avoid collision */
+        padding: 0.4rem 0.7rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        min-width: 80px;
+        text-align: center;
     }
-    
-    .nav .btn-primary {
-        display: inline-block; /* Show it inside the menu instead */
+
+    .logo-text {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav {
+        gap: 0.4rem;
+    }
+
+    .nav-link {
+        font-size: 0.75rem;
+    }
+
+    .logo-text {
+        display: none; /* Hide logo text on very small screens to fit links */
+    }
+
+    .logo-icon img {
+        width: 32px;
+    }
+
+    .header-content .btn-primary {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
     }
 }
 

@@ -18,29 +18,13 @@
         <span class="logo-text">Task-Hive</span>
       </div>
 
-      <nav class="nav" id="main-nav">
-        <a href="{{ url_for('home') }}" class="nav-link">Home</a>
-        <a href="{{ url_for('about') }}" class="nav-link">About Us</a>
-        <a href="{{ url_for('auth.login_page') }}" style="color: #047857; font-weight: bold;" class="nav-link">Login</a>
-        <a href="{{ url_for('auth.register_page') }}" class="btn btn-primary" style="margin-top: 1rem;">Get Started</a>
+      <nav class="nav">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/about" class="nav-link">About Us</a>
+        <a href="/login" class="nav-link active">Login</a>
       </nav>
 
-      <a href="{{ url_for('auth.register_page') }}" class="btn btn-primary">Get Started</a>
-
-      <button class="mobile-nav-toggle" onclick="toggleMobileMenu()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
-      </button>
-
-      <script>
-        function toggleMobileMenu() {
-          const nav = document.getElementById('main-nav');
-          nav.classList.toggle('mobile-active');
-        }
-      </script>
+      <a href="/register" class="btn btn-primary">Get Started</a>
     </div>
   </header>
 
