@@ -17,12 +17,28 @@
                 </div>
                 <span class="logo-text">Task-Hive</span>
             </div>
-            <nav class="nav">
+            <nav class="nav" id="main-nav">
                 <a href="/" class="nav-link">Home</a>
                 <a href="/about" class="nav-link" style="color: #047857; font-weight: bold;">About Us</a>
                 <a href="/login" class="nav-link">Login</a>
+                <a href="/register" class="btn btn-primary" style="margin-top: 1rem;">Get Started</a>
             </nav>
             <a href="/register" class="btn btn-primary">Get Started</a>
+
+            <button class="mobile-nav-toggle" onclick="toggleMobileMenu()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+
+            <script>
+                function toggleMobileMenu() {
+                    const nav = document.getElementById('main-nav');
+                    nav.classList.toggle('mobile-active');
+                }
+            </script>
         </div>
     </header>
 

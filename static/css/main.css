@@ -138,6 +138,64 @@ a:hover {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 0;
+    position: relative;
+}
+
+/* Mobile Nav Toggle */
+.mobile-nav-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 2001;
+}
+
+.mobile-nav-toggle svg {
+    width: 28px;
+    height: 28px;
+    stroke-width: 2.5;
+}
+
+@media (max-width: 768px) {
+    .mobile-nav-toggle {
+        display: block;
+    }
+
+    .nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(15, 23, 42, 0.98);
+        flex-direction: column;
+        padding: 2rem;
+        gap: 1.5rem;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        z-index: 2000;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .nav.mobile-active {
+        display: flex;
+    }
+
+    .header-content .btn-primary {
+        display: none; /* Hide 'Get Started' on mobile header to avoid collision */
+    }
+    
+    .nav .btn-primary {
+        display: inline-block; /* Show it inside the menu instead */
+    }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 .dashboard-header-content {

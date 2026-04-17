@@ -522,12 +522,12 @@
         const params = new URLSearchParams(window.location.search);
         if (params.get('saved') === '1') {
             const toast = document.getElementById('toast-msg');
-            toast.innerText = '✅ Profile updated successfully!';
+            toast.innerText = 'Profile updated successfully!';
             toast.style.display = 'block';
             setTimeout(() => toast.style.display = 'none', 3000);
         } else if (params.get('missing_upi') === '1') {
             const toast = document.getElementById('toast-msg');
-            toast.innerText = '⚠️ Please add your UPI ID to continue!';
+            toast.innerText = 'Please add your UPI ID to continue!';
             toast.style.background = 'rgba(239, 68, 68, 0.15)';
             toast.style.color = '#ef4444';
             toast.style.borderColor = 'rgba(239, 68, 68, 0.4)';
@@ -535,7 +535,7 @@
             setTimeout(() => toast.style.display = 'none', 5000);
         } else if (params.get('force_verification') === '1') {
             const toast = document.getElementById('toast-msg');
-            toast.innerText = '🛡️ Please verify your phone number to use all features!';
+            toast.innerText = 'Please verify your phone number to use all features!';
             toast.style.background = 'rgba(59, 228, 119, 0.15)';
             toast.style.color = 'var(--primary)';
             toast.style.display = 'block';

@@ -220,7 +220,8 @@ def apply_task(task_id):
         notif = Notification(
             user_id=task.posted_by,
             message=f"{worker.name} applied for your task: {task.title}",
-            link=f"/review-applicants/{task.id}"
+            link=f"/review-applicants/{task.id}",
+            type="application"
         )
         db.session.add(notif)
         db.session.commit()
@@ -260,7 +261,8 @@ def add_task_update(task_id):
     notif = Notification(
         user_id=task.posted_by,
         message=f"{worker.name} updated progress to {percentage}% on '{task.title}'",
-        link="/dashboard#my-tasks-section"
+        link="/dashboard#my-tasks-section",
+        type="update"
     )
     db.session.add(notif)
     db.session.add(new_update)
@@ -286,7 +288,8 @@ def hire_worker(application_id):
     notif = Notification(
         user_id=task_app.worker_id,
         message=f"You were hired for: {task.title}!",
-        link="/dashboard#my-tasks-section"
+        link="/dashboard#my-tasks-section",
+        type="hire"
     )
 
     db.session.add(notif)
@@ -335,7 +338,8 @@ def unassign_task(task_id):
         notif = Notification(
             user_id=task.assigned_to,
             message=f"You were unassigned from: {task.title}.",
-            link="/dashboard"
+            link="/dashboard",
+            type="unassigned"
         )
         db.session.add(notif)
 
@@ -530,7 +534,7 @@ def get_notifications():
     if "user_id" not in session: return jsonify([])
     notifs = Notification.query.filter_by(user_id=str(session["user_id"])).order_by(Notification.timestamp.desc()).limit(10).all()
     return jsonify([{
-        "id": n.id, "message": n.message, "link": n.link, "is_read": n.is_read
+        "id": n.id, "message": n.message, "link": n.link, "is_read": n.is_read, "type": n.type
     } for n in notifs])
 
 @dashboard_bp.route("/api/notifications/read/<int:notif_id>", methods=["POST"])

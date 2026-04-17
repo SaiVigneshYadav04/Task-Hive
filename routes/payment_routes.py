@@ -49,8 +49,9 @@ def claim_payment(task_id, milestone):
 
     notif = Notification(
         user_id=str(task.assigned_to),
-        message=f"💰 Payment for {milestone} was claimed for: {task.title}. Please confirm if received.",
-        link="/dashboard#my-tasks-section"
+        message=f"Payment for {milestone} was claimed for: {task.title}. Please confirm if received.",
+        link="/dashboard#my-tasks-section",
+        type="payment_claimed"
     )
     db.session.add(notif)
     db.session.commit()
@@ -72,19 +73,22 @@ def confirm_receipt(task_id):
 
     if milestone == "half":
         task.payment_status = "half_paid"
-        notif_msg = f"✅ 50% Milestone payment confirmed for: {task.title}"
+        notif_msg = f"50% Milestone payment confirmed for: {task.title}"
+        notif_type = "payment_confirmed"
     else:
         task.payment_status = "fully_paid"
         task.status = "completed"
         worker = User.query.get(int(session["user_id"]))
         if worker:
             worker.tasks_completed = (worker.tasks_completed or 0) + 1
-        notif_msg = f"🏆 Full payment confirmed! Task '{task.title}' is finished."
+        notif_msg = f"Full payment confirmed! Task '{task.title}' is finished."
+        notif_type = "completed"
 
     notif = Notification(
         user_id=str(task.posted_by),
         message=notif_msg,
-        link="/dashboard"
+        link="/dashboard",
+        type=notif_type
     )
     db.session.add(notif)
     db.session.commit()

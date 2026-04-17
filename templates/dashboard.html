@@ -485,6 +485,57 @@
             font-size: 0.7rem;
             flex-shrink: 0;
         }
+
+        /* Modern Notification Styles */
+        .notif-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+        .notif-item:hover { background: rgba(255, 255, 255, 0.02); }
+        .notif-item.unread { background: rgba(59, 228, 119, 0.03); }
+        
+        .notif-icon-wrapper {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .notif-icon-wrapper svg { width: 18px; height: 18px; stroke-width: 2.2; }
+
+        /* Notification Types */
+        .notif-type-application { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .notif-type-hire { background: rgba(59, 228, 119, 0.15); color: #3BE477; }
+        .notif-type-update { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+        .notif-type-unassigned { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .notif-type-payment_claimed { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .notif-type-payment_confirmed { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .notif-type-completed { background: rgba(5, 150, 105, 0.2); color: #059669; }
+        .notif-type-default { background: rgba(255, 255, 255, 0.1); color: #94a3b8; }
+
+        .notif-content { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; }
+        .notif-text { color: #e2e8f0; font-size: 0.85rem; line-height: 1.4; }
+        .notif-time { color: #64748b; font-size: 0.7rem; font-weight: 500; }
+        
+        .unread-indicator {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
     </style>
 </head>
 
@@ -501,7 +552,7 @@
 
                     <div style="position: relative;">
                         <button class="notif-btn" onclick="toggleNotifs()" id="notif-bell-btn">
-                            <img src="{{ url_for('static', filename='images/notification.png') }}" alt="Notifications">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: #cbd5e1;"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                             <span id="notif-badge"
                                 style="display: none; position: absolute; top: -4px; right: -4px; background: #ef4444; color: white; font-size: 0.6rem; font-weight: 800; min-width: 18px; height: 18px; border-radius: 50%; align-items: center; justify-content: center; border: 2px solid #0f172a; padding: 0 3px;">0</span>
                         </button>
@@ -538,12 +589,14 @@
         {% if not is_verified %}
         <div id="verification-gate">
             <div class="gate-card glass">
-                <div style="font-size: 4rem; margin-bottom: 1.5rem;">🛡️</div>
+                <div style="margin-bottom: 1.5rem; color: var(--primary);">
+                    <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
                 <h2 style="font-size: 2rem; margin-bottom: 1rem;">Verification Required</h2>
                 <p style="color: var(--text-muted); line-height: 1.6;">
                     To keep Task-Hive safe, we require all users to verify their phone number before posting or browsing tasks.
                 </p>
-                <a href="/profile?force_verification=1" class="gate-btn">Verify Now →</a>
+                <a href="/profile?force_verification=1" class="gate-btn">Verify Now</a>
             </div>
         </div>
         {% endif %}
@@ -625,7 +678,9 @@
                 <div id="tasks-pane" class="page-pane" style="display:none; position: relative;">
                     <div id="tasks-location-gate" class="location-gate-scoped">
                         <div class="card glass" style="max-width: 450px; padding: 2rem; border-color: rgba(59, 228, 119, 0.3);">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">📍</div>
+                            <div style="margin-bottom: 1rem; color: var(--primary);">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            </div>
                             <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Location Access Required</h3>
                             <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
                                 Task-Hive is hyperlocal. We need your location to show tasks within a 5km radius of you.
@@ -635,7 +690,7 @@
                                 <div style="font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; font-size: 0.8rem; text-transform: uppercase;">How to enable:</div>
                                 <div class="guide-step">
                                     <div class="step-num">1</div>
-                                    <div>Click the <b>Lock 🔒</b> icon in your browser address bar.</div>
+                                    <div>Click the <b>Lock icon</b> in your browser address bar.</div>
                                 </div>
                                 <div class="guide-step">
                                     <div class="step-num">2</div>
@@ -709,7 +764,9 @@
                 <div id="post-pane" class="page-pane" style="display:none; position: relative;">
                     <div id="post-location-gate" class="location-gate-scoped">
                         <div class="card glass" style="max-width: 450px; padding: 2rem; border-color: rgba(59, 228, 119, 0.3);">
-                            <div style="font-size: 3rem; margin-bottom: 1rem;">📍</div>
+                            <div style="margin-bottom: 1rem; color: var(--primary);">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            </div>
                             <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 1rem;">Location Required to Post</h3>
                             <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6;">
                                 To post a task, we need your GPS coordinates to show it to workers nearby.
@@ -719,7 +776,7 @@
                                 <div style="font-weight: 800; color: var(--primary); margin-bottom: 0.75rem; font-size: 0.8rem; text-transform: uppercase;">How to enable:</div>
                                 <div class="guide-step">
                                     <div class="step-num">1</div>
-                                    <div>Click the <b>Lock 🔒</b> icon in your browser address bar.</div>
+                                    <div>Click the <b>Lock icon</b> in your browser address bar.</div>
                                 </div>
                                 <div class="guide-step">
                                     <div class="step-num">2</div>
@@ -977,7 +1034,7 @@
             const toast = document.createElement('div');
             toast.className = `custom-toast ${type}`;
 
-            const icon = type === 'success' ? '✓' : '⚠️';
+            const icon = type === 'success' ? '✓' : '!';
 
             toast.innerHTML = `<span class="toast-icon">${icon}</span> <span>${message}</span>`;
 
@@ -1136,7 +1193,7 @@
 
                     data.forEach(task => {
                         const distanceTag = task.distance !== null && task.distance !== undefined
-                            ? `<span style="background: rgba(59, 228, 119, 0.2); color: #3BE477; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem;">📍 ${task.distance} km away</span>`
+                            ? `<span style="background: rgba(59, 228, 119, 0.2); color: #3BE477; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem; display: inline-flex; align-items: center; gap: 0.25rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${task.distance} km away</span>`
                             : '';
 
                         container.innerHTML += `
@@ -1145,7 +1202,7 @@
                                     <div>
                                         <h3 class="task-title">${task.title}</h3>
                                         <span class="task-category-tag" style="text-transform: capitalize;">${task.category}</span>
-                                        <span style="background: rgba(59, 228, 119, 0.3); border: 1px solid rgba(59, 228, 119, 0.7); color: #000000; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem;"> ${task.duration || 'Flexible'}</span>
+                                        <span style="background: rgba(59, 228, 119, 0.3); border: 1px solid rgba(59, 228, 119, 0.7); color: #000000; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem; display: inline-flex; align-items: center; gap: 0.25rem;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> ${task.duration || 'Flexible'}</span>
                                         ${distanceTag}
                                     </div>
                                     <div class="task-payment">
@@ -1250,7 +1307,7 @@
                             } else if (task.payment_status === "fully_paid") {
                                 updateFormHtml = `<div style="margin-top: 1.5rem; color: #3BE477; font-weight: bold; text-align: center; border: 1px solid #3BE477; padding: 1rem; border-radius: 0.5rem; background: rgba(59, 228, 119, 0.1);">Task Completed & Fully Paid!</div>`;
                             } else if (isLocked) {
-                                updateFormHtml = `<div style="margin-top: 1.5rem; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24;">⏳ Waiting for Client to pay the 50% milestone.</div>`;
+                                updateFormHtml = `<div style="margin-top: 1.5rem; color: #fbbf24; font-weight: bold; font-size: 0.95rem; text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 0.5rem; border: 1px dashed #fbbf24; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 2s linear infinite;"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg> Waiting for Client to pay the 50% milestone.</div>`;
                             } else {
                                 updateFormHtml = `
                                     <div style="margin-top: 0.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 0.75rem;">
@@ -1264,7 +1321,7 @@
                                                 style="width: 100%; background: rgba(0,0,0,0.6); color: white; border: 1px solid #3BE477; border-radius: 0.5rem; padding: 0.75rem; font-size: 1rem; outline: none;"
                                                 onclick="event.stopPropagation();">
                                         <div id="proof-container-${task.id}" style="display: none; background: rgba(59, 228, 119, 0.05); padding: 1rem; border-radius: 0.5rem; border: 1px dashed #3BE477; margin-top: 0.5rem;">
-                                            <label style="display: block; color: #3BE477; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem;">📸 Upload Proof of Work (Required for 50% & 100%)</label>
+                                            <label style="display: flex; align-items: center; gap: 0.5rem; color: #3BE477; font-size: 0.85rem; font-weight: bold; margin-bottom: 0.5rem;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg> Upload Proof of Work (Required for 50% & 100%)</label>
                                             <input type="file" id="proof-${task.id}" style="width: 100%; color: white; font-size: 0.9rem;" onclick="event.stopPropagation();">
                                         </div>
                                         <button onclick="postTaskUpdate(${task.id}, event)" style="margin-top: 0.5rem; background: #3BE477; color: black; border: none; border-radius: 0.5rem; padding: 0.75rem 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;">Send Update</button>
@@ -1276,9 +1333,14 @@
                                 <div class="task-card" onclick="this.classList.toggle('expanded')">
                                     <div class="task-card-header">
                                         <div>
-                                        <h3 class="task-title" style="color: white;">${task.title}</h3>
-                                        <span class="task-category-tag">${task.category}</span>
-                                        <span style="background: rgba(59, 228, 119, 0.3);border: 1px solid rgba(59, 228, 119, 0.7); color: #000000; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem;">🕒 ${task.duration || 'Flexible'}</span>
+                                            <h3 class="task-title" style="color: white; margin: 0;">${task.title}</h3>
+                                            <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                                                <span class="task-category-tag" style="margin: 0;">${task.category}</span>
+                                                <span style="background: rgba(59, 228, 119, 0.2); color: #3BE477; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; border: 1px solid rgba(59, 228, 119, 0.3);">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                                    ${task.duration || 'Flexible'}
+                                                </span>
+                                            </div>
                                     </div>
                                         <div class="task-payment">
                                             <span class="payment-label" style="color: #ffffff; font-weight: 700;">You Earn</span>
@@ -1294,11 +1356,11 @@
                                             ${task.contact_phone ? `
                                             <div style="text-align: right;">
                                                 <span style="font-size: 0.75rem; color: #ffffff; text-transform: uppercase; font-weight: bold;">Contact Number</span><br>
-                                                <span style="color: #295539; font-weight: bold; font-size: 1.1rem; letter-spacing: 0.5px;">📞 ${task.contact_phone}</span>
+                                                <span style="color: #295539; font-weight: bold; font-size: 1.1rem; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 0.5rem;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> ${task.contact_phone}</span>
                                             </div>` : ''}
                                         </div>
 
-                                        <button class="btn" onclick="openChat(${task.id}, '${task.title.replace(/'/g, "\\'")}', event)" style="margin-bottom: 1.5rem; width: 100%; background: rgba(59, 228, 119, 0.1); color: #3BE477; border: 1px solid #3BE477; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem;">💬 Chat with Client</button>
+                                        <button class="btn" onclick="openChat(${task.id}, '${task.title.replace(/'/g, "\\'")}', event)" style="margin-bottom: 1.5rem; width: 100%; background: rgba(59, 228, 119, 0.1); color: #3BE477; border: 1px solid #3BE477; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.75rem;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Chat with Client</button>
 
                                         <span style="color: #3BE477; font-size: 0.8rem; text-transform: uppercase; font-weight: bold;">Task History</span><br>
                                         ${timelineHTML}
@@ -1381,9 +1443,14 @@
                                 <div class="task-card" onclick="this.classList.toggle('expanded')">
                                     <div class="task-card-header">
                                         <div>
-                                        <h3 class="task-title" style="color: #000000;">${task.title}</h3>
-                                        <span class="task-category-tag">${task.category}</span>
-                                        <span style="background: rgba(59, 228, 119, 0.3);border: 1px solid rgba(59, 228, 119, 0.7); color: #000000; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-left: 0.5rem;">🕒 ${task.duration || 'Flexible'}</span>
+                                            <h3 class="task-title" style="color: #000000; margin: 0;">${task.title}</h3>
+                                            <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                                                <span class="task-category-tag" style="margin: 0;">${task.category}</span>
+                                                <span style="background: rgba(59, 228, 119, 0.2); color: #295539; padding: 0.25rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; border: 1px solid rgba(59, 228, 119, 0.4);">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                                    ${task.duration || 'Flexible'}
+                                                </span>
+                                            </div>
                                     </div>
                                         <div class="task-payment">
                                             <span class="payment-label" style="color: #000000; font-weight: 700;">Budget</span>
@@ -1399,7 +1466,7 @@
                                             ${task.contact_phone ? `
                                             <div style="text-align: right;">
                                                 <span style="font-size: 0.75rem; color: #ffffff; text-transform: uppercase; font-weight: bold;">Contact Number</span><br>
-                                                <span style="color: #295539; font-weight: bold; font-size: 1.1rem; letter-spacing: 0.5px;">📞 ${task.contact_phone}</span>
+                                                <span style="color: #295539; font-weight: bold; font-size: 1.1rem; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 0.5rem;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> ${task.contact_phone}</span>
                                             </div>` : ''}
                                         </div>
 
@@ -1480,7 +1547,7 @@
                 return;
             }
 
-            btn.innerText = "Uploading... ⏳";
+            btn.innerText = "Uploading...";
             btn.disabled = true;
             btn.style.opacity = "0.6";
             btn.style.cursor = "not-allowed";
@@ -1520,16 +1587,16 @@
             // If final payment, ask for rating first
             if (milestone === 'full') {
                 const { value: rating } = await Swal.fire({
-                    title: '⭐ Rate the Worker',
+                    title: 'Rate the Worker',
                     text: 'How well did they do? You can pay after rating.',
                     icon: 'star',
                     input: 'select',
                     inputOptions: {
-                        '5': '⭐⭐⭐⭐⭐ Excellent!',
-                        '4': '⭐⭐⭐⭐ Great job',
-                        '3': '⭐⭐⭐ It was okay',
-                        '2': '⭐⭐ Needs improvement',
-                        '1': '⭐ Poor experience'
+                        '5': 'Excellent!',
+                        '4': 'Great job',
+                        '3': 'It was okay',
+                        '2': 'Needs improvement',
+                        '1': 'Poor experience'
                     },
                     inputPlaceholder: 'Select rating...',
                     showCancelButton: true,
@@ -1558,7 +1625,7 @@
             const upiLink = `upi://pay?pa=${data.upi_id}&pn=${encodeURIComponent(data.worker_name)}&am=${data.amount}&cu=INR&tn=Task-Hive Milestone`;
 
             const { value: confirmed } = await Swal.fire({
-                title: '💸 Manual UPI Payment',
+                title: 'Manual UPI Payment',
                 html: `
                     <div style="text-align: left; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 1rem; border: 1px solid #3BE477;">
                         <p style="margin-bottom: 0.5rem; font-size: 0.9rem; color: #94a3b8;">Pay Directly to:</p>
@@ -1566,14 +1633,14 @@
                         <p style="font-family: monospace; background: #000; padding: 0.5rem; border-radius: 0.5rem; color: #3BE477; margin-bottom: 1rem;">${data.upi_id}</p>
                         
                         <div style="display: flex; gap: 0.5rem; flex-direction: column;">
-                            <a href="${upiLink}" class="btn btn-primary" style="text-decoration: none; text-align: center; color: black !important;">📲 Open UPI App</a>
+                            <a href="${upiLink}" class="btn btn-primary" style="text-decoration: none; text-align: center; color: black !important;">Open UPI App</a>
                             <p style="font-size: 0.75rem; color: #94a3b8; text-align: center; margin-top: 0.5rem;">(Works best on mobile browsers)</p>
                         </div>
                     </div>
                     <p style="margin-top: 1.5rem; font-size: 0.9rem;">Once you have sent <b>₹${data.amount}</b>, click "I Have Paid" below.</p>
                 `,
                 showCancelButton: true,
-                confirmButtonText: 'I Have Paid ✅',
+                confirmButtonText: 'I Have Paid',
                 cancelButtonText: 'Cancel',
                 confirmButtonColor: '#3BE477',
             });
@@ -1661,7 +1728,7 @@
 
                 if (result.error === "upi_missing") {
                     Swal.fire({
-                        title: '💳 UPI ID Required',
+                        title: 'UPI ID Required',
                         text: "To get paid for this task, you must add your UPI ID to your profile first.",
                         icon: 'warning',
                         confirmButtonText: 'Go to Profile',
@@ -1771,6 +1838,19 @@
             }
         });
 
+        function getNotificationIcon(type) {
+            const icons = {
+                'application': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+                'hire': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+                'update': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
+                'unassigned': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`,
+                'payment_claimed': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`,
+                'payment_confirmed': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+                'completed': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`
+            };
+            return icons[type] || `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+        }
+
         function loadNotifications() {
             fetch("/api/notifications")
                 .then(res => res.json())
@@ -1798,13 +1878,19 @@
                     }
 
                     data.forEach(n => {
-                        const dot = !n.is_read ? `<div class="notif-dot"></div>` : `<div style="width:8px;flex-shrink:0;"></div>`;
+                        const iconType = n.type || 'default';
                         const itemClass = n.is_read ? 'notif-item' : 'notif-item unread';
+                        const indicator = !n.is_read ? `<div class="unread-indicator"></div>` : '';
 
                         list.innerHTML += `
                             <div onclick="readNotif(${n.id}, '${n.link}', this)" class="${itemClass}">
-                                ${dot}
-                                <span class="notif-text">${n.message}</span>
+                                <div class="notif-icon-wrapper notif-type-${iconType}">
+                                    ${getNotificationIcon(n.type)}
+                                </div>
+                                <div class="notif-content">
+                                    <span class="notif-text">${n.message}</span>
+                                </div>
+                                ${indicator}
                             </div>
                         `;
                     });
