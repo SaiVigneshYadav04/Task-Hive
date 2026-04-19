@@ -1344,6 +1344,7 @@ textarea:focus {
 .text-gradient {
     background: linear-gradient(90deg, #3BE477, #8b5cf6, #ec4899);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     background-size: 200% auto;
     animation: shine 4s linear infinite;
